@@ -1,4 +1,4 @@
-package com.example.graph_editor;
+package com.example.graph_editor.menu;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,9 +9,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 
+import com.example.graph_editor.R;
 import com.example.graph_editor.browse.BrowseActivity;
+import com.example.graph_editor.draw.DrawActivity;
 
 public class MenuActivity extends AppCompatActivity {
     private SharedPreferences sharedPref;

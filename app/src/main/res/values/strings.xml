@@ -9,4 +9,6 @@
     <string name="graph">Graph</string>
     <string name="undirected_graph">Undirected Graph</string>
     <string name="directed_graph">Directed Graph</string>
+    <string name="Vertex">Vertex</string>
+    <string name="Edge">Edge</string>
 </resources>

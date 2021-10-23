@@ -15,10 +15,10 @@
             android:name=".browse.BrowseActivity"
             android:exported="false" />
         <activity
-            android:name=".DrawActivity"
+            android:name=".draw.DrawActivity"
             android:exported="false" />
         <activity
-            android:name=".MenuActivity"
+            android:name=".menu.MenuActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
