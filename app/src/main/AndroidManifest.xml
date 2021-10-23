@@ -12,7 +12,7 @@
         android:theme="@style/Theme.Grapheditor"
         tools:ignore="AllowBackup">
         <activity
-            android:name=".BrowseActivity"
+            android:name=".browse.BrowseActivity"
             android:exported="false" />
         <activity
             android:name=".MenuActivity"
