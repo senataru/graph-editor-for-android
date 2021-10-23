@@ -15,6 +15,9 @@
             android:name=".browse.BrowseActivity"
             android:exported="false" />
         <activity
+            android:name=".DrawActivity"
+            android:exported="false" />
+        <activity
             android:name=".MenuActivity"
             android:exported="true">
             <intent-filter>

@@ -25,10 +25,5 @@ public class BrowseActivity extends AppCompatActivity {
                 Arrays.asList(new Save("example", 96), new Save("example2", 7312)));
         saved.setAdapter(adapter);
         saved.setLayoutManager(new LinearLayoutManager(this));
-
-        findViewById(R.id.btnBack).setOnClickListener(v -> {
-            startActivity(new Intent(getApplicationContext(), MenuActivity.class));
-            finish();
-        });
     }
 }

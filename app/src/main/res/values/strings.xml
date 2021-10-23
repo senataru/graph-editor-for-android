@@ -1,10 +1,12 @@
 <resources>
-    <string name="app_name">graph-editor</string>
+    <string name="app_name">Graph Editor</string>
     <string name="create">Create</string>
     <string name="browse">Browse</string>
-    <string name="menuTitle">Graph Editor</string>
+    <string name="menu_title">Graph Editor</string>
     <string name="clear">Clear</string>
     <string name="back">Back</string>
     <string name="name">Name</string>
     <string name="graph">Graph</string>
+    <string name="undirected_graph">Undirected Graph</string>
+    <string name="directed_graph">Directed Graph</string>
 </resources>
