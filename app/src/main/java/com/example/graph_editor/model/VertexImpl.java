@@ -10,6 +10,7 @@ public class VertexImpl implements Vertex {
     String name;
     List<Edge> edges = new ArrayList<>();
     Point point;
+    Point currentPoint;
     EdgeFactory edgeFactory;
 
     public VertexImpl(int id, String name) {
@@ -33,6 +34,11 @@ public class VertexImpl implements Vertex {
     }
 
     @Override
+    public List<Edge> getEdges() {
+        return edges;
+    }
+
+    @Override
     public void setPoint(Point point) {
         this.point = point;
     }
@@ -40,5 +46,15 @@ public class VertexImpl implements Vertex {
     @Override
     public Point getPoint() {
         return point;
+    }
+
+    @Override
+    public void setCurrentPoint(Point currentPoint) {
+        this.currentPoint = currentPoint;
+    }
+
+    @Override
+    public Point getCurrentPoint() {
+        return currentPoint;
     }
 }

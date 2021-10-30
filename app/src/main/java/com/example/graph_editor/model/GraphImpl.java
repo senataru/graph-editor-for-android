@@ -1,11 +1,13 @@
 package com.example.graph_editor.model;
 
+import com.example.graph_editor.model.mathematics.Point;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class GraphImpl implements Graph {
     GraphType type;
-    List<Vertex> vertexes = new ArrayList<>();
+    List<Vertex> vertices = new ArrayList<>();
     VertexFactory vertexFactory;
 
     GraphImpl(GraphType type) {
@@ -15,7 +17,7 @@ public class GraphImpl implements Graph {
 
     @Override
     public void addVertex() {
-        vertexes.add(vertexFactory.produce());
+        vertices.add(vertexFactory.produce());
     }
 
     @Override
@@ -29,7 +31,12 @@ public class GraphImpl implements Graph {
     }
 
     @Override
-    public List<Vertex> getVertexes() {
-        return vertexes;
+    public List<Vertex> getVertices() {
+        return vertices;
+    }
+
+    @Override
+    public DrawManager getDrawManager() {
+        return new DrawManager(vertices);
     }
 }
