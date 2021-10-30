@@ -17,6 +17,7 @@ public class VertexImpl implements Vertex {
         this.id = id;
         this.name = name;
         edgeFactory = new EdgeFactory(this);
+        this.point = new Point(0, 0);
     }
 
     public void setName(String name) {

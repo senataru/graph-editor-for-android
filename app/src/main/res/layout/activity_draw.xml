@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".menu.MenuActivity">
+    tools:context=".draw.DrawActivity">
 
     <TextView
         android:id="@+id/txtChoice"
@@ -29,7 +29,17 @@
         app:layout_constraintTop_toBottomOf="@+id/txtChoice"
         app:layout_constraintVertical_bias="0.067" />
 
+    <com.example.graph_editor.draw.GraphView
+        android:id="@+id/viewGraph"
+        android:layout_width="match_parent"
+        android:layout_height="240sp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtChoice2" />
+
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="100sp"
         android:orientation="horizontal"
@@ -50,11 +60,27 @@
 
         <Button
             android:id="@+id/btnEdge"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="@string/Edge"
-            style="?android:attr/buttonBarButtonStyle" />
+            android:text="@string/Edge" />
+
+        <Button
+            android:id="@+id/btnMoveObject"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/move_object" />
+
+        <Button
+            android:id="@+id/btnMoveCanvas"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/move_canvas" />
 
     </LinearLayout>
 

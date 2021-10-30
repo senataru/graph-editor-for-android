@@ -13,6 +13,7 @@ import android.widget.Button;
 import com.example.graph_editor.R;
 import com.example.graph_editor.browse.BrowseActivity;
 import com.example.graph_editor.draw.DrawActivity;
+import com.example.graph_editor.model.GraphType;
 
 public class MenuActivity extends AppCompatActivity {
     private SharedPreferences sharedPref;
@@ -49,20 +50,20 @@ public class MenuActivity extends AppCompatActivity {
 
         btnUndirected.setOnClickListener(v -> {
             dialog.dismiss();
-            changeToDrawActivity("Undirected");
+            changeToDrawActivity(GraphType.UNDIRECTED);
         });
 
         btnDirected.setOnClickListener(v -> {
             dialog.dismiss();
-            changeToDrawActivity("Directed");
+            changeToDrawActivity(GraphType.DIRECTED);
         });
 
         dialog.show();
     }
 
-    private void changeToDrawActivity(String graphType) {
+    private void changeToDrawActivity(GraphType type) {
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString("GraphType", graphType);
+        editor.putInt("GraphType", type.ordinal());
         editor.apply();
 
         Intent intent = new Intent(this, DrawActivity.class);
