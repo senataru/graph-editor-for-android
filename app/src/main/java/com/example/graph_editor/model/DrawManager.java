@@ -1,5 +1,6 @@
 package com.example.graph_editor.model;
 
+import com.example.graph_editor.draw.Frame;
 import com.example.graph_editor.model.mathematics.Point;
 
 import java.util.ArrayList;
@@ -15,8 +16,11 @@ public class DrawManager {
         this.vertices = vertices;
     }
 
-    public void setFrame(Point leftTop, Point rightBot) {
+    public void setFrame(Frame frame) {
+        //uses the Frame as if it was a struct, doesn't remember the reference
         //maybe error when too close
+        Point leftTop = frame.getLeftTop();
+        Point rightBot = frame.getRightBot();
         this.leftTop = leftTop;
         this.width = rightBot.getX() - leftTop.getX();
         this.height = rightBot.getY() - leftTop.getY();
@@ -25,7 +29,7 @@ public class DrawManager {
 
     private void updateCurrentPoints() {
         for(Vertex vertex : vertices) {
-            vertex.setCurrentPoint(scale(vertex.getPoint()));
+            vertex.setRelativePoint(scale(vertex.getAbsolutePoint()));
         }
     }
 

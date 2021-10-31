@@ -6,21 +6,13 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.Button;
 
 import androidx.annotation.Nullable;
 
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Edge;
-import com.example.graph_editor.model.EdgeImpl;
-import com.example.graph_editor.model.Graph;
-import com.example.graph_editor.model.GraphFactory;
-import com.example.graph_editor.model.GraphImpl;
 import com.example.graph_editor.model.Vertex;
-import com.example.graph_editor.model.VertexImpl;
 import com.example.graph_editor.model.mathematics.Point;
-
-import java.util.List;
 
 public class GraphView extends View {
 
@@ -55,16 +47,18 @@ public class GraphView extends View {
         vertexPaint = new Paint();
         vertexPaint.setColor(Color.MAGENTA);
         vertexPaint.setStyle(Paint.Style.FILL);
+        vertexPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
         edgePaint = new Paint();
         edgePaint.setColor(Color.CYAN);
         edgePaint.setStyle(Paint.Style.FILL);
         edgePaint.setStrokeWidth(8);
+        edgePaint.setFlags(Paint.ANTI_ALIAS_FLAG);
         frame = new Frame(new Point(0, 0), new Point(1, 1));
     }
 
     public void setManager(DrawManager manager) {
         this.manager = manager;
-        manager.setFrame(frame.getLeftTop(), frame.getRightBot());
+        manager.setFrame(frame);
         postInvalidate();
     }
 
@@ -73,10 +67,10 @@ public class GraphView extends View {
         super.onDraw(canvas);
 
         for (Edge e : manager.getEdges())
-            drawEdge(canvas, e, e.getSource().getCurrentPoint(), e.getTarget().getCurrentPoint());
+            drawEdge(canvas, e, e.getSource().getRelativePoint(), e.getTarget().getRelativePoint());
 
         for (Vertex v : manager.getVertices())
-            drawVertex(canvas, v, v.getCurrentPoint());
+            drawVertex(canvas, v, v.getRelativePoint());
     }
 
     private void drawVertex(Canvas canvas, Vertex vertex, Point point) {
@@ -94,5 +88,17 @@ public class GraphView extends View {
                 (float)end.getX()*getWidth(), (float)end.getY()*getHeight(),
                 edgePaint
         );
+    }
+
+    public void scale(double s) {
+        frame.scale(s, s);
+        manager.setFrame(frame);
+        postInvalidate();
+    }
+
+    public void translate(double dx, double dy) {
+        frame.translate(dx, dy);
+        manager.setFrame(frame);
+        postInvalidate();
     }
 }

@@ -9,15 +9,15 @@ public class VertexImpl implements Vertex {
     int id;
     String name;
     List<Edge> edges = new ArrayList<>();
-    Point point;
-    Point currentPoint;
+    Point absolutePoint;
+    Point relativePoint;
     EdgeFactory edgeFactory;
 
     public VertexImpl(int id, String name) {
         this.id = id;
         this.name = name;
         edgeFactory = new EdgeFactory(this);
-        this.point = new Point(0, 0);
+        this.absolutePoint = new Point(0, 0);
     }
 
     public void setName(String name) {
@@ -40,22 +40,22 @@ public class VertexImpl implements Vertex {
     }
 
     @Override
-    public void setPoint(Point point) {
-        this.point = point;
+    public void setAbsolutePoint(Point point) {
+        this.absolutePoint = point;
     }
 
     @Override
-    public Point getPoint() {
-        return point;
+    public Point getAbsolutePoint() {
+        return absolutePoint;
     }
 
     @Override
-    public void setCurrentPoint(Point currentPoint) {
-        this.currentPoint = currentPoint;
+    public void setRelativePoint(Point currentPoint) {
+        this.relativePoint = currentPoint;
     }
 
     @Override
-    public Point getCurrentPoint() {
-        return currentPoint;
+    public Point getRelativePoint() {
+        return relativePoint;
     }
 }
