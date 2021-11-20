@@ -36,7 +36,16 @@ public class GraphImpl implements Graph {
     }
 
     @Override
+    public List<Edge> getEdges() {
+        List<Edge> result = new ArrayList<>();
+        for(Vertex vertex : vertices) {
+            result.addAll(vertex.getEdges());
+        }
+        return result;
+    }
+
+    @Override
     public DrawManager getDrawManager() {
-        return new DrawManager(vertices);
+        return new DrawManager(this);
     }
 }

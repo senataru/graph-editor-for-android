@@ -9,5 +9,6 @@ public interface Graph {
     void addEdge(Vertex source, Vertex target);
     GraphType getType();
     List<Vertex> getVertices();
+    List<Edge> getEdges();
     DrawManager getDrawManager();
 }

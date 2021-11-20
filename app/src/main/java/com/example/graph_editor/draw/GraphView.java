@@ -59,7 +59,7 @@ public class GraphView extends View {
 
     public void setManager(DrawManager manager) {
         this.manager = manager;
-        manager.setFrame(frame);
+        manager.updateFrame(frame);
         postInvalidate();
     }
 
@@ -92,15 +92,14 @@ public class GraphView extends View {
     }
 
     public void scale(double s) {
-        double oldScale = frame.getScale();
-        frame.scale(s/oldScale, s/oldScale);
-        manager.setFrame(frame);
+        frame.scale(s, s);
+        manager.updateFrame(frame);
         postInvalidate();
     }
 
     public void translate(double dx, double dy) {
         frame.translate(dx, dy);
-        manager.setFrame(frame);
+        manager.updateFrame(frame);
         postInvalidate();
     }
 }

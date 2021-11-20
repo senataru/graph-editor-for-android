@@ -7,16 +7,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DrawManager {
-    Point leftTop;
-    double width;
-    double height;
-    List<Vertex> vertices;
+    private Point leftTop;
+    private double width;
+    private double height;
+    private Graph g;
 
-    public DrawManager(List<Vertex> vertices) {
-        this.vertices = vertices;
+    public DrawManager(Graph g) {
+        this.g = g;
     }
 
-    public void setFrame(Frame frame) {
+    public void updateFrame(Frame frame) {
         //uses the Frame as if it was a struct, doesn't remember the reference
         //maybe error when too close
         Point leftTop = frame.getLeftTop();
@@ -28,7 +28,7 @@ public class DrawManager {
     }
 
     private void updateCurrentPoints() {
-        for(Vertex vertex : vertices) {
+        for(Vertex vertex : g.getVertices()) {
             vertex.setRelativePoint(scale(vertex.getAbsolutePoint()));
         }
     }
@@ -39,15 +39,7 @@ public class DrawManager {
         return new Point(x, y);
     }
 
-    public List<Vertex> getVertices() {
-        return vertices;
-    }
+    public List<Vertex> getVertices() { return g.getVertices(); }
 
-    public List<Edge> getEdges() {
-        List<Edge> result = new ArrayList<>();
-        for(Vertex vertex : vertices) {
-            result.addAll(vertex.getEdges());
-        }
-        return result;
-    }
+    public List<Edge> getEdges() { return g.getEdges(); }
 }
