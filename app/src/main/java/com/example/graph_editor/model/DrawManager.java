@@ -35,7 +35,7 @@ public class DrawManager {
 
     private Point scale(Point point) {
         double x = (point.getX() - leftTop.getX())/width;
-        double y = (point.getY() - leftTop.getY())/ height;
+        double y = (point.getY() - leftTop.getY())/height;
         return new Point(x, y);
     }
 

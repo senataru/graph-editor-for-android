@@ -30,6 +30,18 @@ public class Frame {
         System.out.println(rightBot.getY());
     }
 
+    public void setScale(double scale) {
+        double centerX = (rightBot.getX()+leftTop.getX())/2;
+        double newXDiff = (rightBot.getX()-leftTop.getX())*scale;
+        rightBot.setX(centerX - newXDiff/2);
+        leftTop.setX(centerX + newXDiff/2);
+
+        double centerY = (rightBot.getY()+leftTop.getY())/2;
+        double newYDiff = (rightBot.getX()-leftTop.getX())*scale;
+        rightBot.setY(centerY - newYDiff/2);
+        leftTop.setY(centerY + newYDiff/2);
+    }
+
     public void translate(double dx, double dy) {
         double ddx = (rightBot.getX() - leftTop.getX()) * dx;
         double ddy = (rightBot.getY() - leftTop.getY()) * dy;
