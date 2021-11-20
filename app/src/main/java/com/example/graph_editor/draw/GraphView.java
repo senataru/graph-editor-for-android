@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -54,18 +55,21 @@ public class GraphView extends View {
         edgePaint.setStyle(Paint.Style.FILL);
         edgePaint.setStrokeWidth(8);
         edgePaint.setFlags(Paint.ANTI_ALIAS_FLAG);
-        frame = new Frame(new Point(0, 0), new Point(1, 1));
     }
 
     public void setManager(DrawManager manager) {
         this.manager = manager;
-        manager.updateFrame(frame);
         postInvalidate();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+
+        if (frame == null) {   //has to be done here instead of init since height is lazily calculated
+            frame = new Frame(new Point(0, 0), new Point(1, 1.0*getHeight()/getWidth()));
+            manager.updateFrame(frame);
+        }
 
         for (Edge e : manager.getEdges())
             drawEdge(canvas, e, e.getSource().getRelativePoint(), e.getTarget().getRelativePoint());
@@ -77,6 +81,7 @@ public class GraphView extends View {
     private void drawVertex(Canvas canvas, Vertex vertex, Point point) {
         float x = (float)point.getX()*getWidth();
         float y = (float)point.getY()*getHeight();
+
         canvas.drawCircle(
                 x, y, 10, vertexPaint
         );
@@ -91,8 +96,8 @@ public class GraphView extends View {
         );
     }
 
-    public void scale(double s) {
-        frame.scale(s, s);
+    public void setScale(double s) {
+        frame.setScale(s);
         manager.updateFrame(frame);
         postInvalidate();
     }

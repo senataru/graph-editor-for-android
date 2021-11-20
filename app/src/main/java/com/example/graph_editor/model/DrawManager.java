@@ -10,7 +10,7 @@ public class DrawManager {
     private Point leftTop;
     private double width;
     private double height;
-    private Graph g;
+    private final Graph g;
 
     public DrawManager(Graph g) {
         this.g = g;

@@ -77,11 +77,11 @@ public class DrawActivity extends AppCompatActivity {
             changeMode(ActionModeType.NEW_EDGE);
             Point old = l.get(10).getAbsolutePoint();
             l.get(10).setAbsolutePoint(new Point(old.getX()+0.01, old.getY()+0.01));
-            graphView.scale(1);
+            graphView.setScale(1);
         });
         findViewById(R.id.btnMoveObject).setOnClickListener(v -> {
             changeMode(ActionModeType.MOVE_OBJECT);
-            graphView.scale(0.95);
+            graphView.setScale(0.95);
         });
         findViewById(R.id.btnMoveCanvas).setOnClickListener(v -> {
             changeMode(ActionModeType.MOVE_CANVAS);
