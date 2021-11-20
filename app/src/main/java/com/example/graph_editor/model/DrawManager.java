@@ -1,5 +1,7 @@
 package com.example.graph_editor.model;
 
+import android.util.Pair;
+
 import com.example.graph_editor.draw.Frame;
 import com.example.graph_editor.model.mathematics.Point;
 
@@ -19,8 +21,9 @@ public class DrawManager {
     public void updateFrame(Frame frame) {
         //uses the Frame as if it was a struct, doesn't remember the reference
         //maybe error when too close
-        Point leftTop = frame.getLeftTop();
-        Point rightBot = frame.getRightBot();
+        Pair<Point, Point> points = frame.getPoints();
+        Point leftTop = points.first;
+        Point rightBot = points.second;
         this.leftTop = leftTop;
         this.width = rightBot.getX() - leftTop.getX();
         this.height = rightBot.getY() - leftTop.getY();

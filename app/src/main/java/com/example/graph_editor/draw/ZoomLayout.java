@@ -86,12 +86,12 @@ public class ZoomLayout extends RelativeLayout implements ScaleGestureDetector.O
 
             if ((mode == Mode.DRAG && scale >= MIN_ZOOM) || mode == Mode.ZOOM) {
                 getParent().requestDisallowInterceptTouchEvent(true);
-                float maxDx = (child().getWidth() - (child().getWidth() / scale)) / 2 * scale;
-                float maxDy = (child().getHeight() - (child().getHeight() / scale))/ 2 * scale;
-                dx = Math.min(Math.max(dx, -maxDx), maxDx);
-                dy = Math.min(Math.max(dy, -maxDy), maxDy);
-                Log.i(TAG, "Width: " + child().getWidth() + ", scale " + scale + ", dx " + dx
-                        + ", max " + maxDx);
+//                float maxDx = (child().getWidth() - (child().getWidth() / scale)) / 2 * scale;
+//                float maxDy = (child().getHeight() - (child().getHeight() / scale))/ 2 * scale;
+//                dx = Math.min(Math.max(dx, -maxDx), maxDx);
+//                dy = Math.min(Math.max(dy, -maxDy), maxDy);
+//                Log.i(TAG, "Width: " + child().getWidth() + ", scale " + scale + ", dx " + dx
+//                        + ", max " + maxDx);
                 applyScaleAndTranslation();
             }
 
@@ -129,7 +129,11 @@ public class ZoomLayout extends RelativeLayout implements ScaleGestureDetector.O
     private void applyScaleAndTranslation() {
         GraphView c = (GraphView)child();
         c.setScale(scale);
-//        c.translate(dx, dy);
+
+        System.out.println("EEELO");
+        System.out.println(dx);
+        System.out.println(dy);
+        c.translate(dx, dy);
 
 //        child().setScaleX(scale);
 //        child().setScaleY(scale);

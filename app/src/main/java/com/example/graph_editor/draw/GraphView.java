@@ -103,7 +103,7 @@ public class GraphView extends View {
     }
 
     public void translate(double dx, double dy) {
-        frame.translate(dx, dy);
+        frame.translate(dx/getWidth(), dy/getHeight());
         manager.updateFrame(frame);
         postInvalidate();
     }
