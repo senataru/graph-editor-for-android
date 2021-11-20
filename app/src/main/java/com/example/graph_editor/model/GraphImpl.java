@@ -18,11 +18,29 @@ public class GraphImpl implements Graph {
     @Override
     public void addVertex() {
         vertices.add(vertexFactory.produce());
+        vertices.get(vertices.size()-1).setIndex(vertices.size()-1);
     }
 
     @Override
     public void addEdge(Vertex source, Vertex target) {
         source.addEdge(target);
+    }
+
+    @Override
+    public void removeVertex(Vertex vertex) {
+        for(Vertex other : vertices) {
+            other.removeEdge(vertex);
+        }
+        vertices.remove(vertex);
+        for(int i=0; i<vertices.size(); i++)
+            vertices.get(i).setIndex(i);
+    }
+
+    @Override
+    public void removeEdge(Edge edge) {
+        edge.getSource().removeEdge(edge);
+        if(type == GraphType.UNDIRECTED)
+            edge.getTarget().removeEdge(edge.getSource());
     }
 
     @Override

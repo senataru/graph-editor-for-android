@@ -7,6 +7,8 @@ import java.util.List;
 public interface Graph {
     void addVertex();
     void addEdge(Vertex source, Vertex target);
+    void removeVertex(Vertex vertex);
+    void removeEdge(Edge edge);
     GraphType getType();
     List<Vertex> getVertices();
     List<Edge> getEdges();

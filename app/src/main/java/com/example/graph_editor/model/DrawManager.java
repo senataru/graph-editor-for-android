@@ -13,6 +13,7 @@ public class DrawManager {
     private double width;
     private double height;
     private final Graph graph;
+    private final double NEARLY_ZERO = 0.000001;
 
     public DrawManager(Graph graph) {
         this.graph = graph;
@@ -27,6 +28,9 @@ public class DrawManager {
         this.leftTop = leftTop;
         this.width = rightBot.getX() - leftTop.getX();
         this.height = rightBot.getY() - leftTop.getY();
+        if(width <= NEARLY_ZERO || height <= NEARLY_ZERO) {
+            throw new RuntimeException("Frame size equals 0 or is negative");
+        }
     }
 
     public Point scale(Point point) {

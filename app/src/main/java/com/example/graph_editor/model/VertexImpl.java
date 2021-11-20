@@ -1,5 +1,9 @@
 package com.example.graph_editor.model;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
 import com.example.graph_editor.model.mathematics.Point;
 
 import java.util.ArrayList;
@@ -7,6 +11,7 @@ import java.util.List;
 
 public class VertexImpl implements Vertex {
     int id;
+    int index = -1;
     String name;
     List<Edge> edges = new ArrayList<>();
     Point absolutePoint;
@@ -24,6 +29,16 @@ public class VertexImpl implements Vertex {
     }
 
     @Override
+    public int getIndex() {
+        return index;
+    }
+
+    @Override
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    @Override
     public void addEdge(Vertex target) {
         edges.add(edgeFactory.produce(target));
     }
@@ -31,6 +46,12 @@ public class VertexImpl implements Vertex {
     @Override
     public void removeEdge(Edge edge) {
         edges.remove(edge);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    public void removeEdge(Vertex target) {
+        edges.removeIf(edge -> edge.getTarget() == target);
     }
 
     @Override

@@ -77,7 +77,7 @@ public class DrawActivity extends AppCompatActivity {
             changeMode(ActionModeType.NEW_EDGE);
             Point old = l.get(10).getPoint();
             l.get(10).setPoint(new Point(old.getX()+0.01, old.getY()+0.01));
-            graphView.scale(1);
+            graphView.setScale(1);
         });
         findViewById(R.id.btnMoveObject).setOnClickListener(v -> {
             changeMode(ActionModeType.MOVE_OBJECT);
