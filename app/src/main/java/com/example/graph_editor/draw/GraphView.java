@@ -68,10 +68,10 @@ public class GraphView extends View {
         super.onDraw(canvas);
 
         for (Edge e : manager.getEdges())
-            drawEdge(canvas, e, e.getSource().getRelativePoint(), e.getTarget().getRelativePoint());
+            drawEdge(canvas, e, manager.scale(e.getSource().getPoint()), manager.scale(e.getTarget().getPoint()));
 
         for (Vertex v : manager.getVertices())
-            drawVertex(canvas, v, v.getRelativePoint());
+            drawVertex(canvas, v, manager.scale(v.getPoint()));
     }
 
     private void drawVertex(Canvas canvas, Vertex vertex, Point point) {

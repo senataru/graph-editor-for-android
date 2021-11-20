@@ -10,7 +10,6 @@ public class VertexImpl implements Vertex {
     String name;
     List<Edge> edges = new ArrayList<>();
     Point absolutePoint;
-    Point relativePoint;
     EdgeFactory edgeFactory;
 
     public VertexImpl(int id, String name) {
@@ -40,22 +39,12 @@ public class VertexImpl implements Vertex {
     }
 
     @Override
-    public void setAbsolutePoint(Point point) {
+    public void setPoint(Point point) {
         this.absolutePoint = point;
     }
 
     @Override
-    public Point getAbsolutePoint() {
+    public Point getPoint() {
         return absolutePoint;
-    }
-
-    @Override
-    public void setRelativePoint(Point currentPoint) {
-        this.relativePoint = currentPoint;
-    }
-
-    @Override
-    public Point getRelativePoint() {
-        return relativePoint;
     }
 }

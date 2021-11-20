@@ -8,8 +8,6 @@ public interface Vertex {
     void addEdge(Vertex target);
     void removeEdge(Edge edge);
     List<Edge> getEdges();
-    void setAbsolutePoint(Point point);
-    Point getAbsolutePoint();
-    void setRelativePoint(Point point);
-    Point getRelativePoint();
+    void setPoint(Point point);
+    Point getPoint();
 }

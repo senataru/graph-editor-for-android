@@ -44,18 +44,18 @@ public class DrawActivity extends AppCompatActivity {
             graph.addVertex();
 
         List<Vertex> l = graph.getVertices();
-        l.get(0).setAbsolutePoint(new Point(0.3f, 0.2f));
-        l.get(1).setAbsolutePoint(new Point(0.2f, 0.4f));
-        l.get(2).setAbsolutePoint(new Point(0.4f, 0.4f));
-        l.get(3).setAbsolutePoint(new Point(0.1f, 0.6f));
-        l.get(4).setAbsolutePoint(new Point(0.3f, 0.6f));
-        l.get(5).setAbsolutePoint(new Point(0.5f, 0.6f));
+        l.get(0).setPoint(new Point(0.3f, 0.2f));
+        l.get(1).setPoint(new Point(0.2f, 0.4f));
+        l.get(2).setPoint(new Point(0.4f, 0.4f));
+        l.get(3).setPoint(new Point(0.1f, 0.6f));
+        l.get(4).setPoint(new Point(0.3f, 0.6f));
+        l.get(5).setPoint(new Point(0.5f, 0.6f));
 
-        l.get(6).setAbsolutePoint(new Point(0.8f, 0.5f));
-        l.get(7).setAbsolutePoint(new Point(0.9f, 0.8f));
-        l.get(8).setAbsolutePoint(new Point(0.67f, 0.6f));
-        l.get(9).setAbsolutePoint(new Point(0.93f, 0.58f));
-        l.get(10).setAbsolutePoint(new Point(0.7f, 0.8f));
+        l.get(6).setPoint(new Point(0.8f, 0.5f));
+        l.get(7).setPoint(new Point(0.9f, 0.8f));
+        l.get(8).setPoint(new Point(0.67f, 0.6f));
+        l.get(9).setPoint(new Point(0.93f, 0.58f));
+        l.get(10).setPoint(new Point(0.7f, 0.8f));
 
         graph.addEdge(l.get(0), l.get(1));
         graph.addEdge(l.get(0), l.get(2));
@@ -75,8 +75,8 @@ public class DrawActivity extends AppCompatActivity {
         findViewById(R.id.btnVertex).setOnClickListener(v -> changeMode(ActionModeType.NEW_VERTEX));
         findViewById(R.id.btnEdge).setOnClickListener(v -> {
             changeMode(ActionModeType.NEW_EDGE);
-            Point old = l.get(10).getAbsolutePoint();
-            l.get(10).setAbsolutePoint(new Point(old.getX()+0.01, old.getY()+0.01));
+            Point old = l.get(10).getPoint();
+            l.get(10).setPoint(new Point(old.getX()+0.01, old.getY()+0.01));
             graphView.scale(1);
         });
         findViewById(R.id.btnMoveObject).setOnClickListener(v -> {
