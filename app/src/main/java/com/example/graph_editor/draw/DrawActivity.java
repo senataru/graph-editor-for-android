@@ -81,7 +81,7 @@ public class DrawActivity extends AppCompatActivity {
         });
         findViewById(R.id.btnMoveObject).setOnClickListener(v -> {
             changeMode(ActionModeType.MOVE_OBJECT);
-            graphView.scale(0.95);
+            graphView.setScale(0.95);
         });
         findViewById(R.id.btnMoveCanvas).setOnClickListener(v -> {
             changeMode(ActionModeType.MOVE_CANVAS);

@@ -18,8 +18,8 @@ public class ZoomLayout extends RelativeLayout implements ScaleGestureDetector.O
     }
 
     private static final String TAG = "ZoomLayout";
-    private static final float MIN_ZOOM = 1.0f;
-    private static final float MAX_ZOOM = 4.0f;
+    private static final float MIN_ZOOM = 0.0625f;
+    private static final float MAX_ZOOM = 16.0f;
 
     private Mode mode = Mode.NONE;
     private float scale = 1.0f;
@@ -128,8 +128,9 @@ public class ZoomLayout extends RelativeLayout implements ScaleGestureDetector.O
 
     private void applyScaleAndTranslation() {
         GraphView c = (GraphView)child();
-        c.scale(scale);
-        c.translate(dx, dy);
+        c.setScale(scale);
+//        c.translate(dx, dy);
+
 //        child().setScaleX(scale);
 //        child().setScaleY(scale);
 //        child().setTranslationX(dx);
