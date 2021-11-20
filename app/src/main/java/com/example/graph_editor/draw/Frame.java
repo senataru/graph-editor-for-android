@@ -1,36 +1,29 @@
 package com.example.graph_editor.draw;
 
+import android.util.Pair;
+
 import com.example.graph_editor.model.mathematics.Point;
 
 public class Frame {
+    private final Point originalLeftTop;
+    private final Point originalRightBot;
     private Point leftTop;
     private Point rightBot;
     private double scale;
+    private double dx;
+    private double dy;
 
     public Frame(Point leftTop, Point rightBot) {
+        this.originalLeftTop = leftTop;
+        this.originalRightBot = rightBot;
         this.leftTop = leftTop;
         this.rightBot = rightBot;
         this.scale = 1;
     }
 
-    public Point getLeftTop() { return leftTop; }
-    public Point getRightBot() { return rightBot; }
-
-//    public void scale(double x_scale, double y_scale) {
-//        double dx = rightBot.getX() - leftTop.getX();
-//        double dy = rightBot.getY() - leftTop.getY();
-//
-//        double ddx = dx * (x_scale-1)/2;
-//        double ddy = dy * (y_scale-1)/2;
-//
-//        leftTop = new Point(leftTop.getX() - ddx, leftTop.getY() - ddy);
-//        rightBot = new Point(rightBot.getX() + ddx, rightBot.getY() + ddy);
-//
-//        System.out.println(leftTop.getX());
-//        System.out.println(leftTop.getY());
-//        System.out.println(rightBot.getX());
-//        System.out.println(rightBot.getY());
-//    }
+    public Pair<Point, Point> getPoints() {
+        return new Pair<>(leftTop, rightBot);
+    }
 
     public void setScale(double s) {
         double rescale = s/this.scale;
@@ -44,14 +37,18 @@ public class Frame {
         leftTop = new Point(leftTop.getX() - ddx, leftTop.getY() - ddy);
         rightBot = new Point(rightBot.getX() + ddx, rightBot.getY() + ddy);
 
-        this.scale = s;
+        this.scale = (leftTop.getX()-rightBot.getX())/(originalLeftTop.getX()-originalRightBot.getX());
     }
 
-    public void translate(double dx, double dy) {
-        double ddx = (rightBot.getX() - leftTop.getX()) * dx;
-        double ddy = (rightBot.getY() - leftTop.getY()) * dy;
+    public void translate(double dxNew, double dyNew) {
+        double ddx = (this.dx - dxNew) * scale;
+        double ddy = (this.dy - dyNew) * scale;
 
         leftTop = new Point(leftTop.getX() + ddx, leftTop.getY() + ddy);
         rightBot = new Point(rightBot.getX() + ddx, rightBot.getY() + ddy);
+        this.dx = dxNew;
+        this.dy = dyNew;
     }
+
+    public double getScale() { return scale; }
 }
