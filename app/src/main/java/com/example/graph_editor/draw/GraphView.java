@@ -17,8 +17,11 @@ import com.example.graph_editor.model.Vertex;
 import com.example.graph_editor.model.mathematics.Point;
 
 public class GraphView extends View {
+    private final int baseVertexRadius = 7;
+    private final int baseEdgeWidth = 5;
 
     private Paint vertexPaint;
+    private double vertexRadius = baseVertexRadius;
     private Paint edgePaint;
 
     private DrawManager manager;
@@ -53,7 +56,7 @@ public class GraphView extends View {
         edgePaint = new Paint();
         edgePaint.setColor(Color.CYAN);
         edgePaint.setStyle(Paint.Style.FILL);
-        edgePaint.setStrokeWidth(8);
+        edgePaint.setStrokeWidth(baseEdgeWidth);
         edgePaint.setFlags(Paint.ANTI_ALIAS_FLAG);
     }
 
@@ -83,7 +86,7 @@ public class GraphView extends View {
         float y = (float)point.getY()*getHeight();
 
         canvas.drawCircle(
-                x, y, 10, vertexPaint
+                x, y, (float)vertexRadius, vertexPaint
         );
 //        canvas.drawText(vertex.);
     }
@@ -99,12 +102,20 @@ public class GraphView extends View {
     public void setScale(double s) {
         frame.setScale(s);
         manager.updateFrame(frame);
+        vertexRadius = getDrawWidth(s, baseVertexRadius);
+        edgePaint.setStrokeWidth((float)getDrawWidth(s, baseEdgeWidth));
         postInvalidate();
     }
 
     public void translate(double dx, double dy) {
-        frame.translate(dx/getWidth(), dy/getHeight());
+        frame.translate(dx/getWidth(), dy/getWidth());
         manager.updateFrame(frame);
         postInvalidate();
+    }
+
+    private double getDrawWidth(double scale, double value) {
+        return value / scale;
+//        return value / ((scale-1)*4+1);
+//        return value;
     }
 }

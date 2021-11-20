@@ -4,10 +4,16 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.RelativeLayout;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ZoomLayout extends RelativeLayout implements ScaleGestureDetector.OnScaleGestureListener {
 
@@ -73,7 +79,7 @@ public class ZoomLayout extends RelativeLayout implements ScaleGestureDetector.O
                     mode = Mode.ZOOM;
                     break;
                 case MotionEvent.ACTION_POINTER_UP:
-                    mode = Mode.DRAG;
+//                    mode = Mode.DRAG; //why was this originally here? it's simply wrong
                     break;
                 case MotionEvent.ACTION_UP:
                     Log.i(TAG, "UP");
@@ -94,7 +100,6 @@ public class ZoomLayout extends RelativeLayout implements ScaleGestureDetector.O
 //                        + ", max " + maxDx);
                 applyScaleAndTranslation();
             }
-
             return true;
         });
     }
@@ -128,17 +133,8 @@ public class ZoomLayout extends RelativeLayout implements ScaleGestureDetector.O
 
     private void applyScaleAndTranslation() {
         GraphView c = (GraphView)child();
-        c.setScale(scale);
-
-        System.out.println("EEELO");
-        System.out.println(dx);
-        System.out.println(dy);
+        c.setScale(1/scale);
         c.translate(dx, dy);
-
-//        child().setScaleX(scale);
-//        child().setScaleY(scale);
-//        child().setTranslationX(dx);
-//        child().setTranslationY(dy);
     }
 
     private View child() {
