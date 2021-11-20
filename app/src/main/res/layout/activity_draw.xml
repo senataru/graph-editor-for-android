@@ -29,14 +29,20 @@
         app:layout_constraintTop_toBottomOf="@+id/txtChoice"
         app:layout_constraintVertical_bias="0.067" />
 
-    <com.example.graph_editor.draw.GraphView
-        android:id="@+id/viewGraph"
+    <com.example.graph_editor.draw.ZoomLayout
         android:layout_width="match_parent"
-        android:layout_height="240sp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtChoice2" />
+        android:layout_height="match_parent">
+
+        <com.example.graph_editor.draw.GraphView
+            android:id="@+id/viewGraph"
+            android:layout_width="match_parent"
+            android:layout_height="240sp"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtChoice2" />
+    </com.example.graph_editor.draw.ZoomLayout>
+
 
     <LinearLayout
         android:id="@+id/linearLayout"

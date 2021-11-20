@@ -37,4 +37,8 @@ public class Frame {
         leftTop = new Point(leftTop.getX() + ddx, leftTop.getY() + ddy);
         rightBot = new Point(rightBot.getX() + ddx, rightBot.getY() + ddy);
     }
+
+    public double getScale() {
+        return rightBot.getX()-leftTop.getX();
+    }
 }

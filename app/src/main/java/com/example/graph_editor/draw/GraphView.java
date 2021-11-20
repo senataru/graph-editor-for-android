@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -91,7 +92,8 @@ public class GraphView extends View {
     }
 
     public void scale(double s) {
-        frame.scale(s, s);
+        double oldScale = frame.getScale();
+        frame.scale(s/oldScale, s/oldScale);
         manager.setFrame(frame);
         postInvalidate();
     }
