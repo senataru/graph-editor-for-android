@@ -61,37 +61,45 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0">
 
-        <Button
+        <ImageButton
             android:id="@+id/btnVertex"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="@string/Vertex" />
+            android:contentDescription="@string/Vertex"
+            android:src="@drawable/add_vertex"
+            android:scaleType="fitCenter"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/btnEdge"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="@string/Edge" />
+            android:contentDescription="@string/Edge"
+            android:src="@drawable/add_edge"
+            android:scaleType="fitCenter"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/btnMoveObject"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="@string/move_object" />
+            android:contentDescription="@string/move_object"
+            android:src="@drawable/move_object"
+            android:scaleType="fitCenter"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/btnMoveCanvas"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="@string/move_canvas" />
+            android:contentDescription="@string/move_canvas"
+            android:src="@drawable/move_canvas"
+            android:scaleType="fitCenter"/>
 
     </LinearLayout>
 
