@@ -3,6 +3,8 @@ package com.example.graph_editor.draw;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -73,10 +75,14 @@ public class DrawActivity extends AppCompatActivity {
         graphView.setManager(graph.getDrawManager());
 
 
-        findViewById(R.id.btnVertex).setOnClickListener(v -> changeMode(ActionModeType.NEW_VERTEX));
-        findViewById(R.id.btnEdge).setOnClickListener(v -> changeMode(ActionModeType.NEW_EDGE));
-        findViewById(R.id.btnMoveObject).setOnClickListener(v -> changeMode(ActionModeType.MOVE_OBJECT));
-        findViewById(R.id.btnMoveCanvas).setOnClickListener(v -> changeMode(ActionModeType.MOVE_CANVAS));
+        ImageButtonCollection collection = new ImageButtonCollection();
+        collection.add(findViewById(R.id.btnVertex), () -> changeMode(ActionModeType.NEW_VERTEX));
+        collection.add(findViewById(R.id.btnEdge), () -> changeMode(ActionModeType.NEW_EDGE));
+        collection.add(findViewById(R.id.btnMoveObject), () -> changeMode(ActionModeType.MOVE_OBJECT));
+        collection.add(findViewById(R.id.btnMoveCanvas), () -> changeMode(ActionModeType.MOVE_CANVAS));
+
+        changeMode(ActionModeType.MOVE_CANVAS);
+        collection.setCurrent(findViewById(R.id.btnMoveCanvas));
     }
 
     private void changeMode(ActionModeType type) {

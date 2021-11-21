@@ -63,43 +63,47 @@
 
         <ImageButton
             android:id="@+id/btnVertex"
-            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@color/lt_grey"
             android:contentDescription="@string/Vertex"
             android:src="@drawable/add_vertex"
-            android:scaleType="fitCenter"/>
+            android:scaleType="fitCenter"
+            android:padding="20dp"/>
 
         <ImageButton
             android:id="@+id/btnEdge"
-            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:contentDescription="@string/Edge"
+            android:background="@color/lt_grey"
             android:src="@drawable/add_edge"
-            android:scaleType="fitCenter"/>
+            android:scaleType="fitCenter"
+            android:padding="20dp" />
 
         <ImageButton
             android:id="@+id/btnMoveObject"
-            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:contentDescription="@string/move_object"
+            android:background="@color/lt_grey"
             android:src="@drawable/move_object"
-            android:scaleType="fitCenter"/>
+            android:scaleType="fitCenter"
+            android:padding="20dp"/>
 
         <ImageButton
             android:id="@+id/btnMoveCanvas"
-            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:contentDescription="@string/move_canvas"
+            android:background="@color/lt_grey"
             android:src="@drawable/move_canvas"
-            android:scaleType="fitCenter"/>
+            android:scaleType="fitCenter"
+            android:padding="20dp"/>
 
     </LinearLayout>
 
