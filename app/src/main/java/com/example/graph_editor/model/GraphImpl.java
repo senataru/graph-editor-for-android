@@ -16,14 +16,19 @@ public class GraphImpl implements Graph {
     }
 
     @Override
-    public void addVertex() {
-        vertices.add(vertexFactory.produce());
-        vertices.get(vertices.size()-1).setIndex(vertices.size()-1);
+    public Vertex addVertex() {
+        Vertex v = vertexFactory.produce();
+        vertices.add(v);
+        v.setIndex(vertices.size()-1);
+        return v;
     }
 
     @Override
     public void addEdge(Vertex source, Vertex target) {
         source.addEdge(target);
+        if (type == GraphType.UNDIRECTED) {
+            target.addEdge(source);
+        }
     }
 
     @Override

@@ -19,6 +19,10 @@ public class DrawManager {
         this.graph = graph;
     }
 
+    public Graph getGraph() {
+        return graph;
+    }
+
     public void updateFrame(Frame frame) {
         //uses the Frame as if it was a struct, doesn't remember the reference
         Pair<Point, Point> points = frame.getPoints();
@@ -38,7 +42,7 @@ public class DrawManager {
         return new Point(x, y);
     }
 
-    private Point getAbsolute(Point point) {
+    public Point getAbsolute(Point point) {
         double x = leftTop.getX() + point.getX() * width;
         double y = leftTop.getY() + point.getY() * height;
         return new Point(x, y);

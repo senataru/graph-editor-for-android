@@ -38,7 +38,8 @@ public class VertexImpl implements Vertex {
 
     @Override
     public void addEdge(Vertex target) {
-        edges.add(edgeFactory.produce(target));
+        Edge e = edgeFactory.produce(target);
+        edges.add(e);
     }
 
     @Override

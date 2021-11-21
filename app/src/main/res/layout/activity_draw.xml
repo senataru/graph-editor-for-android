@@ -30,6 +30,7 @@
         app:layout_constraintVertical_bias="0.067" />
 
     <com.example.graph_editor.draw.ZoomLayout
+        android:id="@+id/layZoom"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"

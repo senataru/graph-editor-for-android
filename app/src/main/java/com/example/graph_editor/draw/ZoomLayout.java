@@ -27,6 +27,7 @@ public class ZoomLayout extends RelativeLayout implements ScaleGestureDetector.O
     private static final float MIN_ZOOM = 0.0625f;
     private static final float MAX_ZOOM = 16.0f;
 
+    private ActionModeType actionMode = ActionModeType.MOVE_CANVAS;
     private Mode mode = Mode.NONE;
     private float scale = 1.0f;
     private float lastScaleFactor = 0f;
@@ -60,6 +61,9 @@ public class ZoomLayout extends RelativeLayout implements ScaleGestureDetector.O
     public void init(Context context) {
         final ScaleGestureDetector scaleDetector = new ScaleGestureDetector(context, this);
         this.setOnTouchListener((view, motionEvent) -> {
+            if (actionMode != ActionModeType.MOVE_CANVAS) {
+                return false;
+            }
             switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
                 case MotionEvent.ACTION_DOWN:
                     Log.i(TAG, "DOWN");
@@ -131,14 +135,21 @@ public class ZoomLayout extends RelativeLayout implements ScaleGestureDetector.O
         Log.i(TAG, "onScaleEnd");
     }
 
+    public void changeActionMode(ActionModeType modeType) {
+        this.mode = Mode.NONE;
+        this.actionMode = modeType;
+        child().changeActionMode(modeType);
+    }
+
     private void applyScaleAndTranslation() {
-        GraphView c = (GraphView)child();
+        GraphView c = child();
         c.setScale(1/scale);
         c.translate(dx, dy);
     }
 
-    private View child() {
-        return getChildAt(0);
+
+    private GraphView child() {
+        return (GraphView)getChildAt(0);
     }
 
 }

@@ -5,7 +5,7 @@ import com.example.graph_editor.model.mathematics.Point;
 import java.util.List;
 
 public interface Graph {
-    void addVertex();
+    Vertex addVertex();
     void addEdge(Vertex source, Vertex target);
     void removeVertex(Vertex vertex);
     void removeEdge(Edge edge);

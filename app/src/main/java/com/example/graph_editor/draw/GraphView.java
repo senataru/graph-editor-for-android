@@ -1,10 +1,12 @@
 package com.example.graph_editor.draw;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -17,6 +19,8 @@ import com.example.graph_editor.model.mathematics.Point;
 public class GraphView extends View {
     private final int baseVertexRadius = 7;
     private final int baseEdgeWidth = 5;
+
+    private ActionModeType modeType = ActionModeType.NONE;
 
     private Paint vertexPaint;
     private double vertexRadius = baseVertexRadius;
@@ -46,6 +50,7 @@ public class GraphView extends View {
         init(attrs);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void init(@Nullable AttributeSet set) {
         vertexPaint = new Paint();
         vertexPaint.setColor(Color.MAGENTA);
@@ -56,6 +61,17 @@ public class GraphView extends View {
         edgePaint.setStyle(Paint.Style.FILL);
         edgePaint.setStrokeWidth(baseEdgeWidth);
         edgePaint.setFlags(Paint.ANTI_ALIAS_FLAG);
+
+        this.setOnTouchListener((v, event) -> {
+            if (modeType == ActionModeType.NEW_VERTEX) {
+                Vertex ver = manager.getGraph().addVertex();
+                Point point = manager.getAbsolute(new Point(event.getX()/getWidth(), event.getY()/getHeight()));
+                ver.setPoint(point);
+                manager.updateFrame(frame);
+                postInvalidate();
+            }
+            return false;
+        });
     }
 
     public void setManager(DrawManager manager) {
@@ -110,6 +126,11 @@ public class GraphView extends View {
         manager.updateFrame(frame);
         postInvalidate();
     }
+
+    public void changeActionMode(ActionModeType modeType) {
+        this.modeType = modeType;
+    }
+
 
     private double getDrawWidth(double scale, double value) {
         return value / scale;

@@ -21,6 +21,7 @@ public class DrawActivity extends AppCompatActivity {
     private ActionModeType modeType;
 
     TextView modeChoice;
+    ZoomLayout zoomLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +35,10 @@ public class DrawActivity extends AppCompatActivity {
         TextView txtChoice = findViewById(R.id.txtChoice);
         txtChoice.setText(choice.toString());
 
+        graphView = findViewById(R.id.viewGraph);
+        zoomLayout = findViewById(R.id.layZoom);
         modeChoice = findViewById(R.id.txtChoice2);
         changeMode(ActionModeType.NONE);
-
-        graphView = findViewById(R.id.viewGraph);
 
         Graph graph = new GraphFactory(choice).produce();
         for (int i = 0; i< 11; i++)
@@ -73,28 +74,15 @@ public class DrawActivity extends AppCompatActivity {
 
 
         findViewById(R.id.btnVertex).setOnClickListener(v -> changeMode(ActionModeType.NEW_VERTEX));
-        findViewById(R.id.btnEdge).setOnClickListener(v -> {
-            changeMode(ActionModeType.NEW_EDGE);
-            Point old = l.get(10).getPoint();
-            l.get(10).setPoint(new Point(old.getX()+0.01, old.getY()+0.01));
-            graphView.setScale(1);
-        });
-        findViewById(R.id.btnMoveObject).setOnClickListener(v -> {
-            changeMode(ActionModeType.MOVE_OBJECT);
-            graphView.setScale(0.95);
-        });
-        findViewById(R.id.btnMoveCanvas).setOnClickListener(v -> {
-            changeMode(ActionModeType.MOVE_CANVAS);
-            graphView.translate(0.05, 0.05);
-        });
+        findViewById(R.id.btnEdge).setOnClickListener(v -> changeMode(ActionModeType.NEW_EDGE));
+        findViewById(R.id.btnMoveObject).setOnClickListener(v -> changeMode(ActionModeType.MOVE_OBJECT));
+        findViewById(R.id.btnMoveCanvas).setOnClickListener(v -> changeMode(ActionModeType.MOVE_CANVAS));
     }
 
     private void changeMode(ActionModeType type) {
-        if (type == modeType) {
-            modeType = ActionModeType.NONE;
-        } else {
-            modeType = type;
-        }
+        modeType = type;
+
         modeChoice.setText(modeType.toString());
+        zoomLayout.changeActionMode(type);
     }
 }
