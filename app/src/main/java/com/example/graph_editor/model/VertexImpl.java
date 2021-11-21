@@ -10,15 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VertexImpl implements Vertex {
-    int id;
     int index = -1;
     String name;
     List<Edge> edges = new ArrayList<>();
     Point absolutePoint;
     EdgeFactory edgeFactory;
 
-    public VertexImpl(int id, String name) {
-        this.id = id;
+    public VertexImpl(String name) {
         this.name = name;
         edgeFactory = new EdgeFactory(this);
         this.absolutePoint = new Point(0, 0);

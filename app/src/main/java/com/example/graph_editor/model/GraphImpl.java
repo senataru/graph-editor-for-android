@@ -57,7 +57,15 @@ public class GraphImpl implements Graph {
     public List<Edge> getEdges() {
         List<Edge> result = new ArrayList<>();
         for(Vertex vertex : vertices) {
-            result.addAll(vertex.getEdges());
+            if(type == GraphType.DIRECTED) {
+                result.addAll(vertex.getEdges());
+            } else {
+                for(Edge edge : vertex.getEdges()) {
+                    if(edge.getSource().getIndex() < edge.getTarget().getIndex())
+                        result.add(edge);
+                }
+            }
+
         }
         return result;
     }

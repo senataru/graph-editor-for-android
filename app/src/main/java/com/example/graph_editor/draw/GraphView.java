@@ -5,8 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.view.Display;
-import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -75,10 +73,10 @@ public class GraphView extends View {
         }
 
         for (Edge e : manager.getEdges())
-            drawEdge(canvas, e, manager.scale(e.getSource().getPoint()), manager.scale(e.getTarget().getPoint()));
+            drawEdge(canvas, e, manager.getRelative(e.getSource().getPoint()), manager.getRelative(e.getTarget().getPoint()));
 
         for (Vertex v : manager.getVertices())
-            drawVertex(canvas, v, manager.scale(v.getPoint()));
+            drawVertex(canvas, v, manager.getRelative(v.getPoint()));
     }
 
     private void drawVertex(Canvas canvas, Vertex vertex, Point point) {
