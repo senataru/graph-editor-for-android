@@ -75,7 +75,7 @@ public class DrawActivity extends AppCompatActivity {
         graphView.setManager(graph.getDrawManager());
 
 
-        ImageButtonCollection collection = new ImageButtonCollection();
+        ImageButtonCollection collection = new ImageButtonCollection(this);
         collection.add(findViewById(R.id.btnVertex), () -> changeMode(ActionModeType.NEW_VERTEX));
         collection.add(findViewById(R.id.btnEdge), () -> changeMode(ActionModeType.NEW_EDGE));
         collection.add(findViewById(R.id.btnMoveObject), () -> changeMode(ActionModeType.MOVE_OBJECT));
@@ -83,6 +83,8 @@ public class DrawActivity extends AppCompatActivity {
 
         changeMode(ActionModeType.MOVE_CANVAS);
         collection.setCurrent(findViewById(R.id.btnMoveCanvas));
+
+        findViewById(R.id.buttonSave).setOnClickListener( v -> new SavePopup(this, zoomLayout).show(graph));
     }
 
     private void changeMode(ActionModeType type) {

@@ -13,4 +13,7 @@
     <string name="Edge">Add\nedge</string>
     <string name="move_object">Move\nobject</string>
     <string name="move_canvas">move\ncanvas</string>
+    <string name="save">Save</string>
+    <string name="enter_graph_name">Enter graph\'s name</string>
+    <string name="save_your_graph">Save your graph</string>
 </resources>

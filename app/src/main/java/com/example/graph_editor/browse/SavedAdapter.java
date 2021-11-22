@@ -1,6 +1,7 @@
 package com.example.graph_editor.browse;
 
 import android.content.Context;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.graph_editor.R;
+import com.example.graph_editor.database.Save;
 
 import java.util.List;
 
@@ -25,6 +27,7 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder>{
     public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.saved_row, parent, false);
+        ((TextView)view.findViewById(R.id.data2Text)).setMovementMethod(new ScrollingMovementMethod());
         return new Holder(view);
     }
 

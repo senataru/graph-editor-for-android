@@ -15,19 +15,27 @@ import java.util.List;
 
 public class ImageButtonCollection {
     ImageButton current = null;
+    Context context;
+    int ACTIVE, NOT_ACTIVE;
+    ImageButtonCollection(Context context) {
+        this.context = context;
+        ACTIVE = ContextCompat.getColor(context, R.color.grey);
+        NOT_ACTIVE = ContextCompat.getColor(context, R.color.lt_grey);
+    }
     void add(ImageButton button, Runnable function) {
         button.setOnClickListener(v -> {
             function.run();
             setCurrent(button);
         });
+        button.setBackgroundColor(NOT_ACTIVE);
     }
     public void setCurrent(ImageButton button) {
         if(current != null) {
             current.setClickable(true);
-            current.setBackgroundColor(Color.LTGRAY);
+            current.setBackgroundColor(NOT_ACTIVE);
         }
         current = button;
         button.setClickable(false);
-        current.setBackgroundColor(Color.GRAY);
+        current.setBackgroundColor(ACTIVE);
     }
 }

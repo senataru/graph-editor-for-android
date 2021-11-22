@@ -7,11 +7,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 
 import com.example.graph_editor.R;
+import com.example.graph_editor.database.Save;
+import com.example.graph_editor.database.SavesDatabase;
 
 import java.util.Arrays;
 
 public class BrowseActivity extends AppCompatActivity {
     RecyclerView saved;
+    SavesDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,8 +22,9 @@ public class BrowseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_browse);
 
         saved = findViewById(R.id.saved);
+        database = SavesDatabase.getDbInstance(getApplicationContext());
         SavedAdapter adapter = new SavedAdapter(this,
-                Arrays.asList(new Save("example", 96), new Save("example2", 7312)));
+                database.saveDao().getAllScores());
         saved.setAdapter(adapter);
         saved.setLayoutManager(new LinearLayoutManager(this));
     }

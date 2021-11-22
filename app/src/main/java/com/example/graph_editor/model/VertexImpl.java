@@ -26,6 +26,7 @@ public class VertexImpl implements Vertex {
         this.name = name;
     }
 
+    //TODO: write tests
     @Override
     public int getIndex() {
         return index;
