@@ -91,6 +91,38 @@ public class DrawManager {
 //        return result;
 //    }
 
+    public Frame getOptimalFrame(double paddingPercent) {
+        List<Vertex> vertices = graph.getVertices();
+        if(vertices.isEmpty()){
+            return new Frame(new Point(0,1), new Point(1, 0));
+        }
+        Point leftTop = new Point(-Double.MAX_VALUE, Double.MAX_VALUE), rightBot = new Point(Double.MAX_VALUE, -Double.MAX_VALUE);
+        for(Vertex vertex : graph.getVertices()) {
+            Point point = vertex.getPoint();
+            if(point.getX()<leftTop.getX())
+                leftTop = new Point(point.getX(), leftTop.getY());
+            if(point.getY()>leftTop.getY())
+                leftTop = new Point(leftTop.getX(), point.getY());
+            if(point.getX()>rightBot.getX())
+                rightBot = new Point(point.getX(), rightBot.getY());
+            if(point.getY()<rightBot.getY())
+                rightBot = new Point(rightBot.getX(), point.getY());
+        }
+
+
+        double widthToAdd = (rightBot.getX() - leftTop.getX())*paddingPercent;
+        double heightToAdd = (rightBot.getY() - leftTop.getY())*paddingPercent;
+        leftTop = new Point(leftTop.getX()-widthToAdd, leftTop.getY()+heightToAdd);
+        rightBot = new Point(rightBot.getX()+widthToAdd, rightBot.getY()-heightToAdd);
+
+        if(vertices.size() == 1) {
+            leftTop = new Point(leftTop.getX()-1, leftTop.getY()+1);
+            rightBot = new Point(rightBot.getX()+1, rightBot.getY()-1);
+        }
+
+        return new Frame(leftTop, rightBot);
+    }
+
     public List<Vertex> getVertices() { return graph.getVertices(); }
 
     public List<Edge> getEdges() { return graph.getEdges(); }
