@@ -3,8 +3,6 @@ package com.example.graph_editor.draw;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,7 +18,6 @@ import java.util.List;
 
 public class DrawActivity extends AppCompatActivity {
     private GraphView graphView;
-    private ActionModeType modeType;
 
     TextView modeChoice;
     ZoomLayout zoomLayout;
@@ -38,6 +35,7 @@ public class DrawActivity extends AppCompatActivity {
         txtChoice.setText(choice.toString());
 
         graphView = findViewById(R.id.viewGraph);
+        ActionModeType.addObserver(graphView);
         zoomLayout = findViewById(R.id.layZoom);
         modeChoice = findViewById(R.id.txtChoice2);
         changeMode(ActionModeType.NONE);
@@ -72,8 +70,7 @@ public class DrawActivity extends AppCompatActivity {
         graph.addEdge(l.get(10), l.get(9));
         graph.addEdge(l.get(10), l.get(6));
 
-        graphView.setManager(graph.getDrawManager());
-
+        graphView.initializeGraph(graph.getDrawManager(), true);
 
         ImageButtonCollection collection = new ImageButtonCollection(this);
         collection.add(findViewById(R.id.btnVertex), () -> changeMode(ActionModeType.NEW_VERTEX));
@@ -88,9 +85,14 @@ public class DrawActivity extends AppCompatActivity {
     }
 
     private void changeMode(ActionModeType type) {
-        modeType = type;
+        ActionModeType.setCurrentModeType(type);
+        modeChoice.setText(type.toString());
+    }
 
-        modeChoice.setText(modeType.toString());
-        zoomLayout.changeActionMode(type);
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ActionModeType.removeObserver(graphView);
+        ActionModeType.resetCurrentModeType();
     }
 }

@@ -55,8 +55,8 @@ public class DrawManager {
                 getRelative(edge.getSource().getPoint()), getRelative(edge.getTarget().getPoint()));
     }
 
-    //returns null if there is no vertices
-    public Vertex getNearestVertex(Point relativePoint) {
+    //returns null if there are no vertices
+    public Vertex getNearestVertex(Point relativePoint, double delta) {
         Point point = getAbsolute(relativePoint);
         double nearest = Double.MAX_VALUE;
         Vertex result = null;
@@ -70,8 +70,8 @@ public class DrawManager {
         return result;
     }
 
-    //returns null if there is no edges
-    public Edge getNearestEdge(Point relativePoint) {
+    //returns null if there are no edges
+    public Edge getNearestEdge(Point relativePoint, double delta) {
         Point point = getAbsolute(relativePoint);
         double nearest = Double.MAX_VALUE;
         Edge result = null;

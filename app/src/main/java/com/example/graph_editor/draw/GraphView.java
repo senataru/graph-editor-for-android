@@ -16,19 +16,23 @@ import com.example.graph_editor.model.Edge;
 import com.example.graph_editor.model.Vertex;
 import com.example.graph_editor.model.mathematics.Point;
 
-public class GraphView extends View {
+import java.util.Observable;
+import java.util.Observer;
+
+public class GraphView extends View implements ActionModeTypeObserver {
     private final int baseVertexRadius = 7;
     private final int baseEdgeWidth = 5;
-
-    private ActionModeType modeType = ActionModeType.NONE;
 
     private Paint vertexPaint;
     private double vertexRadius = baseVertexRadius;
     private Paint edgePaint;
+    private Paint highlightPaint;
 
     private DrawManager manager;
     private Frame frame;
+    private boolean interactive;
 
+    Vertex highlighted = null;
 
     public GraphView(Context context) {
         super(context);
@@ -56,6 +60,10 @@ public class GraphView extends View {
         vertexPaint.setColor(Color.MAGENTA);
         vertexPaint.setStyle(Paint.Style.FILL);
         vertexPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
+        highlightPaint = new Paint();
+        highlightPaint.setColor(Color.GRAY);
+        highlightPaint.setStyle(Paint.Style.FILL);
+        highlightPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
         edgePaint = new Paint();
         edgePaint.setColor(Color.CYAN);
         edgePaint.setStyle(Paint.Style.FILL);
@@ -63,19 +71,26 @@ public class GraphView extends View {
         edgePaint.setFlags(Paint.ANTI_ALIAS_FLAG);
 
         this.setOnTouchListener((v, event) -> {
-            if (modeType == ActionModeType.NEW_VERTEX) {
+            if (! interactive) return false;
+            switch (ActionModeType.getCurrentModeType()) {
+            case NEW_VERTEX:
                 Vertex ver = manager.getGraph().addVertex();
                 Point point = manager.getAbsolute(new Point(event.getX()/getWidth(), event.getY()/getHeight()));
                 ver.setPoint(point);
-                manager.updateFrame(frame);
-                postInvalidate();
+                break;
+            case MOVE_OBJECT:
+                highlighted = manager.getNearestVertex(new Point(event.getX()/getWidth(), event.getY()/getHeight()), 0.1);
+                break;
             }
+            manager.updateFrame(frame);
+            postInvalidate();
             return false;
         });
     }
 
-    public void setManager(DrawManager manager) {
+    public void initializeGraph(DrawManager manager, boolean interactive) {
         this.manager = manager;
+        this.interactive = interactive;
         postInvalidate();
     }
 
@@ -92,16 +107,18 @@ public class GraphView extends View {
             drawEdge(canvas, e, manager.getRelative(e.getSource().getPoint()), manager.getRelative(e.getTarget().getPoint()));
 
         for (Vertex v : manager.getVertices())
-            drawVertex(canvas, v, manager.getRelative(v.getPoint()));
+            drawVertex(canvas, v, manager.getRelative(v.getPoint()), v==highlighted);
     }
 
-    private void drawVertex(Canvas canvas, Vertex vertex, Point point) {
+    private void drawVertex(Canvas canvas, Vertex vertex, Point point, boolean highlighted) {
         float x = (float)point.getX()*getWidth();
         float y = (float)point.getY()*getHeight();
 
-        canvas.drawCircle(
-                x, y, (float)vertexRadius, vertexPaint
-        );
+        if (highlighted) {
+            canvas.drawCircle(x, y, (float)vertexRadius*2, highlightPaint);
+        }
+
+        canvas.drawCircle(x, y, (float)vertexRadius, vertexPaint);
 //        canvas.drawText(vertex.);
     }
 
@@ -127,14 +144,15 @@ public class GraphView extends View {
         postInvalidate();
     }
 
-    public void changeActionMode(ActionModeType modeType) {
-        this.modeType = modeType;
-    }
-
-
     private double getDrawWidth(double scale, double value) {
         return value / scale;
 //        return value / ((scale-1)*4+1);
 //        return value;
+    }
+
+    @Override
+    public void update(ActionModeType newType) {
+        highlighted = null;
+        postInvalidate();
     }
 }

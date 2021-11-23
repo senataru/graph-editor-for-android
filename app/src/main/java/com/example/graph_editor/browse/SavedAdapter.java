@@ -12,6 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.graph_editor.R;
 import com.example.graph_editor.database.Save;
+import com.example.graph_editor.draw.GraphView;
+import com.example.graph_editor.graphStorage.GraphScanner;
+import com.example.graph_editor.model.Graph;
 
 import java.util.List;
 
@@ -27,14 +30,21 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder>{
     public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.saved_row, parent, false);
-        ((TextView)view.findViewById(R.id.data2Text)).setMovementMethod(new ScrollingMovementMethod());
+        ((TextView)view.findViewById(R.id.txtName)).setMovementMethod(new ScrollingMovementMethod());
         return new Holder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull Holder holder, int position) {
-        holder.data1Text.setText(data.get(position).name);
-        holder.data2Text.setText(String.valueOf(data.get(position).graph));
+        holder.txtName.setText(data.get(position).name);
+        String graphString = String.valueOf(data.get(position).graph);
+        try {
+            Graph graph = GraphScanner.fromExact(graphString);
+            holder.dataGraph.initializeGraph(graph.getDrawManager(), false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -42,13 +52,13 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder>{
         return data.size();
     }
     static class Holder extends RecyclerView.ViewHolder {
-        TextView data1Text;
-        TextView data2Text;
+        TextView txtName;
+        GraphView dataGraph;
 
         public Holder(@NonNull View itemView) {
             super(itemView);
-            data1Text = itemView.findViewById(R.id.data1Text);
-            data2Text = itemView.findViewById(R.id.data2Text);
+            txtName = itemView.findViewById(R.id.txtName);
+            dataGraph = itemView.findViewById(R.id.dataGraph);
         }
     }
 }
