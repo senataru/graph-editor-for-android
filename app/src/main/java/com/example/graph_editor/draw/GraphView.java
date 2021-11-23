@@ -72,14 +72,35 @@ public class GraphView extends View implements ActionModeTypeObserver {
 
         this.setOnTouchListener((v, event) -> {
             if (! interactive) return false;
+
+            Point relativePoint = new Point(event.getX()/getWidth(), event.getY()/getHeight());
+            Vertex newVertex = manager.getNearestVertex(relativePoint, 0.1);
+
             switch (ActionModeType.getCurrentModeType()) {
             case NEW_VERTEX:
                 Vertex ver = manager.getGraph().addVertex();
                 Point point = manager.getAbsolute(new Point(event.getX()/getWidth(), event.getY()/getHeight()));
                 ver.setPoint(point);
                 break;
+
+
             case MOVE_OBJECT:
-                highlighted = manager.getNearestVertex(new Point(event.getX()/getWidth(), event.getY()/getHeight()), 0.1);
+                if (highlighted == null && newVertex != null)       // select a vertex
+                    highlighted = newVertex;
+                else if (highlighted == newVertex && highlighted != null) // move current vertex slightly
+                    highlighted.setPoint(manager.getAbsolute(relativePoint));
+                else if (newVertex != null)     // select different vertex
+                    highlighted = newVertex;
+                else if (highlighted != null)       // move selected vertex
+                    highlighted.setPoint(manager.getAbsolute(relativePoint));
+                break;
+            case NEW_EDGE:
+                if (highlighted != null) {
+                    manager.getGraph().addEdge(highlighted, newVertex);
+                    highlighted = null;
+                } else {
+                    highlighted = newVertex;
+                }
                 break;
             }
             manager.updateFrame(frame);
