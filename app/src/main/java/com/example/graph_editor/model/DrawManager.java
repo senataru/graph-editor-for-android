@@ -91,10 +91,10 @@ public class DrawManager {
 //        return result;
 //    }
 
-    public Frame getOptimalFrame(double paddingPercent) {
+    public Frame getOptimalFrame(double paddingPercent, Frame frame) {
         List<Vertex> vertices = graph.getVertices();
         if(vertices.isEmpty()){
-            return new Frame(new Point(0,1), new Point(1, 0));
+            return new Frame(new Point(0,0), new Point(1, 1));
         }
         Point leftTop = new Point(-Double.MAX_VALUE, Double.MAX_VALUE), rightBot = new Point(Double.MAX_VALUE, -Double.MAX_VALUE);
         for(Vertex vertex : graph.getVertices()) {
@@ -115,11 +115,10 @@ public class DrawManager {
         leftTop = new Point(leftTop.getX()-widthToAdd, leftTop.getY()+heightToAdd);
         rightBot = new Point(rightBot.getX()+widthToAdd, rightBot.getY()-heightToAdd);
 
-        if(vertices.size() == 1) {
+        if(vertices.size() <= 1) {
             leftTop = new Point(leftTop.getX()-1, leftTop.getY()+1);
             rightBot = new Point(rightBot.getX()+1, rightBot.getY()-1);
         }
-
         return new Frame(leftTop, rightBot);
     }
 

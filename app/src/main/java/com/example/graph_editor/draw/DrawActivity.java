@@ -3,11 +3,12 @@ package com.example.graph_editor.draw;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.graph_editor.R;
+import com.example.graph_editor.draw.graph_view.GraphView;
+import com.example.graph_editor.draw.graph_view.ImageButtonCollection;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.GraphFactory;
 import com.example.graph_editor.model.GraphType;
@@ -19,7 +20,6 @@ import java.util.List;
 public class DrawActivity extends AppCompatActivity {
     private GraphView graphView;
 
-    TextView modeChoice;
     ZoomLayout zoomLayout;
 
     @Override
@@ -31,13 +31,9 @@ public class DrawActivity extends AppCompatActivity {
         int choiceOrd = sharedPref.getInt("GraphType", 0);
         GraphType choice = GraphType.values()[choiceOrd];
 
-        TextView txtChoice = findViewById(R.id.txtChoice);
-        txtChoice.setText(choice.toString());
-
         graphView = findViewById(R.id.viewGraph);
         ActionModeType.addObserver(graphView);
         zoomLayout = findViewById(R.id.layZoom);
-        modeChoice = findViewById(R.id.txtChoice2);
         changeMode(ActionModeType.NONE);
 
         Graph graph = new GraphFactory(choice).produce();
@@ -86,7 +82,6 @@ public class DrawActivity extends AppCompatActivity {
 
     private void changeMode(ActionModeType type) {
         ActionModeType.setCurrentModeType(type);
-        modeChoice.setText(type.toString());
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.example.graph_editor.draw;
+package com.example.graph_editor.draw.graph_view;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -17,12 +17,12 @@ public class ImageButtonCollection {
     ImageButton current = null;
     Context context;
     int ACTIVE, NOT_ACTIVE;
-    ImageButtonCollection(Context context) {
+    public ImageButtonCollection(Context context) {
         this.context = context;
         ACTIVE = ContextCompat.getColor(context, R.color.grey);
         NOT_ACTIVE = ContextCompat.getColor(context, R.color.lt_grey);
     }
-    void add(ImageButton button, Runnable function) {
+    public void add(ImageButton button, Runnable function) {
         button.setOnClickListener(v -> {
             function.run();
             setCurrent(button);

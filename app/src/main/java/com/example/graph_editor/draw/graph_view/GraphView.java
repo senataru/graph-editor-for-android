@@ -1,4 +1,4 @@
-package com.example.graph_editor.draw;
+package com.example.graph_editor.draw.graph_view;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -6,18 +6,17 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import com.example.graph_editor.draw.ActionModeType;
+import com.example.graph_editor.draw.ActionModeTypeObserver;
+import com.example.graph_editor.draw.Frame;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Edge;
 import com.example.graph_editor.model.Vertex;
 import com.example.graph_editor.model.mathematics.Point;
-
-import java.util.Observable;
-import java.util.Observer;
 
 public class GraphView extends View implements ActionModeTypeObserver {
     private final int baseVertexRadius = 7;
@@ -29,10 +28,9 @@ public class GraphView extends View implements ActionModeTypeObserver {
     private Paint highlightPaint;
 
     private DrawManager manager;
-    private Frame frame;
-    private boolean interactive;
+    public Frame frame;
 
-    Vertex highlighted = null;
+    public Vertex highlighted = null;
 
     public GraphView(Context context) {
         super(context);
@@ -54,7 +52,6 @@ public class GraphView extends View implements ActionModeTypeObserver {
         init(attrs);
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private void init(@Nullable AttributeSet set) {
         vertexPaint = new Paint();
         vertexPaint.setColor(Color.MAGENTA);
@@ -69,50 +66,15 @@ public class GraphView extends View implements ActionModeTypeObserver {
         edgePaint.setStyle(Paint.Style.FILL);
         edgePaint.setStrokeWidth(baseEdgeWidth);
         edgePaint.setFlags(Paint.ANTI_ALIAS_FLAG);
-
-        this.setOnTouchListener((v, event) -> {
-            if (! interactive) return false;
-
-            Point relativePoint = new Point(event.getX()/getWidth(), event.getY()/getHeight());
-            // highlighted - the first selected, this is the other one
-            Vertex selected = manager.getNearestVertex(relativePoint, 0.1);
-
-            switch (ActionModeType.getCurrentModeType()) {
-            case NEW_VERTEX:
-                Vertex ver = manager.getGraph().addVertex();
-                Point point = manager.getAbsolute(new Point(event.getX()/getWidth(), event.getY()/getHeight()));
-                ver.setPoint(point);
-                break;
-
-
-            case MOVE_OBJECT:
-                if (highlighted == null && selected != null)       // select a vertex
-                    highlighted = selected;
-                else if (highlighted == selected && highlighted != null) // move current vertex slightly
-                    highlighted.setPoint(manager.getAbsolute(relativePoint));
-                else if (selected != null)     // select different vertex
-                    highlighted = selected;
-                else if (highlighted != null)       // move selected vertex
-                    highlighted.setPoint(manager.getAbsolute(relativePoint));
-                break;
-            case NEW_EDGE:
-                if (highlighted != null && selected != null) {
-                    manager.getGraph().addEdge(highlighted, selected);
-                    highlighted = null;
-                } else {
-                    highlighted = selected;
-                }
-                break;
-            }
-            manager.updateFrame(frame);
-            postInvalidate();
-            return false;
-        });
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public void initializeGraph(DrawManager manager, boolean interactive) {
         this.manager = manager;
-        this.interactive = interactive;
+        if (interactive)
+            this.setOnTouchListener(new GraphOnTouchListenerImpl(this, manager));
+        else
+            this.setOnTouchListener(new GraphOnTouchListenerNull());
         postInvalidate();
     }
 
@@ -122,6 +84,7 @@ public class GraphView extends View implements ActionModeTypeObserver {
 
         if (frame == null) {   //has to be done here instead of init since height is lazily calculated
             frame = new Frame(new Point(0, 0), new Point(1, 1.0*getHeight()/getWidth()));
+//            frame = manager.getOptimalFrame(0.1, frame);
             manager.updateFrame(frame);
         }
 
@@ -176,5 +139,9 @@ public class GraphView extends View implements ActionModeTypeObserver {
     public void update(ActionModeType newType) {
         highlighted = null;
         postInvalidate();
+    }
+
+    public Point getRelative(Point point) {
+        return new Point(point.getX()/getWidth(), point.getY()/getHeight());
     }
 }

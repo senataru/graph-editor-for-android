@@ -4,16 +4,11 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
-import android.view.View;
 import android.widget.RelativeLayout;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.example.graph_editor.draw.graph_view.GraphView;
 
 public class ZoomLayout extends RelativeLayout implements ScaleGestureDetector.OnScaleGestureListener {
 

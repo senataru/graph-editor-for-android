@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.graph_editor.R;
 import com.example.graph_editor.database.Save;
-import com.example.graph_editor.draw.GraphView;
+import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.graphStorage.GraphScanner;
 import com.example.graph_editor.model.Graph;
 

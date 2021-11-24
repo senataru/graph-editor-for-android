@@ -29,7 +29,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.example.graph_editor.draw.GraphView
+            <com.example.graph_editor.draw.graph_view.GraphView
                 android:id="@+id/dataGraph"
                 android:layout_width="191dp"
                 android:layout_height="145dp"
