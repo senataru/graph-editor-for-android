@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.graph_editor.R;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.graph_view.ImageButtonCollection;
+import com.example.graph_editor.graphStorage.GraphScanner;
+import com.example.graph_editor.graphStorage.InvalidGraphStringException;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.GraphFactory;
 import com.example.graph_editor.model.GraphType;
@@ -36,35 +38,46 @@ public class DrawActivity extends AppCompatActivity {
         zoomLayout = findViewById(R.id.layZoom);
         changeMode(ActionModeType.NONE);
 
-        Graph graph = new GraphFactory(choice).produce();
-        for (int i = 0; i< 11; i++)
-            graph.addVertex();
+        Graph graph = null;
 
-        List<Vertex> l = graph.getVertices();
-        l.get(0).setPoint(new Point(0.3f, 0.2f));
-        l.get(1).setPoint(new Point(0.2f, 0.4f));
-        l.get(2).setPoint(new Point(0.4f, 0.4f));
-        l.get(3).setPoint(new Point(0.1f, 0.6f));
-        l.get(4).setPoint(new Point(0.3f, 0.6f));
-        l.get(5).setPoint(new Point(0.5f, 0.6f));
-
-        l.get(6).setPoint(new Point(0.8f, 0.5f));
-        l.get(7).setPoint(new Point(0.9f, 0.8f));
-        l.get(8).setPoint(new Point(0.67f, 0.6f));
-        l.get(9).setPoint(new Point(0.93f, 0.58f));
-        l.get(10).setPoint(new Point(0.7f, 0.8f));
-
-        graph.addEdge(l.get(0), l.get(1));
-        graph.addEdge(l.get(0), l.get(2));
-        graph.addEdge(l.get(1), l.get(3));
-        graph.addEdge(l.get(1), l.get(4));
-        graph.addEdge(l.get(2), l.get(5));
-
-        graph.addEdge(l.get(6), l.get(7));
-        graph.addEdge(l.get(8), l.get(7));
-        graph.addEdge(l.get(8), l.get(9));
-        graph.addEdge(l.get(10), l.get(9));
-        graph.addEdge(l.get(10), l.get(6));
+        String graphString = sharedPref.getString("currentGraph", null);
+        if (graphString != null) {
+            try {
+                graph = GraphScanner.fromExact(graphString);
+            } catch (InvalidGraphStringException e) {
+                e.printStackTrace();
+            }
+        } else {
+            graph = new GraphFactory(choice).produce();
+        }
+//        for (int i = 0; i< 11; i++)
+//            graph.addVertex();
+//
+//        List<Vertex> l = graph.getVertices();
+//        l.get(0).setPoint(new Point(0.3f, 0.2f));
+//        l.get(1).setPoint(new Point(0.2f, 0.4f));
+//        l.get(2).setPoint(new Point(0.4f, 0.4f));
+//        l.get(3).setPoint(new Point(0.1f, 0.6f));
+//        l.get(4).setPoint(new Point(0.3f, 0.6f));
+//        l.get(5).setPoint(new Point(0.5f, 0.6f));
+//
+//        l.get(6).setPoint(new Point(0.8f, 0.5f));
+//        l.get(7).setPoint(new Point(0.9f, 0.8f));
+//        l.get(8).setPoint(new Point(0.67f, 0.6f));
+//        l.get(9).setPoint(new Point(0.93f, 0.58f));
+//        l.get(10).setPoint(new Point(0.7f, 0.8f));
+//
+//        graph.addEdge(l.get(0), l.get(1));
+//        graph.addEdge(l.get(0), l.get(2));
+//        graph.addEdge(l.get(1), l.get(3));
+//        graph.addEdge(l.get(1), l.get(4));
+//        graph.addEdge(l.get(2), l.get(5));
+//
+//        graph.addEdge(l.get(6), l.get(7));
+//        graph.addEdge(l.get(8), l.get(7));
+//        graph.addEdge(l.get(8), l.get(9));
+//        graph.addEdge(l.get(10), l.get(9));
+//        graph.addEdge(l.get(10), l.get(6));
 
         graphView.initializeGraph(graph.getDrawManager(), true);
 
@@ -77,8 +90,10 @@ public class DrawActivity extends AppCompatActivity {
         changeMode(ActionModeType.MOVE_CANVAS);
         collection.setCurrent(findViewById(R.id.btnMoveCanvas));
 
-        findViewById(R.id.buttonSave).setOnClickListener( v -> new SavePopup(this, zoomLayout).show(graph));
-        findViewById(R.id.buttonClear).setOnClickListener( v -> {graph.getVertices().clear(); graphView.postInvalidate();} );
+        final Graph finalGraph = graph;
+        findViewById(R.id.buttonSave).setOnClickListener( v -> new SavePopup(this, zoomLayout).show(finalGraph));
+        findViewById(R.id.buttonClear).setOnClickListener(v -> {
+            finalGraph.getVertices().clear(); graphView.postInvalidate();} );
     }
 
     private void changeMode(ActionModeType type) {
