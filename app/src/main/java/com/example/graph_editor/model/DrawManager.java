@@ -8,6 +8,7 @@ import com.example.graph_editor.model.mathematics.Point;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class DrawManager {
     private Point leftTop;
@@ -56,11 +57,13 @@ public class DrawManager {
     }
 
     //returns null if there are no vertices
-    public Vertex getNearestVertex(Point relativePoint, double delta) {
+    public Vertex getNearestVertex(Point relativePoint, double delta, Set<Vertex> excluded) {
         Point point = getAbsolute(relativePoint);
         double nearest = Double.MAX_VALUE;
         Vertex result = null;
         for(Vertex vertex : graph.getVertices()) {
+            if (excluded.contains(vertex))
+                continue;
             double distance = Geometry.distance(point, vertex.getPoint());
             if( distance < nearest){
                 result = vertex;

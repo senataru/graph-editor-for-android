@@ -78,6 +78,7 @@ public class DrawActivity extends AppCompatActivity {
         collection.setCurrent(findViewById(R.id.btnMoveCanvas));
 
         findViewById(R.id.buttonSave).setOnClickListener( v -> new SavePopup(this, zoomLayout).show(graph));
+        findViewById(R.id.buttonClear).setOnClickListener( v -> {graph.getVertices().clear(); graphView.postInvalidate();} );
     }
 
     private void changeMode(ActionModeType type) {

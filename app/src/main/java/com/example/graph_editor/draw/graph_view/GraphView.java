@@ -1,20 +1,29 @@
 package com.example.graph_editor.draw.graph_view;
 
+import static java.lang.Math.PI;
+import static java.lang.Math.atan2;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import com.example.graph_editor.draw.ActionModeType;
 import com.example.graph_editor.draw.ActionModeTypeObserver;
 import com.example.graph_editor.draw.Frame;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Edge;
+import com.example.graph_editor.model.GraphType;
 import com.example.graph_editor.model.Vertex;
 import com.example.graph_editor.model.mathematics.Point;
 
@@ -54,15 +63,19 @@ public class GraphView extends View implements ActionModeTypeObserver {
 
     private void init(@Nullable AttributeSet set) {
         vertexPaint = new Paint();
-        vertexPaint.setColor(Color.MAGENTA);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vertexPaint.setColor(Color.rgb( 0.4f, 0.4f, 1f));
+        } else {
+            vertexPaint.setColor(Color.BLUE);
+        }
         vertexPaint.setStyle(Paint.Style.FILL);
         vertexPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
         highlightPaint = new Paint();
-        highlightPaint.setColor(Color.GRAY);
+        highlightPaint.setColor(Color.DKGRAY);
         highlightPaint.setStyle(Paint.Style.FILL);
         highlightPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
         edgePaint = new Paint();
-        edgePaint.setColor(Color.CYAN);
+        edgePaint.setColor(Color.GRAY);
         edgePaint.setStyle(Paint.Style.FILL);
         edgePaint.setStrokeWidth(baseEdgeWidth);
         edgePaint.setFlags(Paint.ANTI_ALIAS_FLAG);
@@ -108,11 +121,44 @@ public class GraphView extends View implements ActionModeTypeObserver {
     }
 
     private void drawEdge(Canvas canvas, Edge edge, Point start, Point end) {
-        canvas.drawLine(
-                (float)start.getX()*getWidth(), (float)start.getY()*getHeight(),
-                (float)end.getX()*getWidth(), (float)end.getY()*getHeight(),
-                edgePaint
-        );
+        float x1 = (float) start.getX() * getWidth();
+        float y1 = (float) start.getY() * getHeight();
+        float x2 = (float) end.getX() * getWidth();
+        float y2 = (float) end.getY() * getHeight();
+        if (manager.getGraph().getType() == GraphType.UNDIRECTED) {
+            canvas.drawLine(x1, y1, x2, y2, edgePaint);
+        } else {
+            System.out.println("directed");
+            drawArrow(edgePaint, canvas, x1, y1, x2, y2);
+        }
+    }
+
+    private void drawArrow(Paint paint, Canvas canvas, float from_x, float from_y, float to_x, float to_y)
+    {
+        float angle,anglerad, radius, lineangle;
+
+        //values to change for other appearance *CHANGE THESE FOR OTHER SIZE ARROWHEADS*
+        radius=25;
+        angle=30;
+
+        //some angle calculations
+        anglerad= (float) (PI*angle/180.0f);
+        lineangle= (float) (atan2(to_y-from_y,to_x-from_x));
+
+        //tha line
+        canvas.drawLine(from_x,from_y,to_x,to_y,paint);
+
+        //tha triangle
+        Path path = new Path();
+        path.setFillType(Path.FillType.EVEN_ODD);
+        path.moveTo(to_x, to_y);
+        path.lineTo((float)(to_x-radius*cos(lineangle - (anglerad / 2.0))),
+                (float)(to_y-radius*sin(lineangle - (anglerad / 2.0))));
+        path.lineTo((float)(to_x-radius*cos(lineangle + (anglerad / 2.0))),
+                (float)(to_y-radius*sin(lineangle + (anglerad / 2.0))));
+        path.close();
+
+        canvas.drawPath(path, paint);
     }
 
     public void setScale(double s) {

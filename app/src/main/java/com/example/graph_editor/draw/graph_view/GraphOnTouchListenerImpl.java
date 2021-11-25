@@ -9,6 +9,9 @@ import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.Vertex;
 import com.example.graph_editor.model.mathematics.Point;
 
+import java.util.Collections;
+import java.util.HashSet;
+
 public class GraphOnTouchListenerImpl implements GraphOnTouchListener {
 
     private final DrawManager manager;
@@ -20,9 +23,9 @@ public class GraphOnTouchListenerImpl implements GraphOnTouchListener {
     private Point relativePoint;
     private Point absolutePoint;
     private Vertex highlighted;
-    private Vertex selected;
+    private Vertex nearest;
     private Vertex newVertex;
-    private ActionModeType currentType;
+    private Vertex nearestNotNew;
 
     public GraphOnTouchListenerImpl(GraphView graphView, DrawManager manager) {
         this.graphView = graphView;
@@ -37,9 +40,9 @@ public class GraphOnTouchListenerImpl implements GraphOnTouchListener {
         relativePoint = graphView.getRelative(new Point(event.getX(), event.getY()));
         absolutePoint = manager.getAbsolute(relativePoint);
         highlighted = graphView.highlighted;
-        selected = manager.getNearestVertex(relativePoint, 0.1);
-        newVertex = null;
-        currentType = ActionModeType.getCurrentModeType();
+        nearest = manager.getNearestVertex(relativePoint, 0.1, Collections.emptySet());
+        nearestNotNew = manager.getNearestVertex(relativePoint, 0.1, new HashSet<>(Collections.singleton(newVertex)));
+        ActionModeType currentType = ActionModeType.getCurrentModeType();
 
         boolean result;
 
@@ -51,7 +54,7 @@ public class GraphOnTouchListenerImpl implements GraphOnTouchListener {
                 result = actionNewEdge(v, event);
                 break;
             case MOVE_OBJECT:
-                result = actionMoveObject(v, event, true);
+                result = actionMoveObject(v, event);
                 break;
             default:
                 result = false;
@@ -82,47 +85,73 @@ public class GraphOnTouchListenerImpl implements GraphOnTouchListener {
         return true;
     }
 
+
+    Vertex edgeFirst = null;
     private boolean actionNewEdge(View v, MotionEvent e) {
-        if (e.getAction() == MotionEvent.ACTION_DOWN) {
-            if (highlighted == null) {
-                if (selected == null) {
-                    newVertex = graph.addVertex();
-                    newVertex.setPoint(absolutePoint);
-                    highlighted = newVertex;
-                    return true;
+        switch (e.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                if (edgeFirst == null) {
+                    if (nearest != null) {
+                        edgeFirst = nearest;
+                    } else {
+                        edgeFirst = graph.addVertex();
+                        edgeFirst.setPoint(absolutePoint);
+                    }
+                    highlighted = edgeFirst;
                 } else {
-                    highlighted = selected;
-                }
-            } else {
-                if (highlighted == selected) {
-                    highlighted = null;
-                } else {
-                    boolean createdNew = selected == null;
-                    if (selected == null) {
+                    if (edgeFirst == nearest) {
+                        edgeFirst = null;
+                        highlighted = null;
+                    } else {
                         newVertex = graph.addVertex();
                         newVertex.setPoint(absolutePoint);
-                        selected = newVertex;
+                        highlighted = newVertex;
+                        manager.getGraph().addEdge(edgeFirst, newVertex);
+                        if (nearest != null) {
+                            newVertex.setPoint(nearest.getPoint());
+                        }
+                        return true;
                     }
-                    manager.getGraph().addEdge(highlighted, selected);
-                    highlighted = selected;
-                    return createdNew;
                 }
-            }
-        } else {
-            return actionMoveObject(v, e, false);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (edgeFirst != null) {
+                    if (newVertex != null) {
+                        if (nearestNotNew != null) {
+                            newVertex.setPoint(nearestNotNew.getPoint());
+                        } else {
+                            newVertex.setPoint(absolutePoint);
+                        }
+                    }
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                if (nearestNotNew == edgeFirst) {
+                    edgeFirst = null;
+                }
+                if (edgeFirst != null && newVertex != null) {
+                    if (nearestNotNew != null) {
+                        graph.removeVertex(newVertex);
+                        graph.addEdge(edgeFirst, nearestNotNew);
+                    }
+                    edgeFirst = null;
+                    newVertex = null;
+                }
+                highlighted = edgeFirst;
+                break;
         }
         return false;
     }
 
-    private boolean actionMoveObject(View v, MotionEvent e, boolean dehighlight) {
+    private boolean actionMoveObject(View v, MotionEvent e) {
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (highlighted == null && selected != null)       // select a vertex
-                    highlighted = selected;
-                else if (highlighted == selected && highlighted != null) // move current vertex slightly
+                if (highlighted == null && nearest != null)       // select a vertex
+                    highlighted = nearest;
+                else if (highlighted == nearest && highlighted != null) // move current vertex slightly
                     highlighted.setPoint(manager.getAbsolute(relativePoint));
-                else if (selected != null)     // select different vertex
-                    highlighted = selected;
+                else if (nearest != null)     // select different vertex
+                    highlighted = nearest;
                 else if (highlighted != null)       // move selected vertex
                     highlighted.setPoint(manager.getAbsolute(relativePoint));
                 break;
@@ -132,8 +161,7 @@ public class GraphOnTouchListenerImpl implements GraphOnTouchListener {
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if (dehighlight)
-                    highlighted = null;
+                highlighted = null;
                 break;
         }
         return true;
