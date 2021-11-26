@@ -108,31 +108,31 @@ public class DrawManager {
         if(vertices.isEmpty()){
             return new Frame(new Point(0,0), new Point(1, 1));
         }
-        Point extremeLeftTop = new Point(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
-        Point extremeRightBot = new Point(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+        Point extremeLeftTop = new Point(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+        Point extremeRightBot = new Point(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
         for(Vertex vertex : graph.getVertices()) {
             Point point = vertex.getPoint();
             if(point.getX()<extremeLeftTop.getX())
                 extremeLeftTop = new Point(point.getX(), extremeLeftTop.getY());
-            if(point.getY()>extremeLeftTop.getY())
+            if(point.getY()<extremeLeftTop.getY())
                 extremeLeftTop = new Point(extremeLeftTop.getX(), point.getY());
             if(point.getX()>extremeRightBot.getX())
                 extremeRightBot = new Point(point.getX(), extremeRightBot.getY());
-            if(point.getY()<extremeRightBot.getY())
+            if(point.getY()>extremeRightBot.getY())
                 extremeRightBot = new Point(extremeRightBot.getX(), point.getY());
         }
 
         double extremeWidth = extremeRightBot.getX() - extremeLeftTop.getX();
-        double extremeHeight = extremeLeftTop.getY() - extremeRightBot.getY() ;
+        double extremeHeight = extremeRightBot.getY() - extremeLeftTop.getY();
         double scale = Math.max(extremeWidth/width, extremeHeight/height);
         Point resultLeftTop = new Point(extremeLeftTop.getX()-paddingPercent*width*scale,
-                extremeLeftTop.getY()+paddingPercent*height*scale);
+                extremeLeftTop.getY()-paddingPercent*height*scale);
         Point resultRightBot = new Point(resultLeftTop.getX()+width*scale*(1+2*paddingPercent),
-                resultLeftTop.getY()-height*scale*(1+2*paddingPercent));
+                resultLeftTop.getY()+height*scale*(1+2*paddingPercent));
 
         if(vertices.size() <= 1) {
-            resultLeftTop = new Point(resultLeftTop.getX()-1, resultLeftTop.getY()+1);
-            resultRightBot = new Point(resultRightBot.getX()+1, resultRightBot.getY()-1);
+            resultLeftTop = new Point(resultLeftTop.getX()-1, resultLeftTop.getY()-1);
+            resultRightBot = new Point(resultRightBot.getX()+1, resultRightBot.getY()+1);
         }
 
         Frame result = new Frame(resultLeftTop, resultRightBot);
