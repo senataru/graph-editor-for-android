@@ -10,15 +10,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+
+// !! needs initialising in form of setting frame at least once
 public class DrawManager {
     private Point leftTop;
     private double width;
     private double height;
     private final Graph graph;
+    private boolean initialised = false;
 
     public DrawManager(Graph graph) {
         this.graph = graph;
     }
+
+    public boolean isInitialised() { return initialised; }
 
     public Graph getGraph() {
         return graph;
@@ -35,6 +40,7 @@ public class DrawManager {
         if(new Point(width, height).equals(Point.ZERO)) {
             throw new RuntimeException("Frame size equals 0 or is negative");
         }
+        initialised = true;
     }
 
     public Point getRelative(Point point) {
@@ -95,6 +101,9 @@ public class DrawManager {
 //    }
 
     public Frame getOptimalFrame(double paddingPercent, Frame frame) {
+        if (true)
+            return frame;
+
         List<Vertex> vertices = graph.getVertices();
         if(vertices.isEmpty()){
             return new Frame(new Point(0,0), new Point(1, 1));

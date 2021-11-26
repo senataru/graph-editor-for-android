@@ -21,6 +21,7 @@ import androidx.annotation.RequiresApi;
 import com.example.graph_editor.draw.ActionModeType;
 import com.example.graph_editor.draw.ActionModeTypeObserver;
 import com.example.graph_editor.draw.Frame;
+import com.example.graph_editor.graphStorage.GraphWriter;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Edge;
 import com.example.graph_editor.model.GraphType;
@@ -82,6 +83,7 @@ public class GraphView extends View implements ActionModeTypeObserver {
     }
 
     @SuppressLint("ClickableViewAccessibility")
+    // !! this alone is not enough, all due to height height being lazily calculated
     public void initializeGraph(DrawManager manager, boolean interactive) {
         this.manager = manager;
         if (interactive)
@@ -95,9 +97,10 @@ public class GraphView extends View implements ActionModeTypeObserver {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if (frame == null) {   //has to be done here instead of init since height is lazily calculated
-            frame = new Frame(new Point(0, 0), new Point(1, 1.0*getHeight()/getWidth()));
-//            frame = manager.getOptimalFrame(0.1, frame);
+        if (!manager.isInitialised()) {   //has to be done here instead of init or initializeGraph since height is lazily calculated
+            if (frame == null)
+                frame = new Frame(new Point(0, 0), new Point(1.0, 1.0 * getHeight() / getWidth()));
+            frame = manager.getOptimalFrame(0.1, frame);
             manager.updateFrame(frame);
         }
 
@@ -105,7 +108,7 @@ public class GraphView extends View implements ActionModeTypeObserver {
             drawEdge(canvas, e, manager.getRelative(e.getSource().getPoint()), manager.getRelative(e.getTarget().getPoint()));
 
         for (Vertex v : manager.getVertices())
-            drawVertex(canvas, v, manager.getRelative(v.getPoint()), v==highlighted);
+            drawVertex(canvas, v, manager.getRelative(v.getPoint()), v == highlighted);
     }
 
     private void drawVertex(Canvas canvas, Vertex vertex, Point point, boolean highlighted) {
@@ -128,7 +131,6 @@ public class GraphView extends View implements ActionModeTypeObserver {
         if (manager.getGraph().getType() == GraphType.UNDIRECTED) {
             canvas.drawLine(x1, y1, x2, y2, edgePaint);
         } else {
-            System.out.println("directed");
             drawArrow(edgePaint, canvas, x1, y1, x2, y2);
         }
     }

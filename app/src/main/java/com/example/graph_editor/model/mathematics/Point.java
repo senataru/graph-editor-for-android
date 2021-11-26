@@ -1,5 +1,7 @@
 package com.example.graph_editor.model.mathematics;
 
+import androidx.annotation.NonNull;
+
 public class Point {
     public static Point ZERO = new Point(0, 0);
     final double x, y;
@@ -16,5 +18,15 @@ public class Point {
         if(!(obj instanceof Point)) return false;
         Point other = (Point) obj;
         return Geometry.close(other.getX(), getX()) && Geometry.close(other.getY(), getY());
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        s.append(x);
+        s.append(" ");
+        s.append(y);
+        return new String(s);
     }
 }

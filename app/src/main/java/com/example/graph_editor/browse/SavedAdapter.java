@@ -53,12 +53,12 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
             e.printStackTrace();
         }
         holder.editButton.setOnClickListener(v -> browseActivity.changeActivity(graphString));
-
         holder.deleteButton.setOnClickListener(v -> {
-            SavesDatabase.getDbInstance(context).saveDao().delete(data.get(position));
+            Save s = data.get(position);
             data.remove(position);
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, data.size());
+            SavesDatabase.getDbInstance(context).saveDao().delete(s);
         });
     }
 
