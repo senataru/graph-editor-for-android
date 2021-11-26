@@ -16,12 +16,10 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 
 import com.example.graph_editor.draw.ActionModeType;
 import com.example.graph_editor.draw.ActionModeTypeObserver;
 import com.example.graph_editor.draw.Frame;
-import com.example.graph_editor.graphStorage.GraphWriter;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Edge;
 import com.example.graph_editor.model.GraphType;
@@ -100,8 +98,7 @@ public class GraphView extends View implements ActionModeTypeObserver {
         if (!manager.isInitialised()) {   //has to be done here instead of init or initializeGraph since height is lazily calculated
             if (frame == null)
                 frame = new Frame(new Point(0, 0), new Point(1.0, 1.0 * getHeight() / getWidth()));
-            frame = manager.getOptimalFrame(0.1, frame);
-            manager.updateFrame(frame);
+            frame = manager.getOptimalAndUpdateFrame(0.1, frame);
         }
 
         for (Edge e : manager.getEdges())
