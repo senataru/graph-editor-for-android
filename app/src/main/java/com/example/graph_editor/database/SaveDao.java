@@ -1,6 +1,7 @@
 package com.example.graph_editor.database;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
@@ -17,5 +18,8 @@ public interface SaveDao {
 
     @Query("DELETE FROM save")
     void deleteAll();
+
+    @Delete
+    void delete(Save save);
 
 }

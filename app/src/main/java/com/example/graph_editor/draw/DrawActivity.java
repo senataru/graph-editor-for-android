@@ -79,6 +79,7 @@ public class DrawActivity extends AppCompatActivity {
 //        graph.addEdge(l.get(10), l.get(9));
 //        graph.addEdge(l.get(10), l.get(6));
 
+        assert graph != null;
         graphView.initializeGraph(graph.getDrawManager(), true);
 
         ImageButtonCollection collection = new ImageButtonCollection(this);
@@ -105,5 +106,10 @@ public class DrawActivity extends AppCompatActivity {
         super.onDestroy();
         ActionModeType.removeObserver(graphView);
         ActionModeType.resetCurrentModeType();
+
+        SharedPreferences sharedPref = this.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("currentGraph", null);
+        editor.apply();
     }
 }

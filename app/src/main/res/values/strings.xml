@@ -16,4 +16,6 @@
     <string name="save">Save</string>
     <string name="enter_graph_name">Enter graph\'s name</string>
     <string name="save_your_graph">Save your graph</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
 </resources>
