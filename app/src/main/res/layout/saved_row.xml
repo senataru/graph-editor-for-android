@@ -19,7 +19,7 @@
 
             <TextView
                 android:id="@+id/txtName"
-                android:layout_width="200dp"
+                android:layout_width="170dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:paddingBottom="10dp"
@@ -32,14 +32,14 @@
 
             <com.example.graph_editor.draw.graph_view.GraphView
                 android:id="@+id/dataGraph"
-                android:layout_width="191dp"
-                android:layout_height="145dp"
+                android:layout_width="match_parent"
+                android:layout_height="95dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginStart="200dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.69"
-                app:layout_constraintStart_toEndOf="@+id/txtName"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout"
@@ -54,8 +54,10 @@
 
             <Button
                 android:id="@+id/btnEdit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="70dp"
+                android:layout_height="40dp"
+                android:textSize="12sp"
+                android:paddingHorizontal="5dp"
                 android:layout_marginStart="16dp"
                 android:text="@string/edit"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -64,13 +66,16 @@
 
             <Button
                 android:id="@+id/btnDelete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="70dp"
+                android:layout_height="40dp"
+                android:paddingHorizontal="5dp"
+                android:textSize="12sp"
                 android:layout_marginStart="12dp"
                 android:backgroundTint="@color/light_red"
                 android:text="@string/delete"
                 app:layout_constraintBottom_toBottomOf="@+id/btnEdit"
                 app:layout_constraintEnd_toEndOf="@+id/txtName"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/btnEdit"
                 app:layout_constraintTop_toBottomOf="@+id/txtName"
                 app:layout_constraintVertical_bias="1.0" />
