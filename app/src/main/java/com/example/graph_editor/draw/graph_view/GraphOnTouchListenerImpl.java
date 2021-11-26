@@ -5,6 +5,7 @@ import android.view.View;
 
 import com.example.graph_editor.draw.ActionModeType;
 import com.example.graph_editor.model.DrawManager;
+import com.example.graph_editor.model.Edge;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.Vertex;
 import com.example.graph_editor.model.mathematics.Point;
@@ -56,6 +57,9 @@ public class GraphOnTouchListenerImpl implements GraphOnTouchListener {
             case MOVE_OBJECT:
                 result = actionMoveObject(v, event);
                 break;
+            case REMOVE_OBJECT:
+                result = actionRemoveObject(v, event);
+                break;
             default:
                 result = false;
                 break;
@@ -84,7 +88,6 @@ public class GraphOnTouchListenerImpl implements GraphOnTouchListener {
         }
         return true;
     }
-
 
     Vertex edgeFirst = null;
     private boolean actionNewEdge(View v, MotionEvent e) {
@@ -162,6 +165,25 @@ public class GraphOnTouchListenerImpl implements GraphOnTouchListener {
                 break;
             case MotionEvent.ACTION_UP:
                 highlighted = null;
+                break;
+        }
+        return true;
+    }
+
+    private boolean actionRemoveObject(View v, MotionEvent e) {
+        Edge nearestEdge = manager.getNearestEdge(relativePoint, 0.03);
+        Vertex nearestVertex = manager.getNearestVertex(relativePoint, 0.03, Collections.emptySet());
+
+        if (nearestVertex != null)
+            graph.removeVertex(nearestVertex);
+        if (nearestEdge != null)
+            graph.removeEdge(nearestEdge);
+
+        switch (e.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_MOVE:
+            case MotionEvent.ACTION_UP:
+            default:
                 break;
         }
         return true;

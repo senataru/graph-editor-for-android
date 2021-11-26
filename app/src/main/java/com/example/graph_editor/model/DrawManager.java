@@ -81,24 +81,25 @@ public class DrawManager {
             return null;
         return result;
     }
-//
-//    //returns null if there are no edges
-//    public Edge getNearestEdge(Point relativePoint, double delta) {
-//        Point point = getAbsolute(relativePoint);
-//        double nearest = Double.MAX_VALUE;
-//        Edge result = null;
-//        for(Edge edge : graph.getEdges()) {
-//            double distance = Geometry.distanceFromSegment(point,
-//                    edge.getSource().getPoint(), edge.getTarget().getPoint());
-//            if( distance < nearest){
-//                result = edge;
-//                nearest = distance;
-//            }
-//        }
-//
-//
-//        return result;
-//    }
+
+    //returns null if there are no edges
+    public Edge getNearestEdge(Point relativePoint, double delta) {
+        Point point = getAbsolute(relativePoint);
+        double nearest = Double.MAX_VALUE;
+        Edge result = null;
+        for(Edge edge : graph.getEdges()) {
+            double distance = Geometry.distanceFromSegment(point,
+                    edge.getSource().getPoint(), edge.getTarget().getPoint());
+            if( distance < nearest){
+                result = edge;
+                nearest = distance;
+            }
+        }
+        if (result != null && getRelativeDistanceFrom(relativePoint, result) > delta)
+            return null;
+
+        return result;
+    }
 
     public Frame getOptimalFrame(double paddingPercent, Frame frame) {
         if (true)

@@ -18,7 +18,7 @@
         <LinearLayout
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
-            android:layout_height="100sp"
+            android:layout_height="80sp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -68,6 +68,17 @@
                 android:contentDescription="@string/move_canvas"
                 android:background="@color/lt_grey"
                 android:src="@drawable/move_canvas"
+                android:scaleType="fitCenter"
+                android:padding="20dp"/>
+
+            <ImageButton
+                android:id="@+id/btnRemoveObject"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:contentDescription="@string/move_canvas"
+                android:background="@color/lt_grey"
+                android:src="@drawable/remove_object"
                 android:scaleType="fitCenter"
                 android:padding="20dp"/>
 
