@@ -23,7 +23,7 @@ public class ZoomLayout extends RelativeLayout implements ScaleGestureDetector.O
     private static final float MAX_ZOOM = 16.0f;
 
     private Mode mode = Mode.NONE;
-    private float scale = 1.0f;
+    public static float scale = 1.0f;
     private float lastScaleFactor = 0f;
 
     // Where the finger first  touches the screen
@@ -35,6 +35,13 @@ public class ZoomLayout extends RelativeLayout implements ScaleGestureDetector.O
     private float dy = 0f;
     private float prevDx = 0f;
     private float prevDy = 0f;
+
+//    public void setTransformations(float scale, float dx, float dy) {
+//        System.out.println("SETTING");
+//        this.scale = 0.01f;
+//        this.dx = dx;
+//        this.dy = dy;
+//    }
 
     public ZoomLayout(Context context) {
         super(context);

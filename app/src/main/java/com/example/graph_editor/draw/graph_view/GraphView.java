@@ -17,14 +17,17 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import com.example.graph_editor.R;
 import com.example.graph_editor.draw.ActionModeType;
 import com.example.graph_editor.draw.ActionModeTypeObserver;
 import com.example.graph_editor.draw.Frame;
+import com.example.graph_editor.draw.ZoomLayout;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Edge;
 import com.example.graph_editor.model.GraphType;
 import com.example.graph_editor.model.Vertex;
 import com.example.graph_editor.model.mathematics.Point;
+import com.example.graph_editor.model.mathematics.Rectangle;
 
 public class GraphView extends View implements ActionModeTypeObserver {
     private final int baseVertexRadius = 7;
@@ -97,8 +100,16 @@ public class GraphView extends View implements ActionModeTypeObserver {
 
         if (!manager.isInitialised()) {   //has to be done here instead of init or initializeGraph since height is lazily calculated
             if (frame == null)
-                frame = new Frame(new Point(0, 0), new Point(1.0, 1.0 * getHeight() / getWidth()));
-            frame = manager.getOptimalAndUpdateFrame(0.1, frame);
+                frame = new Frame(new Rectangle(new Point(0, 0), new Point(1.0, 1.0 * getHeight() / getWidth())), 1);
+            manager.updateRectangle(frame.getRectangle());
+            Rectangle rec = manager.getOptimalRectangle(0.1, frame.getRectangle());
+            manager.updateRectangle(rec);
+            frame.updateRectangle(rec);
+            try {
+                ((ZoomLayout) getParent()).setTransformations((float) frame.getScale(), 0, 0);        // TODO: integrate this into frame update
+            } catch (Exception ignored) {
+
+            }
         }
 
         for (Edge e : manager.getEdges())
@@ -162,7 +173,7 @@ public class GraphView extends View implements ActionModeTypeObserver {
 
     public void setScale(double s) {
         frame.setScale(s);
-        manager.updateFrame(frame);
+        manager.updateRectangle(frame.getRectangle());
         vertexRadius = getDrawWidth(s, baseVertexRadius);
         edgePaint.setStrokeWidth((float)getDrawWidth(s, baseEdgeWidth));
         postInvalidate();
@@ -170,7 +181,7 @@ public class GraphView extends View implements ActionModeTypeObserver {
 
     public void translate(double dx, double dy) {
         frame.translate(dx/getWidth(), dy/getWidth());
-        manager.updateFrame(frame);
+        manager.updateRectangle(frame.getRectangle());
         postInvalidate();
     }
 

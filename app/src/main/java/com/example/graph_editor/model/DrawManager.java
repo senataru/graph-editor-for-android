@@ -5,6 +5,7 @@ import android.util.Pair;
 import com.example.graph_editor.draw.Frame;
 import com.example.graph_editor.model.mathematics.Geometry;
 import com.example.graph_editor.model.mathematics.Point;
+import com.example.graph_editor.model.mathematics.Rectangle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,16 +30,14 @@ public class DrawManager {
         return graph;
     }
 
-    public void updateFrame(Frame frame) {
-        //uses the Frame as if it was a struct, doesn't remember the reference
-        Pair<Point, Point> points = frame.getPoints();
-        Point leftTop = points.first;
-        Point rightBot = points.second;
+    public void updateRectangle(Rectangle rectangle) {
+        Point leftTop = rectangle.getLeftTop();
+        Point rightBot = rectangle.getRightBot();
         this.leftTop = leftTop;
         this.width = rightBot.getX() - leftTop.getX();
         this.height = rightBot.getY() - leftTop.getY();
         if(new Point(width, height).equals(Point.ZERO)) {
-            throw new RuntimeException("Frame size equals 0 or is negative");
+            throw new RuntimeException("rectangle size equals 0 or is negative");
         }
         initialised = true;
     }
@@ -101,13 +100,12 @@ public class DrawManager {
         return result;
     }
 
-    public Frame getOptimalAndUpdateFrame(double paddingPercent, Frame frame) {
-        updateFrame(frame);
-
+    public Rectangle getOptimalRectangle(double paddingPercent, Rectangle rectangle) {
         List<Vertex> vertices = graph.getVertices();
         if(vertices.isEmpty()){
-            return new Frame(new Point(0,0), new Point(1, 1));
+            return new Rectangle(new Point(0,0), new Point(1, 1*rectangle.getHeight()/rectangle.getWidth()));
         }
+
         Point extremeLeftTop = new Point(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
         Point extremeRightBot = new Point(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
         for(Vertex vertex : graph.getVertices()) {
@@ -135,9 +133,7 @@ public class DrawManager {
             resultRightBot = new Point(resultRightBot.getX()+1, resultRightBot.getY()+1);
         }
 
-        Frame result = new Frame(resultLeftTop, resultRightBot);
-        updateFrame(result);
-        return result;
+        return new Rectangle(resultLeftTop, resultRightBot);
     }
 
     public List<Vertex> getVertices() { return graph.getVertices(); }
