@@ -14,6 +14,9 @@ public class Frame {
     private double dx;
     private double dy;
 
+    public static final float MAX_SCALE = 16f;
+    public static final float MIN_SCALE = 1/16f;
+
     public Frame(Rectangle rec, double scale) {
         this.rec = rec;
         this.scale = scale;
@@ -28,23 +31,16 @@ public class Frame {
         this.rec = newRec;
     }
 
-    public void setScale(double s) {
-        double rescale = s/this.scale;
+    public void rescale(double scale) {
+        double newScale = Math.min(Math.max(scale*this.scale, MIN_SCALE), MAX_SCALE);
 
-        this.rec = new Rectangle(this.rec, rescale);
+        this.rec = new Rectangle(this.rec, newScale/this.scale);
 
-        this.scale = s;
+        this.scale = newScale;
     }
 
     public void translate(double dxNew, double dyNew) {
-//        double ddx = (this.dx - dxNew) * scale;
-//        double ddy = (this.dy - dyNew) * scale;
-
-//        this.rec = new Rectangle(this.rec, ddx, ddy);
         this.rec = new Rectangle(this.rec, dxNew*scale, dyNew*scale);
-
-//        this.dx = dxNew;
-//        this.dy = dyNew;
     }
 
     public double getScale() { return this.scale; }

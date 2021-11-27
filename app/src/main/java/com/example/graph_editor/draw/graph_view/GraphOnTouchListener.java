@@ -1,12 +1,11 @@
 package com.example.graph_editor.draw.graph_view;
 
-import android.util.Log;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 
 import com.example.graph_editor.draw.ActionModeType;
 import com.example.graph_editor.draw.Frame;
-import com.example.graph_editor.draw.ZoomLayout;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Edge;
 import com.example.graph_editor.model.Graph;
@@ -21,6 +20,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     private final DrawManager manager;
     private final GraphView graphView;
     private final Frame frame;
+    private final ScaleGestureDetector scaleDetector;
 
     // global variables for easier management
     private final Graph graph;
@@ -29,10 +29,11 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     private Point absolutePoint;
     private Vertex highlighted;
 
-    public GraphOnTouchListener(GraphView graphView, DrawManager manager, Frame frame) {
+    public GraphOnTouchListener(GraphView graphView, DrawManager manager, Frame frame, ScaleGestureDetector scaleDetector) {
         this.graphView = graphView;
         this.manager = manager;
         this.frame = frame;
+        this.scaleDetector = scaleDetector;
 
         this.graph = manager.getGraph();
     }
@@ -67,6 +68,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
                 result = false;
                 break;
         }
+        scaleDetector.onTouchEvent(event);
 
         manager.updateRectangle(graphView.frame.getRectangle());       //TODO: manager update method without frame
         graphView.highlighted = highlighted;
@@ -230,7 +232,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
                 break;
         }
         if (mode == Mode.DRAG)
-            frame.translate(dx/v.getWidth(), dy/v.getHeight());
+            frame.translate(dx/v.getWidth(), dy/v.getWidth());
         return true;
     }
 }

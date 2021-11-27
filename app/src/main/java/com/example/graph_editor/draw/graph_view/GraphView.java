@@ -13,6 +13,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -100,7 +101,8 @@ public class GraphView extends View implements ActionModeTypeObserver {
         manager.updateRectangle(rec);
         frame.updateRectangle(rec);
         if (interactive) {
-            this.setOnTouchListener(new GraphOnTouchListener(this, manager, frame));
+            ScaleGestureDetector scaleDetector = new ScaleGestureDetector(getContext(), new GraphOnScaleListener(frame));
+            this.setOnTouchListener(new GraphOnTouchListener(this, manager, frame, scaleDetector));
         }
     }
 
@@ -110,12 +112,10 @@ public class GraphView extends View implements ActionModeTypeObserver {
 
         if (!manager.isInitialised()) {   //has to be done here instead of init or initializeGraph since height is lazily calculated
             lazyInitialize();
-//            try {
-//                ((ZoomLayout) getParent()).setTransformations((float) frame.getScale(), 0, 0);        // TODO: integrate this into frame update
-//            } catch (Exception ignored) {
-
-//            }
         }
+
+        vertexRadius = getDrawWidth(frame.getScale(), baseVertexRadius);
+        edgePaint.setStrokeWidth((float)getDrawWidth(frame.getScale(), baseEdgeWidth));
 
         for (Edge e : manager.getEdges())
             drawEdge(canvas, e, manager.getRelative(e.getSource().getPoint()), manager.getRelative(e.getTarget().getPoint()));
@@ -176,24 +176,12 @@ public class GraphView extends View implements ActionModeTypeObserver {
         canvas.drawPath(path, paint);
     }
 
-    public void setScale(double s) {
-        frame.setScale(s);
-        manager.updateRectangle(frame.getRectangle());
-        vertexRadius = getDrawWidth(s, baseVertexRadius);
-        edgePaint.setStrokeWidth((float)getDrawWidth(s, baseEdgeWidth));
-        postInvalidate();
-    }
-
-    public void translate(double dx, double dy) {
-        frame.translate(dx/getWidth(), dy/getWidth());
-        manager.updateRectangle(frame.getRectangle());
-        postInvalidate();
-    }
-
     private double getDrawWidth(double scale, double value) {
-        return value / scale;
-//        return value / ((scale-1)*4+1);
-//        return value;
+        double fun;
+        fun = scale;
+//        fun = 1;
+//        fun = ((scale-1)*4+1);
+        return value / fun * (getWidth()/1000.0);
     }
 
     @Override
