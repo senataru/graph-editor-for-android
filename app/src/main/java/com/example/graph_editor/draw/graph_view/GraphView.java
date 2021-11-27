@@ -17,11 +17,9 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import com.example.graph_editor.R;
 import com.example.graph_editor.draw.ActionModeType;
 import com.example.graph_editor.draw.ActionModeTypeObserver;
 import com.example.graph_editor.draw.Frame;
-import com.example.graph_editor.draw.ZoomLayout;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Edge;
 import com.example.graph_editor.model.GraphType;
@@ -42,6 +40,8 @@ public class GraphView extends View implements ActionModeTypeObserver {
     public Frame frame;
 
     public Vertex highlighted = null;
+
+    private boolean interactive = false;
 
     public GraphView(Context context) {
         super(context);
@@ -83,15 +83,25 @@ public class GraphView extends View implements ActionModeTypeObserver {
         edgePaint.setFlags(Paint.ANTI_ALIAS_FLAG);
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     // !! this alone is not enough, all due to height height being lazily calculated
     public void initializeGraph(DrawManager manager, boolean interactive) {
         this.manager = manager;
-        if (interactive)
-            this.setOnTouchListener(new GraphOnTouchListenerImpl(this, manager));
-        else
-            this.setOnTouchListener(new GraphOnTouchListenerNull());
+        this.interactive = interactive;
+
         postInvalidate();
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void lazyInitialize() {
+        if (this.frame == null)
+            this.frame = new Frame(new Rectangle(new Point(0, 0), new Point(1.0, 1.0 * getHeight() / getWidth())), 1);
+        manager.updateRectangle(frame.getRectangle());
+        Rectangle rec = manager.getOptimalRectangle(0.1, frame.getRectangle());
+        manager.updateRectangle(rec);
+        frame.updateRectangle(rec);
+        if (interactive) {
+            this.setOnTouchListener(new GraphOnTouchListener(this, manager, frame));
+        }
     }
 
     @Override
@@ -99,17 +109,12 @@ public class GraphView extends View implements ActionModeTypeObserver {
         super.onDraw(canvas);
 
         if (!manager.isInitialised()) {   //has to be done here instead of init or initializeGraph since height is lazily calculated
-            if (frame == null)
-                frame = new Frame(new Rectangle(new Point(0, 0), new Point(1.0, 1.0 * getHeight() / getWidth())), 1);
-            manager.updateRectangle(frame.getRectangle());
-            Rectangle rec = manager.getOptimalRectangle(0.1, frame.getRectangle());
-            manager.updateRectangle(rec);
-            frame.updateRectangle(rec);
-            try {
-                ((ZoomLayout) getParent()).setTransformations((float) frame.getScale(), 0, 0);        // TODO: integrate this into frame update
-            } catch (Exception ignored) {
+            lazyInitialize();
+//            try {
+//                ((ZoomLayout) getParent()).setTransformations((float) frame.getScale(), 0, 0);        // TODO: integrate this into frame update
+//            } catch (Exception ignored) {
 
-            }
+//            }
         }
 
         for (Edge e : manager.getEdges())

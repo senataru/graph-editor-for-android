@@ -23,8 +23,8 @@ public class Rectangle {
         leftTop = original.getLeftTop();
         rightBot = original.getRightBot();
 
-        leftTop = new Point(leftTop.getX() + dx, leftTop.getY() + dy);
-        rightBot = new Point(rightBot.getX() + dx, rightBot.getY() + dy);
+        leftTop = new Point(leftTop.getX() - dx, leftTop.getY() - dy);
+        rightBot = new Point(rightBot.getX() - dx, rightBot.getY() - dy);
     }
 
     public Point getLeftTop() { return leftTop; }

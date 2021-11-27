@@ -21,14 +21,14 @@ import java.util.Timer;
 
 public class SavePopup {
     DrawActivity drawActivityActivity;
-    ZoomLayout layout;
+    Context context;
     AlertDialog dialog;
-    SavePopup(DrawActivity drawActivity, ZoomLayout layout) {
+    SavePopup(DrawActivity drawActivity, Context context) {  // TODO: rewrite this implementation
         this.drawActivityActivity = drawActivity;
-        this.layout = layout;
+        this.context = context;
     }
     public void show(Graph graph) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(layout.getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = (LayoutInflater)drawActivityActivity.getSystemService( Context.LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.save_popup, null);
         popupView.findViewById(R.id.saveBtn).setOnClickListener(v -> {

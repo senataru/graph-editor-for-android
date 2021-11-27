@@ -22,8 +22,6 @@ import java.util.List;
 public class DrawActivity extends AppCompatActivity {
     private GraphView graphView;
 
-    ZoomLayout zoomLayout;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +33,6 @@ public class DrawActivity extends AppCompatActivity {
 
         graphView = findViewById(R.id.viewGraph);
         ActionModeType.addObserver(graphView);
-        zoomLayout = findViewById(R.id.layZoom);
         changeMode(ActionModeType.NONE);
 
         Graph graph = null;
@@ -65,7 +62,7 @@ public class DrawActivity extends AppCompatActivity {
         collection.setCurrent(findViewById(R.id.btnMoveCanvas));
 
         final Graph finalGraph = graph;
-        findViewById(R.id.buttonSave).setOnClickListener( v -> new SavePopup(this, zoomLayout).show(finalGraph));
+        findViewById(R.id.buttonSave).setOnClickListener( v -> new SavePopup(this, this).show(finalGraph));
         findViewById(R.id.buttonClear).setOnClickListener(v -> {
             finalGraph.getVertices().clear(); graphView.postInvalidate();} );
     }

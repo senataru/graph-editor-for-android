@@ -37,13 +37,14 @@ public class Frame {
     }
 
     public void translate(double dxNew, double dyNew) {
-        double ddx = (this.dx - dxNew) * scale;
-        double ddy = (this.dy - dyNew) * scale;
+//        double ddx = (this.dx - dxNew) * scale;
+//        double ddy = (this.dy - dyNew) * scale;
 
-        this.rec = new Rectangle(this.rec, ddx, ddy);
+//        this.rec = new Rectangle(this.rec, ddx, ddy);
+        this.rec = new Rectangle(this.rec, dxNew*scale, dyNew*scale);
 
-        this.dx = dxNew;
-        this.dy = dyNew;
+//        this.dx = dxNew;
+//        this.dy = dyNew;
     }
 
     public double getScale() { return this.scale; }
