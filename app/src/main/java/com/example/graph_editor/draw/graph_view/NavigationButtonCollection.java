@@ -13,11 +13,12 @@ import com.example.graph_editor.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImageButtonCollection {
+public class NavigationButtonCollection {
     ImageButton current = null;
     Context context;
     int ACTIVE, NOT_ACTIVE;
-    public ImageButtonCollection(Context context) {
+
+    public NavigationButtonCollection(Context context) {
         this.context = context;
         ACTIVE = ContextCompat.getColor(context, R.color.grey);
         NOT_ACTIVE = ContextCompat.getColor(context, R.color.lt_grey);

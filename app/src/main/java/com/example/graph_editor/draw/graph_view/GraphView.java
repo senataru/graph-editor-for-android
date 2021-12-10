@@ -66,11 +66,7 @@ public class GraphView extends View implements ActionModeTypeObserver {
 
     private void init(@Nullable AttributeSet set) {
         vertexPaint = new Paint();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vertexPaint.setColor(Color.rgb( 0.4f, 0.4f, 1f));
-        } else {
-            vertexPaint.setColor(Color.BLUE);
-        }
+        vertexPaint.setColor(Color.BLUE);
         vertexPaint.setStyle(Paint.Style.FILL);
         vertexPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
         highlightPaint = new Paint();
@@ -148,13 +144,14 @@ public class GraphView extends View implements ActionModeTypeObserver {
         }
     }
 
+    //TODO rewrite this function
     private void drawArrow(Paint paint, Canvas canvas, float from_x, float from_y, float to_x, float to_y)
     {
         float angle,anglerad, radius, lineangle;
 
         //values to change for other appearance *CHANGE THESE FOR OTHER SIZE ARROWHEADS*
-        radius=25;
-        angle=30;
+        radius=(float)getDrawWidth(frame.getScale(), 50);
+        angle=45;
 
         //some angle calculations
         anglerad= (float) (PI*angle/180.0f);

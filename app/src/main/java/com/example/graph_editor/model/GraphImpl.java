@@ -25,6 +25,10 @@ public class GraphImpl implements Graph {
 
     @Override
     public void addEdge(Vertex source, Vertex target) {
+        if (source == target) return;
+        for (Edge e : source.getEdges())
+            if (e.getTarget() == target) return;
+
         source.addEdge(target);
         if (type == GraphType.UNDIRECTED) {
             target.addEdge(source);

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.view.ScaleGestureDetector;
 
+import com.example.graph_editor.draw.ActionModeType;
 import com.example.graph_editor.draw.Frame;
 
 public class GraphOnScaleListener implements ScaleGestureDetector.OnScaleGestureListener {
@@ -13,10 +14,8 @@ public class GraphOnScaleListener implements ScaleGestureDetector.OnScaleGesture
         this.frame = frame;
     }
 
-    // no need to remember modes
     @Override
     public boolean onScale(ScaleGestureDetector detector) {
-//        System.out.println("Budzi sie detektor");
         float scaleFactor = detector.getScaleFactor();
         frame.rescale(1/scaleFactor);
         return true;
@@ -24,11 +23,15 @@ public class GraphOnScaleListener implements ScaleGestureDetector.OnScaleGesture
 
     @Override
     public boolean onScaleBegin(ScaleGestureDetector detector) {
-        return true;
+        if (ActionModeType.getCurrentModeType() == ActionModeType.MOVE_CANVAS) {
+            ActionModeType.setCurrentModeType(ActionModeType.ZOOM_CANVAS);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public void onScaleEnd(ScaleGestureDetector detector) {
-
+        ActionModeType.setCurrentModeType(ActionModeType.MOVE_CANVAS);
     }
 }

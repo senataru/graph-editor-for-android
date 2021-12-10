@@ -8,16 +8,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.graph_editor.R;
 import com.example.graph_editor.draw.graph_view.GraphView;
-import com.example.graph_editor.draw.graph_view.ImageButtonCollection;
+import com.example.graph_editor.draw.graph_view.NavigationButtonCollection;
 import com.example.graph_editor.graphStorage.GraphScanner;
 import com.example.graph_editor.graphStorage.InvalidGraphStringException;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.GraphFactory;
 import com.example.graph_editor.model.GraphType;
-import com.example.graph_editor.model.Vertex;
-import com.example.graph_editor.model.mathematics.Point;
-
-import java.util.List;
 
 public class DrawActivity extends AppCompatActivity {
     private GraphView graphView;
@@ -47,11 +43,14 @@ public class DrawActivity extends AppCompatActivity {
         } else {
             graph = new GraphFactory(choice).produce();
         }
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("currentGraph", null);
+        editor.apply();
 
         assert graph != null;
         graphView.initializeGraph(graph.getDrawManager(), true);
 
-        ImageButtonCollection collection = new ImageButtonCollection(this);
+        NavigationButtonCollection collection = new NavigationButtonCollection(this);
         collection.add(findViewById(R.id.btnVertex), () -> changeMode(ActionModeType.NEW_VERTEX));
         collection.add(findViewById(R.id.btnEdge), () -> changeMode(ActionModeType.NEW_EDGE));
         collection.add(findViewById(R.id.btnMoveObject), () -> changeMode(ActionModeType.MOVE_OBJECT));
@@ -76,10 +75,5 @@ public class DrawActivity extends AppCompatActivity {
         super.onDestroy();
         ActionModeType.removeObserver(graphView);
         ActionModeType.resetCurrentModeType();
-
-        SharedPreferences sharedPref = this.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString("currentGraph", null);
-        editor.apply();
     }
 }

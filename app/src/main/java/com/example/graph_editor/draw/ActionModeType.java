@@ -6,7 +6,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 public enum ActionModeType {
-    NONE, NEW_VERTEX, NEW_EDGE, MOVE_OBJECT, MOVE_CANVAS, REMOVE_OBJECT;
+    NONE, NEW_VERTEX, NEW_EDGE, MOVE_OBJECT, MOVE_CANVAS, ZOOM_CANVAS, REMOVE_OBJECT;
 
     private static final List<ActionModeTypeObserver> observers = new ArrayList<>();
     private static volatile ActionModeType currentType = ActionModeType.NONE;

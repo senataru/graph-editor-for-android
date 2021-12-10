@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-
 // !! needs initialising in form of setting frame at least once
+//TODO replace this class with a collection of static methods
 public class DrawManager {
     private Point leftTop;
     private double width;

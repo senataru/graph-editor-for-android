@@ -48,10 +48,13 @@ public class VertexImpl implements Vertex {
         edges.remove(edge);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void removeEdge(Vertex target) {
-        edges.removeIf(edge -> edge.getTarget() == target);
+        List<Edge> toRemove = new ArrayList<>();
+        for (Edge e : edges)
+            if (e.getTarget() == target)
+                toRemove.add(e);
+        edges.removeAll(toRemove);
     }
 
     @Override

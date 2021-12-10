@@ -14,6 +14,7 @@ import com.example.graph_editor.model.mathematics.Point;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 public class GraphOnTouchListener implements View.OnTouchListener {
 
@@ -41,13 +42,13 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         v.performClick();
+
         relativePoint = graphView.getRelative(new Point(event.getX(), event.getY()));
         absolutePoint = manager.getAbsolute(relativePoint);
         highlighted = graphView.highlighted;
         ActionModeType currentType = ActionModeType.getCurrentModeType();
 
         boolean result;
-
         switch (currentType) {
             case NEW_VERTEX:
                 result = actionNewVertex(v, event);
@@ -64,6 +65,8 @@ public class GraphOnTouchListener implements View.OnTouchListener {
             case MOVE_CANVAS:
                 result = actionMoveCanvas(v, event);
                 break;
+            case ZOOM_CANVAS:
+            case NONE:
             default:
                 result = false;
                 break;
@@ -137,6 +140,9 @@ public class GraphOnTouchListener implements View.OnTouchListener {
                         newVertex.setPoint(absolutePoint);
                     break;
                 case MotionEvent.ACTION_UP:
+                    if (nearestNotNew == edgeFirst && nearestNotNew != null) {
+                        graph.removeVertex(newVertex);
+                    }
                     if (nearestNotNew != edgeFirst && nearestNotNew != null) {
                         graph.removeVertex(newVertex);
                         graph.addEdge(edgeFirst, nearestNotNew);
