@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -98,6 +99,12 @@ public class DrawActivity extends AppCompatActivity {
             case R.id.options_btn_clear:
                 graph.getVertices().clear();
                 graphView.postInvalidate();
+                return true;
+            case R.id.options_btn_normalize:
+            case R.id.options_btn_redo:
+            case R.id.options_btn_undo:
+            case R.id.options_btn_save_as:
+                Toast.makeText(this, "Not implemented", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
