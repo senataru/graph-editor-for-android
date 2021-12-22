@@ -12,5 +12,4 @@ public interface Graph {
     GraphType getType();
     List<Vertex> getVertices();
     List<Edge> getEdges();
-    DrawManager getDrawManager();
 }

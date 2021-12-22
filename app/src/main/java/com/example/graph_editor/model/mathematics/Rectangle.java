@@ -27,8 +27,13 @@ public class Rectangle {
         rightBot = new Point(rightBot.getX() - dx, rightBot.getY() - dy);
     }
 
+
+
     public Point getLeftTop() { return leftTop; }
     public Point getRightBot() { return rightBot; }
+
+    public double getLeft() { return  leftTop.getX(); }
+    public double getTop() { return  leftTop.getY(); }
 
     public void setLeftTop(Point leftTop) { this.leftTop = leftTop; }
     public void setRightBot(Point rightBot) { this.rightBot = rightBot; }

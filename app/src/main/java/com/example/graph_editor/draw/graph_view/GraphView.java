@@ -23,6 +23,7 @@ import com.example.graph_editor.draw.ActionModeTypeObserver;
 import com.example.graph_editor.draw.Frame;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Edge;
+import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.GraphType;
 import com.example.graph_editor.model.Vertex;
 import com.example.graph_editor.model.mathematics.Point;
@@ -37,12 +38,13 @@ public class GraphView extends View implements ActionModeTypeObserver {
     private Paint edgePaint;
     private Paint highlightPaint;
 
-    private DrawManager manager;
+    private Graph graph;
     public Frame frame;
 
     public Vertex highlighted = null;
 
     private boolean interactive = false;
+    private boolean isInitialised = false;
 
     public GraphView(Context context) {
         super(context);
@@ -81,8 +83,8 @@ public class GraphView extends View implements ActionModeTypeObserver {
     }
 
     // !! this alone is not enough, all due to height height being lazily calculated
-    public void initializeGraph(DrawManager manager, boolean interactive) {
-        this.manager = manager;
+    public void initializeGraph(Graph graph, boolean interactive) {
+        this.graph = graph;
         this.interactive = interactive;
 
         postInvalidate();
@@ -92,32 +94,32 @@ public class GraphView extends View implements ActionModeTypeObserver {
     private void lazyInitialize() {
         if (this.frame == null)
             this.frame = new Frame(new Rectangle(new Point(0, 0), new Point(1.0, 1.0 * getHeight() / getWidth())), 1);
-        manager.updateRectangle(frame.getRectangle());
-        Rectangle rec = manager.getOptimalRectangle(0.1, frame.getRectangle());
-        manager.updateRectangle(rec);
+        Rectangle rec = DrawManager.getOptimalRectangle(graph,0.1, frame.getRectangle());
         frame.updateRectangle(rec);
         if (interactive) {
             ScaleGestureDetector scaleDetector = new ScaleGestureDetector(getContext(), new GraphOnScaleListener(frame));
-            this.setOnTouchListener(new GraphOnTouchListener(this, manager, frame, scaleDetector));
+            this.setOnTouchListener(new GraphOnTouchListener(this, graph, frame, scaleDetector));
         }
+        isInitialised = true;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if (!manager.isInitialised()) {   //has to be done here instead of init or initializeGraph since height is lazily calculated
+        if (!isInitialised) {   //has to be done here instead of init or initializeGraph since height is lazily calculated
             lazyInitialize();
         }
 
         vertexRadius = getDrawWidth(frame.getScale(), baseVertexRadius);
         edgePaint.setStrokeWidth((float)getDrawWidth(frame.getScale(), baseEdgeWidth));
 
-        for (Edge e : manager.getEdges())
-            drawEdge(canvas, e, manager.getRelative(e.getSource().getPoint()), manager.getRelative(e.getTarget().getPoint()));
+        for (Edge e : graph.getEdges())
+            drawEdge(canvas, e, DrawManager.getRelative(frame.getRectangle(), e.getSource().getPoint()),
+                    DrawManager.getRelative(frame.getRectangle(), e.getTarget().getPoint()));
 
-        for (Vertex v : manager.getVertices())
-            drawVertex(canvas, v, manager.getRelative(v.getPoint()), v == highlighted);
+        for (Vertex v : graph.getVertices())
+            drawVertex(canvas, v, DrawManager.getRelative(frame.getRectangle(), v.getPoint()), v == highlighted);
     }
 
     private void drawVertex(Canvas canvas, Vertex vertex, Point point, boolean highlighted) {
@@ -137,7 +139,7 @@ public class GraphView extends View implements ActionModeTypeObserver {
         float y1 = (float) start.getY() * getHeight();
         float x2 = (float) end.getX() * getWidth();
         float y2 = (float) end.getY() * getHeight();
-        if (manager.getGraph().getType() == GraphType.UNDIRECTED) {
+        if (graph.getType() == GraphType.UNDIRECTED) {
             canvas.drawLine(x1, y1, x2, y2, edgePaint);
         } else {
             drawArrow(edgePaint, canvas, x1, y1, x2, y2);

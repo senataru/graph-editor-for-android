@@ -78,9 +78,4 @@ public class GraphImpl implements Graph {
         }
         return result;
     }
-
-    @Override
-    public DrawManager getDrawManager() {
-        return new DrawManager(this);
-    }
 }

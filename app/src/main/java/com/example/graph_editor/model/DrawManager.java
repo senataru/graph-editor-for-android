@@ -11,59 +11,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-// !! needs initialising in form of setting frame at least once
-//TODO replace this class with a collection of static methods
 public class DrawManager {
-    private Point leftTop;
-    private double width;
-    private double height;
-    private final Graph graph;
-    private boolean initialised = false;
 
-    public DrawManager(Graph graph) {
-        this.graph = graph;
-    }
-
-    public boolean isInitialised() { return initialised; }
-
-    public Graph getGraph() {
-        return graph;
-    }
-
-    public void updateRectangle(Rectangle rectangle) {
-        Point leftTop = rectangle.getLeftTop();
-        Point rightBot = rectangle.getRightBot();
-        this.leftTop = leftTop;
-        this.width = rightBot.getX() - leftTop.getX();
-        this.height = rightBot.getY() - leftTop.getY();
-        if(new Point(width, height).equals(Point.ZERO)) {
-            throw new RuntimeException("rectangle size equals 0 or is negative");
-        }
-        initialised = true;
-    }
-
-    public Point getRelative(Point point) {
-        double x = (point.getX() - leftTop.getX())/width;
-        double y = (point.getY() - leftTop.getY())/height;
+    public static Point getRelative(Rectangle rectangle, Point point) {
+        double x = (point.getX() - rectangle.getLeft())/rectangle.getWidth();
+        double y = (point.getY() - rectangle.getTop())/rectangle.getHeight();
         return new Point(x, y);
     }
 
-    public Point getAbsolute(Point point) {
-        double x = leftTop.getX() + point.getX() * width;
-        double y = leftTop.getY() + point.getY() * height;
+    public static Point getAbsolute(Rectangle rectangle, Point point) {
+        double x = rectangle.getLeft() + point.getX() * rectangle.getWidth();
+        double y = rectangle.getTop() + point.getY() * rectangle.getHeight();
         return new Point(x, y);
     }
-    public double getRelativeDistanceFrom(Point relativePoint, Vertex vertex) {
-        return Geometry.distance(relativePoint, getRelative(vertex.getPoint()));
+    public static double getRelativeDistanceFrom(Rectangle rectangle, Point relativePoint, Vertex vertex) {
+        return Geometry.distance(relativePoint, getRelative(rectangle, vertex.getPoint()));
     }
-    public double getRelativeDistanceFrom(Point relativePoint, Edge edge) {
+    public static double getRelativeDistanceFrom(Rectangle rectangle, Point relativePoint, Edge edge) {
         return Geometry.distanceFromSegment(relativePoint,
-                getRelative(edge.getSource().getPoint()), getRelative(edge.getTarget().getPoint()));
+                getRelative(rectangle, edge.getSource().getPoint()),
+                getRelative(rectangle, edge.getTarget().getPoint()));
     }
 
     //returns null if there are no vertices
-    public Vertex getNearestVertex(Point relativePoint, double delta, Set<Vertex> excluded) {
-        Point point = getAbsolute(relativePoint);
+    public static Vertex getNearestVertex(Graph graph, Rectangle rectangle, Point relativePoint, double delta, Set<Vertex> excluded) {
+        Point point = getAbsolute(rectangle, relativePoint);
         double nearest = Double.MAX_VALUE;
         Vertex result = null;
         for(Vertex vertex : graph.getVertices()) {
@@ -76,14 +48,14 @@ public class DrawManager {
             }
         }
 
-        if (result != null && getRelativeDistanceFrom(relativePoint, result) > delta)
+        if (result != null && getRelativeDistanceFrom(rectangle, relativePoint, result) > delta)
             return null;
         return result;
     }
 
     //returns null if there are no edges
-    public Edge getNearestEdge(Point relativePoint, double delta) {
-        Point point = getAbsolute(relativePoint);
+    public static Edge getNearestEdge(Graph graph, Rectangle rectangle, Point relativePoint, double delta) {
+        Point point = getAbsolute(rectangle, relativePoint);
         double nearest = Double.MAX_VALUE;
         Edge result = null;
         for(Edge edge : graph.getEdges()) {
@@ -94,13 +66,13 @@ public class DrawManager {
                 nearest = distance;
             }
         }
-        if (result != null && getRelativeDistanceFrom(relativePoint, result) > delta)
+        if (result != null && getRelativeDistanceFrom(rectangle, relativePoint, result) > delta)
             return null;
 
         return result;
     }
 
-    public Rectangle getOptimalRectangle(double paddingPercent, Rectangle rectangle) {
+    public static Rectangle getOptimalRectangle(Graph graph, double paddingPercent, Rectangle rectangle) {
         List<Vertex> vertices = graph.getVertices();
         if(vertices.isEmpty()){
             return new Rectangle(new Point(0,0), new Point(1, 1*rectangle.getHeight()/rectangle.getWidth()));
@@ -122,11 +94,11 @@ public class DrawManager {
 
         double extremeWidth = extremeRightBot.getX() - extremeLeftTop.getX();
         double extremeHeight = extremeRightBot.getY() - extremeLeftTop.getY();
-        double scale = Math.max(extremeWidth/width, extremeHeight/height);
-        Point resultLeftTop = new Point(extremeLeftTop.getX()-paddingPercent*width*scale,
-                extremeLeftTop.getY()-paddingPercent*height*scale);
-        Point resultRightBot = new Point(resultLeftTop.getX()+width*scale*(1+2*paddingPercent),
-                resultLeftTop.getY()+height*scale*(1+2*paddingPercent));
+        double scale = Math.max(extremeWidth/rectangle.getWidth(), extremeHeight/rectangle.getHeight());
+        Point resultLeftTop = new Point(extremeLeftTop.getX()-paddingPercent*rectangle.getWidth()*scale,
+                extremeLeftTop.getY()-paddingPercent*rectangle.getHeight()*scale);
+        Point resultRightBot = new Point(resultLeftTop.getX()+rectangle.getWidth()*scale*(1+2*paddingPercent),
+                resultLeftTop.getY()+rectangle.getHeight()*scale*(1+2*paddingPercent));
 
         if(vertices.size() <= 1) {
             resultLeftTop = new Point(resultLeftTop.getX()-1, resultLeftTop.getY()-1);
@@ -135,8 +107,4 @@ public class DrawManager {
 
         return new Rectangle(resultLeftTop, resultRightBot);
     }
-
-    public List<Vertex> getVertices() { return graph.getVertices(); }
-
-    public List<Edge> getEdges() { return graph.getEdges(); }
 }

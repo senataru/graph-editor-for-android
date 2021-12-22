@@ -48,7 +48,7 @@ public class DrawActivity extends AppCompatActivity {
         editor.apply();
 
         assert graph != null;
-        graphView.initializeGraph(graph.getDrawManager(), true);
+        graphView.initializeGraph(graph, true);
 
         NavigationButtonCollection collection = new NavigationButtonCollection(this);
         collection.add(findViewById(R.id.btnVertex), () -> changeMode(ActionModeType.NEW_VERTEX));

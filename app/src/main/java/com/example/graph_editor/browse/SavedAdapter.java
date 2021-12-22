@@ -48,7 +48,7 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
         String graphString = data.get(position).graph;
         try {
             Graph graph = GraphScanner.fromExact(graphString);
-            holder.dataGraph.initializeGraph(graph.getDrawManager(), false);
+            holder.dataGraph.initializeGraph(graph, false);
         } catch (Exception e) {
             e.printStackTrace();
         }

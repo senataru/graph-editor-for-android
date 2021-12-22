@@ -18,7 +18,6 @@ import java.util.List;
 
 public class GraphOnTouchListener implements View.OnTouchListener {
 
-    private final DrawManager manager;
     private final GraphView graphView;
     private final Frame frame;
     private final ScaleGestureDetector scaleDetector;
@@ -30,13 +29,11 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     private Point absolutePoint;
     private Vertex highlighted;
 
-    public GraphOnTouchListener(GraphView graphView, DrawManager manager, Frame frame, ScaleGestureDetector scaleDetector) {
+    public GraphOnTouchListener(GraphView graphView, Graph graph, Frame frame, ScaleGestureDetector scaleDetector) {
         this.graphView = graphView;
-        this.manager = manager;
+        this.graph = graph;
         this.frame = frame;
         this.scaleDetector = scaleDetector;
-
-        this.graph = manager.getGraph();
     }
 
     @Override
@@ -44,7 +41,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
         v.performClick();
 
         relativePoint = graphView.getRelative(new Point(event.getX(), event.getY()));
-        absolutePoint = manager.getAbsolute(relativePoint);
+        absolutePoint = DrawManager.getAbsolute(frame.getRectangle(), relativePoint);
         highlighted = graphView.highlighted;
         ActionModeType currentType = ActionModeType.getCurrentModeType();
 
@@ -72,8 +69,6 @@ public class GraphOnTouchListener implements View.OnTouchListener {
                 break;
         }
         scaleDetector.onTouchEvent(event);
-
-        manager.updateRectangle(graphView.frame.getRectangle());       //TODO: manager update method without frame
         graphView.highlighted = highlighted;
         graphView.postInvalidate();
         return result;
@@ -101,8 +96,9 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     private Vertex newVertex = null;
     private boolean firstAction = true;     // choose first vertex, the choose another
     private boolean actionNewEdge(View v, MotionEvent e) {
-        Vertex nearest = manager.getNearestVertex(relativePoint, 0.1, Collections.emptySet());
-        Vertex nearestNotNew = manager.getNearestVertex(relativePoint, 0.1, new HashSet<>(Collections.singleton(newVertex)));
+        Vertex nearest = DrawManager.getNearestVertex(graph, frame.getRectangle(), relativePoint, 0.1, Collections.emptySet());
+        Vertex nearestNotNew = DrawManager.getNearestVertex(graph,
+                frame.getRectangle(), relativePoint, 0.1, new HashSet<>(Collections.singleton(newVertex)));
 
         if (firstAction) {
             switch (e.getAction()) {
@@ -128,7 +124,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
                     newVertex = graph.addVertex();
                     newVertex.setPoint(absolutePoint);
                     highlighted = newVertex;
-                    manager.getGraph().addEdge(edgeFirst, newVertex);
+                    graph.addEdge(edgeFirst, newVertex);
                     if (nearest != null) {
                         newVertex.setPoint(nearest.getPoint());
                     }
@@ -158,22 +154,22 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     }
 
     private boolean actionMoveObject(View v, MotionEvent e) {
-        Vertex nearest = manager.getNearestVertex(relativePoint, 0.1, Collections.emptySet());
+        Vertex nearest = DrawManager.getNearestVertex(graph, frame.getRectangle(), relativePoint, 0.1, Collections.emptySet());
 
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 if (highlighted == null && nearest != null)       // select a vertex
                     highlighted = nearest;
                 else if (highlighted == nearest && highlighted != null) // move current vertex slightly
-                    highlighted.setPoint(manager.getAbsolute(relativePoint));
+                    highlighted.setPoint(DrawManager.getAbsolute(frame.getRectangle(), relativePoint));
                 else if (nearest != null)     // select different vertex
                     highlighted = nearest;
                 else if (highlighted != null)       // move selected vertex
-                    highlighted.setPoint(manager.getAbsolute(relativePoint));
+                    highlighted.setPoint(DrawManager.getAbsolute(frame.getRectangle(), relativePoint));
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (highlighted != null) {
-                    highlighted.setPoint(manager.getAbsolute(relativePoint));
+                    highlighted.setPoint(DrawManager.getAbsolute(frame.getRectangle(), relativePoint));
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -184,8 +180,8 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     }
 
     private boolean actionRemoveObject(View v, MotionEvent e) {
-        Edge nearestEdge = manager.getNearestEdge(relativePoint, 0.03);
-        Vertex nearestVertex = manager.getNearestVertex(relativePoint, 0.03, Collections.emptySet());
+        Edge nearestEdge = DrawManager.getNearestEdge(graph, frame.getRectangle(), relativePoint, 0.03);
+        Vertex nearestVertex = DrawManager.getNearestVertex(graph, frame.getRectangle(), relativePoint, 0.03, Collections.emptySet());
 
         if (nearestVertex != null)
             graph.removeVertex(nearestVertex);
