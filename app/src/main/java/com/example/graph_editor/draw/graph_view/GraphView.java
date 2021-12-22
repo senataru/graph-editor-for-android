@@ -91,7 +91,7 @@ public class GraphView extends View implements ActionModeTypeObserver {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private void lazyInitialize() {
+    public void lazyInitialize() {
         if (this.frame == null)
             this.frame = new Frame(new Rectangle(new Point(0, 0), new Point(1.0, 1.0 * getHeight() / getWidth())), 1);
         Rectangle rec = DrawManager.getOptimalRectangle(graph,0.1, frame.getRectangle());

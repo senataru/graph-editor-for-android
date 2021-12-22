@@ -19,6 +19,7 @@ import com.example.graph_editor.draw.graph_view.NavigationButtonCollection;
 import com.example.graph_editor.graphStorage.GraphScanner;
 import com.example.graph_editor.graphStorage.GraphWriter;
 import com.example.graph_editor.graphStorage.InvalidGraphStringException;
+import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.GraphFactory;
 import com.example.graph_editor.model.GraphType;
@@ -105,7 +106,7 @@ public class DrawActivity extends AppCompatActivity {
                 } else {
                     SavesDatabase database = SavesDatabase.getDbInstance(getApplicationContext());
                     database.saveDao().updateGraph(currentGraphId, GraphWriter.toExact(graph), System.currentTimeMillis());
-                    Toast.makeText(getApplicationContext(), "Graph saved", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Graph saved", Toast.LENGTH_LONG).show();
                 }
                 return true;
             case R.id.options_btn_clear:
@@ -113,6 +114,10 @@ public class DrawActivity extends AppCompatActivity {
                 graphView.postInvalidate();
                 return true;
             case R.id.options_btn_normalize:
+                graphView.lazyInitialize();
+                graphView.update(null);
+                //Im not sure if works well
+                return true;
             case R.id.options_btn_redo:
             case R.id.options_btn_undo:
                 Toast.makeText(this, "Not implemented", Toast.LENGTH_SHORT).show();

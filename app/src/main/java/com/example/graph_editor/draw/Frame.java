@@ -11,8 +11,6 @@ import java.util.function.Function;
 public class Frame {
     private Rectangle rec;
     private double scale;
-    private double dx;
-    private double dy;
 
     public static final float MAX_SCALE = 16f;
     public static final float MIN_SCALE = 1/16f;
