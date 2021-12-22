@@ -115,6 +115,8 @@ public class DrawActivity extends AppCompatActivity {
             case R.id.options_btn_normalize:
             case R.id.options_btn_redo:
             case R.id.options_btn_undo:
+                Toast.makeText(this, "Not implemented", Toast.LENGTH_SHORT).show();
+                return true;
             case R.id.options_btn_save_as:
                 new SavePopup(this, this).show(graph);
                 return true;
