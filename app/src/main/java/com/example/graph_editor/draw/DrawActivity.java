@@ -1,9 +1,14 @@
 package com.example.graph_editor.draw;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.graph_editor.R;
@@ -17,6 +22,8 @@ import com.example.graph_editor.model.GraphType;
 
 public class DrawActivity extends AppCompatActivity {
     private GraphView graphView;
+    //TODO: remove this temporary solution
+    private Graph graph;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,10 +67,7 @@ public class DrawActivity extends AppCompatActivity {
         changeMode(ActionModeType.MOVE_CANVAS);
         collection.setCurrent(findViewById(R.id.btnMoveCanvas));
 
-        final Graph finalGraph = graph;
-        findViewById(R.id.buttonSave).setOnClickListener( v -> new SavePopup(this, this).show(finalGraph));
-        findViewById(R.id.buttonClear).setOnClickListener(v -> {
-            finalGraph.getVertices().clear(); graphView.postInvalidate();} );
+        this.graph = graph;
     }
 
     private void changeMode(ActionModeType type) {
@@ -75,5 +79,28 @@ public class DrawActivity extends AppCompatActivity {
         super.onDestroy();
         ActionModeType.removeObserver(graphView);
         ActionModeType.resetCurrentModeType();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.graph_options_menu, menu);
+        return true;
+    }
+
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.options_btn_save:
+                new SavePopup(this, this).show(graph);
+                return true;
+            case R.id.options_btn_clear:
+                graph.getVertices().clear();
+                graphView.postInvalidate();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

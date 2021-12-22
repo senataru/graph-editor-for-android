@@ -224,7 +224,6 @@ public class GraphOnTouchListener implements View.OnTouchListener {
                 prevY = e.getY();
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
-                System.out.println("Action down");
                 mode = Mode.ZOOM;
                 break;
             case MotionEvent.ACTION_POINTER_UP:

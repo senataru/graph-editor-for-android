@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 
 import com.example.graph_editor.R;
@@ -25,7 +27,6 @@ public class MenuActivity extends AppCompatActivity {
         setContentView(R.layout.activity_menu);
 
         sharedPref = this.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
-
 
         Button btnBrowse = findViewById(R.id.btnBrowse);
         btnBrowse.setOnClickListener(v -> {

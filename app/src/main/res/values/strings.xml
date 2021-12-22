@@ -18,4 +18,5 @@
     <string name="save_your_graph">Save your graph</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
+    <string name="clear_graph">Clear graph</string>
 </resources>
