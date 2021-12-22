@@ -13,9 +13,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.graph_editor.R;
+import com.example.graph_editor.database.SavesDatabase;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.graph_view.NavigationButtonCollection;
 import com.example.graph_editor.graphStorage.GraphScanner;
+import com.example.graph_editor.graphStorage.GraphWriter;
 import com.example.graph_editor.graphStorage.InvalidGraphStringException;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.GraphFactory;
@@ -25,6 +27,7 @@ public class DrawActivity extends AppCompatActivity {
     private GraphView graphView;
     //TODO: remove this temporary solution
     private Graph graph;
+    private int currentGraphId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +35,7 @@ public class DrawActivity extends AppCompatActivity {
         setContentView(R.layout.activity_draw);
 
         SharedPreferences sharedPref = this.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
+        currentGraphId = sharedPref.getInt("currentGraphId", -1);
         int choiceOrd = sharedPref.getInt("GraphType", 0);
         GraphType choice = GraphType.values()[choiceOrd];
 
@@ -51,8 +55,10 @@ public class DrawActivity extends AppCompatActivity {
         } else {
             graph = new GraphFactory(choice).produce();
         }
+
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("currentGraph", null);
+        editor.remove("currentGraphId");
         editor.apply();
 
         assert graph != null;
@@ -94,7 +100,13 @@ public class DrawActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.options_btn_save:
-                new SavePopup(this, this).show(graph);
+                if(currentGraphId == -1) {
+                    new SavePopup(this, this).show(graph);
+                } else {
+                    SavesDatabase database = SavesDatabase.getDbInstance(getApplicationContext());
+                    database.saveDao().updateGraph(currentGraphId, GraphWriter.toExact(graph), System.currentTimeMillis());
+                    Toast.makeText(getApplicationContext(), "Graph saved", Toast.LENGTH_LONG).show();
+                }
                 return true;
             case R.id.options_btn_clear:
                 graph.getVertices().clear();
@@ -104,7 +116,7 @@ public class DrawActivity extends AppCompatActivity {
             case R.id.options_btn_redo:
             case R.id.options_btn_undo:
             case R.id.options_btn_save_as:
-                Toast.makeText(this, "Not implemented", Toast.LENGTH_SHORT).show();
+                new SavePopup(this, this).show(graph);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

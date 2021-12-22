@@ -52,7 +52,7 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        holder.editButton.setOnClickListener(v -> browseActivity.changeActivity(graphString));
+        holder.editButton.setOnClickListener(v -> browseActivity.changeActivity(graphString, data.get(position).uid));
         holder.deleteButton.setOnClickListener(v -> {
             Save s = data.get(position);
             data.remove(position);
