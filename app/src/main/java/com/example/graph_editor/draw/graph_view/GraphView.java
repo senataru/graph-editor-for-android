@@ -92,12 +92,12 @@ public class GraphView extends View implements ActionModeTypeObserver {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    public void lazyInitialize() {
+    private void lazyInitialize() {
         // right now current state has null frame
         State currentState = stateStack.getCurrentState();
         Rectangle rec = new Rectangle(new Point(0, 0), new Point(1.0, 1.0 * getHeight() / getWidth()));
         Rectangle optimalRec = DrawManager.getOptimalRectangle(currentState.getGraph(),0.1, rec);
-        Frame frame = new Frame(optimalRec, 1);
+        Frame frame = new Frame(optimalRec, rec.getWidth()*optimalRec.getWidth());
         currentState.setFrame(frame);
         if (interactive) {
             ScaleGestureDetector scaleDetector = new ScaleGestureDetector(getContext(), new GraphOnScaleListener(stateStack));
