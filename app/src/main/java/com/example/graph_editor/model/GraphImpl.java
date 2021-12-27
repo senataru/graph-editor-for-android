@@ -1,5 +1,8 @@
 package com.example.graph_editor.model;
 
+import com.example.graph_editor.graphStorage.GraphScanner;
+import com.example.graph_editor.graphStorage.GraphWriter;
+import com.example.graph_editor.graphStorage.InvalidGraphStringException;
 import com.example.graph_editor.model.mathematics.Point;
 
 import java.util.ArrayList;
@@ -75,6 +78,17 @@ public class GraphImpl implements Graph {
                 }
             }
 
+        }
+        return result;
+    }
+
+    @Override
+    public Graph deepCopy() {
+        Graph result = null;
+        try {
+            result = GraphScanner.fromExact(GraphWriter.toExact(this));
+        } catch (InvalidGraphStringException e) {
+            e.printStackTrace();
         }
         return result;
     }

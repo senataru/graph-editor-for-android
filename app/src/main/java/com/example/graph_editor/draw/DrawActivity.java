@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,15 +20,18 @@ import com.example.graph_editor.draw.graph_view.NavigationButtonCollection;
 import com.example.graph_editor.graphStorage.GraphScanner;
 import com.example.graph_editor.graphStorage.GraphWriter;
 import com.example.graph_editor.graphStorage.InvalidGraphStringException;
-import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.GraphFactory;
 import com.example.graph_editor.model.GraphType;
+import com.example.graph_editor.model.mathematics.Point;
+import com.example.graph_editor.model.mathematics.Rectangle;
+import com.example.graph_editor.model.state.State;
+import com.example.graph_editor.model.state.UndoRedoStack;
+import com.example.graph_editor.model.state.UndoRedoStackImpl;
 
 public class DrawActivity extends AppCompatActivity {
     private GraphView graphView;
-    //TODO: remove this temporary solution
-    private Graph graph;
+    private UndoRedoStack stateStack;
     private int currentGraphId = -1;
 
     @Override
@@ -63,7 +67,10 @@ public class DrawActivity extends AppCompatActivity {
         editor.apply();
 
         assert graph != null;
-        graphView.initializeGraph(graph, true);
+        stateStack = new UndoRedoStackImpl(this::invalidateOptionsMenu);
+        // the frame is temporary and will be replaced as soon as possible (when the height will be known)
+        stateStack.put(new State(graph, new Frame(new Rectangle(new Point(0, 0), new Point(1, 1)), 1)));
+        graphView.initialize(stateStack,true);
 
         NavigationButtonCollection collection = new NavigationButtonCollection(this);
         collection.add(findViewById(R.id.btnVertex), () -> changeMode(ActionModeType.NEW_VERTEX));
@@ -74,8 +81,6 @@ public class DrawActivity extends AppCompatActivity {
 
         changeMode(ActionModeType.MOVE_CANVAS);
         collection.setCurrent(findViewById(R.id.btnMoveCanvas));
-
-        this.graph = graph;
     }
 
     private void changeMode(ActionModeType type) {
@@ -102,31 +107,46 @@ public class DrawActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.options_btn_save:
                 if(currentGraphId == -1) {
-                    new SavePopup(this, this).show(graph);
+                    new SavePopup(this, this).show(stateStack.getCurrentState().getGraph());
                 } else {
                     SavesDatabase database = SavesDatabase.getDbInstance(getApplicationContext());
-                    database.saveDao().updateGraph(currentGraphId, GraphWriter.toExact(graph), System.currentTimeMillis());
+                    database.saveDao().updateGraph(currentGraphId, GraphWriter.toExact(stateStack.getCurrentState().getGraph()), System.currentTimeMillis());
                     Toast.makeText(this, "Graph saved", Toast.LENGTH_LONG).show();
                 }
                 return true;
             case R.id.options_btn_clear:
-                graph.getVertices().clear();
+                stateStack.put(stateStack.getCurrentState());
+                stateStack.getCurrentState().getGraph().getVertices().clear();
+                graphView.postInvalidate();
+                return true;
+            case R.id.options_btn_redo:
+                stateStack.redo();
+                graphView.postInvalidate();
+                return true;
+            case R.id.options_btn_undo:
+                stateStack.undo();
                 graphView.postInvalidate();
                 return true;
             case R.id.options_btn_normalize:
-                graphView.lazyInitialize();
-                graphView.update(null);
-                //Im not sure if works well
-                return true;
-            case R.id.options_btn_redo:
-            case R.id.options_btn_undo:
                 Toast.makeText(this, "Not implemented", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.options_btn_save_as:
-                new SavePopup(this, this).show(graph);
+                new SavePopup(this, this).show(stateStack.getCurrentState().getGraph());
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu (Menu menu) {
+        MenuItem undo = menu.findItem(R.id.options_btn_undo);
+        MenuItem redo = menu.findItem(R.id.options_btn_redo);
+
+        redo.setEnabled(stateStack.isRedoPossible());
+        redo.getIcon().setAlpha(stateStack.isRedoPossible() ? 255 : 128);
+        undo.setEnabled(stateStack.isUndoPossible());
+        undo.getIcon().setAlpha(stateStack.isUndoPossible() ? 255 : 128);
+        return true;
     }
 }

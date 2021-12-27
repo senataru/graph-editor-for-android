@@ -1,5 +1,7 @@
 package com.example.graph_editor.model.mathematics;
 
+import com.example.graph_editor.R;
+
 public class Rectangle {
     private Point leftTop;
     private Point rightBot;
@@ -42,4 +44,8 @@ public class Rectangle {
     public double getWidth() { return rightBot.getX() - leftTop.getX(); }
 
     public Point getCentre() { return new Point((rightBot.getX() + leftTop.getX())/2, (rightBot.getY() + leftTop.getY())/2); }
+
+    public Rectangle deepCopy() {
+        return new Rectangle(leftTop.deepCopy(), rightBot.deepCopy());
+    }
 }

@@ -42,4 +42,8 @@ public class Frame {
     }
 
     public double getScale() { return this.scale; }
+
+    public Frame deepCopy() {
+        return new Frame(rec.deepCopy(), scale);
+    }
 }

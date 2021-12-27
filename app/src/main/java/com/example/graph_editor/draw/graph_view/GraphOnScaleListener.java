@@ -1,23 +1,22 @@
 package com.example.graph_editor.draw.graph_view;
 
-import android.content.Context;
-import android.util.Log;
 import android.view.ScaleGestureDetector;
 
 import com.example.graph_editor.draw.ActionModeType;
-import com.example.graph_editor.draw.Frame;
+import com.example.graph_editor.model.state.UndoRedoStack;
 
 public class GraphOnScaleListener implements ScaleGestureDetector.OnScaleGestureListener {
-    private final Frame frame;
+    private final UndoRedoStack stateStack;
 
-    GraphOnScaleListener(Frame frame) {
-        this.frame = frame;
+    GraphOnScaleListener(UndoRedoStack stack) {
+        this.stateStack = stack;
     }
 
     @Override
     public boolean onScale(ScaleGestureDetector detector) {
         float scaleFactor = detector.getScaleFactor();
-        frame.rescale(1/scaleFactor);
+
+        stateStack.getCurrentState().getFrame().rescale(1/scaleFactor);
         return true;
     }
 
@@ -25,6 +24,7 @@ public class GraphOnScaleListener implements ScaleGestureDetector.OnScaleGesture
     public boolean onScaleBegin(ScaleGestureDetector detector) {
         if (ActionModeType.getCurrentModeType() == ActionModeType.MOVE_CANVAS) {
             ActionModeType.setCurrentModeType(ActionModeType.ZOOM_CANVAS);
+//            stateStack.backup();     // unnecessary - every scale begins with move, and move is already backed up
             return true;
         }
         return false;
@@ -33,5 +33,6 @@ public class GraphOnScaleListener implements ScaleGestureDetector.OnScaleGesture
     @Override
     public void onScaleEnd(ScaleGestureDetector detector) {
         ActionModeType.setCurrentModeType(ActionModeType.MOVE_CANVAS);
+
     }
 }

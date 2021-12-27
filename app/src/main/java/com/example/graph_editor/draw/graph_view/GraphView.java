@@ -11,7 +11,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -25,6 +24,8 @@ import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Edge;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.GraphType;
+import com.example.graph_editor.model.state.State;
+import com.example.graph_editor.model.state.UndoRedoStack;
 import com.example.graph_editor.model.Vertex;
 import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.mathematics.Rectangle;
@@ -38,13 +39,12 @@ public class GraphView extends View implements ActionModeTypeObserver {
     private Paint edgePaint;
     private Paint highlightPaint;
 
-    private Graph graph;
-    public Frame frame;
+    private UndoRedoStack stateStack;
 
     public Vertex highlighted = null;
 
     private boolean interactive = false;
-    private boolean isInitialised = false;
+    private boolean isLazyInitialised = false;
 
     public GraphView(Context context) {
         super(context);
@@ -83,40 +83,47 @@ public class GraphView extends View implements ActionModeTypeObserver {
     }
 
     // !! this alone is not enough, all due to height height being lazily calculated
-    public void initializeGraph(Graph graph, boolean interactive) {
-        this.graph = graph;
+    public void initialize(UndoRedoStack stack, boolean interactive) {
         this.interactive = interactive;
+        this.stateStack = stack;
+        isLazyInitialised = false;
 
         postInvalidate();
     }
 
     @SuppressLint("ClickableViewAccessibility")
     public void lazyInitialize() {
-        if (this.frame == null)
-            this.frame = new Frame(new Rectangle(new Point(0, 0), new Point(1.0, 1.0 * getHeight() / getWidth())), 1);
-        Rectangle rec = DrawManager.getOptimalRectangle(graph,0.1, frame.getRectangle());
-        frame.updateRectangle(rec);
+        // right now current state has null frame
+        State currentState = stateStack.getCurrentState();
+        Rectangle rec = new Rectangle(new Point(0, 0), new Point(1.0, 1.0 * getHeight() / getWidth()));
+        Rectangle optimalRec = DrawManager.getOptimalRectangle(currentState.getGraph(),0.1, rec);
+        Frame frame = new Frame(optimalRec, 1);
+        currentState.setFrame(frame);
         if (interactive) {
-            ScaleGestureDetector scaleDetector = new ScaleGestureDetector(getContext(), new GraphOnScaleListener(frame));
-            this.setOnTouchListener(new GraphOnTouchListener(this, graph, frame, scaleDetector));
+            ScaleGestureDetector scaleDetector = new ScaleGestureDetector(getContext(), new GraphOnScaleListener(stateStack));
+            this.setOnTouchListener(new GraphOnTouchListener(this, stateStack, scaleDetector));
         }
-        isInitialised = true;
+        isLazyInitialised = true;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if (!isInitialised) {   //has to be done here instead of init or initializeGraph since height is lazily calculated
+        if (!isLazyInitialised) {   //has to be done here instead of init or initializeGraph since height is lazily calculated
             lazyInitialize();
         }
+
+        State state = stateStack.getCurrentState();
+        Frame frame = state.getFrame();
+        Graph graph = state.getGraph();
 
         vertexRadius = getDrawWidth(frame.getScale(), baseVertexRadius);
         edgePaint.setStrokeWidth((float)getDrawWidth(frame.getScale(), baseEdgeWidth));
 
         for (Edge e : graph.getEdges())
             drawEdge(canvas, e, DrawManager.getRelative(frame.getRectangle(), e.getSource().getPoint()),
-                    DrawManager.getRelative(frame.getRectangle(), e.getTarget().getPoint()));
+                    DrawManager.getRelative(frame.getRectangle(), e.getTarget().getPoint()), graph.getType());
 
         for (Vertex v : graph.getVertices())
             drawVertex(canvas, v, DrawManager.getRelative(frame.getRectangle(), v.getPoint()), v == highlighted);
@@ -134,12 +141,12 @@ public class GraphView extends View implements ActionModeTypeObserver {
 //        canvas.drawText(vertex.);
     }
 
-    private void drawEdge(Canvas canvas, Edge edge, Point start, Point end) {
+    private void drawEdge(Canvas canvas, Edge edge, Point start, Point end, GraphType type) {
         float x1 = (float) start.getX() * getWidth();
         float y1 = (float) start.getY() * getHeight();
         float x2 = (float) end.getX() * getWidth();
         float y2 = (float) end.getY() * getHeight();
-        if (graph.getType() == GraphType.UNDIRECTED) {
+        if (type == GraphType.UNDIRECTED) {
             canvas.drawLine(x1, y1, x2, y2, edgePaint);
         } else {
             drawArrow(edgePaint, canvas, x1, y1, x2, y2);
@@ -152,8 +159,10 @@ public class GraphView extends View implements ActionModeTypeObserver {
         float angle,anglerad, radius, lineangle;
 
         //values to change for other appearance *CHANGE THESE FOR OTHER SIZE ARROWHEADS*
-        radius=(float)getDrawWidth(frame.getScale(), 50);
+//        radius=(float)getDrawWidth(frame.getScale(), 50);
+        radius=50;
         angle=45;
+
 
         //some angle calculations
         anglerad= (float) (PI*angle/180.0f);

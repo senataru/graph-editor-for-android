@@ -20,6 +20,10 @@ public class Point {
         return Geometry.close(other.getX(), getX()) && Geometry.close(other.getY(), getY());
     }
 
+    public Point deepCopy() {
+        return new Point(x, y);
+    }
+
     @NonNull
     @Override
     public String toString() {

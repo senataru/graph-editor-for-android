@@ -2,9 +2,6 @@ package com.example.graph_editor.browse;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +14,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.graph_editor.R;
 import com.example.graph_editor.database.Save;
 import com.example.graph_editor.database.SavesDatabase;
-import com.example.graph_editor.draw.DrawActivity;
+import com.example.graph_editor.draw.Frame;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.graphStorage.GraphScanner;
 import com.example.graph_editor.model.Graph;
+import com.example.graph_editor.model.mathematics.Point;
+import com.example.graph_editor.model.mathematics.Rectangle;
+import com.example.graph_editor.model.state.State;
+import com.example.graph_editor.model.state.UndoRedoStack;
+import com.example.graph_editor.model.state.UndoRedoStackImpl;
 
 import java.util.List;
-import java.util.function.Function;
 
 public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
     Context context;
@@ -48,7 +49,9 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
         String graphString = data.get(position).graph;
         try {
             Graph graph = GraphScanner.fromExact(graphString);
-            holder.dataGraph.initializeGraph(graph, false);
+            UndoRedoStack stack = new UndoRedoStackImpl(() -> {});
+            stack.put(new State(graph, new Frame(new Rectangle(new Point(0, 0), new Point(1, 1)), 1)));
+            holder.dataGraph.initialize(stack, false);
         } catch (Exception e) {
             e.printStackTrace();
         }

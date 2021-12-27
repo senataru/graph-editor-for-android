@@ -11,6 +11,8 @@ import com.example.graph_editor.model.Edge;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.Vertex;
 import com.example.graph_editor.model.mathematics.Point;
+import com.example.graph_editor.model.state.State;
+import com.example.graph_editor.model.state.UndoRedoStack;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -19,26 +21,31 @@ import java.util.List;
 public class GraphOnTouchListener implements View.OnTouchListener {
 
     private final GraphView graphView;
-    private final Frame frame;
+    private final UndoRedoStack stateStack;
     private final ScaleGestureDetector scaleDetector;
 
     // global variables for easier management
-    private final Graph graph;
 
+    private State currentState;
+    private Graph graph;
+    private Frame frame;
     private Point relativePoint;
     private Point absolutePoint;
     private Vertex highlighted;
 
-    public GraphOnTouchListener(GraphView graphView, Graph graph, Frame frame, ScaleGestureDetector scaleDetector) {
+    public GraphOnTouchListener(GraphView graphView, UndoRedoStack stateStack, ScaleGestureDetector scaleDetector) {
         this.graphView = graphView;
-        this.graph = graph;
-        this.frame = frame;
+        this.stateStack = stateStack;
         this.scaleDetector = scaleDetector;
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         v.performClick();
+
+        currentState = stateStack.getCurrentState();
+        frame = currentState.getFrame();
+        graph = currentState.getGraph();
 
         relativePoint = graphView.getRelative(new Point(event.getX(), event.getY()));
         absolutePoint = DrawManager.getAbsolute(frame.getRectangle(), relativePoint);
@@ -77,6 +84,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     private boolean actionNewVertex(View v, MotionEvent e) {
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                stateStack.backup();
                 highlighted = graph.addVertex();
                 highlighted.setPoint(absolutePoint);
                 break;
@@ -103,6 +111,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
         if (firstAction) {
             switch (e.getAction()) {
                 case MotionEvent.ACTION_DOWN:
+                    stateStack.backup();
                     if (nearest != null) {
                         edgeFirst = nearest;
                     } else {
@@ -158,6 +167,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
 
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                stateStack.backup();
                 if (highlighted == null && nearest != null)       // select a vertex
                     highlighted = nearest;
                 else if (highlighted == nearest && highlighted != null) // move current vertex slightly
@@ -183,18 +193,15 @@ public class GraphOnTouchListener implements View.OnTouchListener {
         Edge nearestEdge = DrawManager.getNearestEdge(graph, frame.getRectangle(), relativePoint, 0.03);
         Vertex nearestVertex = DrawManager.getNearestVertex(graph, frame.getRectangle(), relativePoint, 0.03, Collections.emptySet());
 
+        if (e.getAction() == MotionEvent.ACTION_DOWN) {
+            stateStack.backup();
+        }
+
         if (nearestVertex != null)
             graph.removeVertex(nearestVertex);
         if (nearestEdge != null)
             graph.removeEdge(nearestEdge);
 
-        switch (e.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-            case MotionEvent.ACTION_MOVE:
-            case MotionEvent.ACTION_UP:
-            default:
-                break;
-        }
         return true;
     }
 
@@ -211,6 +218,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     private boolean actionMoveCanvas(View v, MotionEvent e) {
         switch (e.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
+                stateStack.backup();
                 mode = Mode.DRAG;
                 prevX = e.getX();
                 prevY = e.getY();
