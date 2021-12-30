@@ -72,6 +72,10 @@ public class DrawManager {
         return result;
     }
 
+    public static void normalizeGraph() {
+
+    }
+
     public static Rectangle getOptimalRectangle(Graph graph, double paddingPercent, Rectangle rectangle) {
         List<Vertex> vertices = graph.getVertices();
         if(vertices.isEmpty()){
@@ -95,10 +99,11 @@ public class DrawManager {
         double extremeWidth = extremeRightBot.getX() - extremeLeftTop.getX();
         double extremeHeight = extremeRightBot.getY() - extremeLeftTop.getY();
         double scale = Math.max(extremeWidth/rectangle.getWidth(), extremeHeight/rectangle.getHeight());
-        Point resultLeftTop = new Point(extremeLeftTop.getX()-paddingPercent*rectangle.getWidth()*scale,
-                extremeLeftTop.getY()-paddingPercent*rectangle.getHeight()*scale);
-        Point resultRightBot = new Point(resultLeftTop.getX()+rectangle.getWidth()*scale*(1+2*paddingPercent),
-                resultLeftTop.getY()+rectangle.getHeight()*scale*(1+2*paddingPercent));
+        Point center = new Point(extremeLeftTop.getX()+extremeWidth/2, extremeLeftTop.getY()+extremeHeight/2);
+        Point resultLeftTop = new Point(center.getX()-(0.5+paddingPercent)*rectangle.getWidth()*scale,
+                center.getY()-(0.5+paddingPercent)*rectangle.getHeight()*scale);
+        Point resultRightBot = new Point(center.getX()+rectangle.getWidth()*scale*(0.5+paddingPercent),
+                center.getY()+rectangle.getHeight()*scale*(0.5+paddingPercent));
 
         if(vertices.size() <= 1) {
             resultLeftTop = new Point(resultLeftTop.getX()-1, resultLeftTop.getY()-1);
