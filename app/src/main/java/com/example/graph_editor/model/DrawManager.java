@@ -72,16 +72,7 @@ public class DrawManager {
         return result;
     }
 
-    public static void normalizeGraph() {
-
-    }
-
-    public static Rectangle getOptimalRectangle(Graph graph, double paddingPercent, Rectangle rectangle) {
-        List<Vertex> vertices = graph.getVertices();
-        if(vertices.isEmpty()){
-            return new Rectangle(new Point(0,0), new Point(1, 1*rectangle.getHeight()/rectangle.getWidth()));
-        }
-
+    private static Rectangle getExtremeRectangle(Graph graph) {
         Point extremeLeftTop = new Point(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
         Point extremeRightBot = new Point(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
         for(Vertex vertex : graph.getVertices()) {
@@ -95,6 +86,32 @@ public class DrawManager {
             if(point.getY()>extremeRightBot.getY())
                 extremeRightBot = new Point(extremeRightBot.getX(), point.getY());
         }
+        return new Rectangle(extremeLeftTop, extremeRightBot);
+    }
+
+    public static void normalizeGraph(Graph graph) {
+        Rectangle extremeRectangle = getExtremeRectangle(graph);
+        Point extremeLeftTop = extremeRectangle.getLeftTop();
+        Point extremeRightBot = extremeRectangle.getRightBot();
+        double extremeWidth = extremeRightBot.getX() - extremeLeftTop.getX();
+        double extremeHeight = extremeRightBot.getY() - extremeLeftTop.getY();
+        for(Vertex vertex : graph.getVertices()) {
+            Point point = vertex.getPoint();
+            double x = (extremeWidth == 0.0)? 0.0 : (point.getX()-extremeLeftTop.getX())/extremeWidth;
+            double y = (extremeHeight == 0.0)? 0.0 : (point.getY()-extremeLeftTop.getY())/extremeHeight;
+            vertex.setPoint(new Point(x, y));
+        }
+    }
+
+    public static Rectangle getOptimalRectangle(Graph graph, double paddingPercent, Rectangle rectangle) {
+        List<Vertex> vertices = graph.getVertices();
+        if(vertices.isEmpty()){
+            return new Rectangle(new Point(0,0), new Point(1, rectangle.getHeight()/rectangle.getWidth()));
+        }
+
+        Rectangle extremeRectangle = getExtremeRectangle(graph);
+        Point extremeLeftTop = extremeRectangle.getLeftTop();
+        Point extremeRightBot = extremeRectangle.getRightBot();
 
         double extremeWidth = extremeRightBot.getX() - extremeLeftTop.getX();
         double extremeHeight = extremeRightBot.getY() - extremeLeftTop.getY();
@@ -105,7 +122,7 @@ public class DrawManager {
         Point resultRightBot = new Point(center.getX()+rectangle.getWidth()*scale*(0.5+paddingPercent),
                 center.getY()+rectangle.getHeight()*scale*(0.5+paddingPercent));
 
-        if(vertices.size() <= 1) {
+        if(vertices.size() == 1) {
             resultLeftTop = new Point(resultLeftTop.getX()-1, resultLeftTop.getY()-1);
             resultRightBot = new Point(resultRightBot.getX()+1, resultRightBot.getY()+1);
         }
