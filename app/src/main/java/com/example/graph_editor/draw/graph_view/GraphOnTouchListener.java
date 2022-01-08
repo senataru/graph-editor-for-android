@@ -190,17 +190,18 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     }
 
     private boolean actionRemoveObject(View v, MotionEvent e) {
-        Edge nearestEdge = DrawManager.getNearestEdge(graph, frame.getRectangle(), relativePoint, 0.03);
-        Vertex nearestVertex = DrawManager.getNearestVertex(graph, frame.getRectangle(), relativePoint, 0.03, Collections.emptySet());
-
         if (e.getAction() == MotionEvent.ACTION_DOWN) {
             stateStack.backup();
         }
 
-        if (nearestVertex != null)
+        Vertex nearestVertex;
+        while (null != (nearestVertex = DrawManager.getNearestVertex(graph, frame.getRectangle(), relativePoint, 0.03, Collections.emptySet()))) {
             graph.removeVertex(nearestVertex);
-        if (nearestEdge != null)
+        }
+        Edge nearestEdge;
+        while (null != (nearestEdge = DrawManager.getNearestEdge(graph, frame.getRectangle(), relativePoint, 0.03))) {
             graph.removeEdge(nearestEdge);
+        }
 
         return true;
     }

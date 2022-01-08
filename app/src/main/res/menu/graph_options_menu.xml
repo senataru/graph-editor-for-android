@@ -27,6 +27,16 @@
         app:showAsAction="never" >
     </item>
 
+    <item android:id="@+id/options_btn_share"
+        android:title="@string/share_graph"
+        app:showAsAction="never" >
+    </item>
+
+    <item android:id="@+id/options_btn_import"
+        android:title="@string/import_graph"
+        app:showAsAction="never" >
+    </item>
+
     <item android:id="@+id/options_btn_clear"
         android:title="@string/clear_graph"
         app:showAsAction="never" >

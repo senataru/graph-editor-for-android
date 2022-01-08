@@ -2,6 +2,7 @@ package com.example.graph_editor.draw;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
@@ -71,7 +72,10 @@ public class DrawActivity extends AppCompatActivity {
         editor.apply();
 
         assert graph != null;
-        stateStack = new UndoRedoStackImpl(this::invalidateOptionsMenu);
+        stateStack = new UndoRedoStackImpl(() -> {
+            invalidateOptionsMenu();
+            graphView.postInvalidate();
+        });
         // the frame is temporary and will be replaced as soon as possible (when the height will be known)
         stateStack.put(new State(graph, new Frame(new Rectangle(new Point(0, 0), new Point(1, 1)), 1)));
         graphView.initialize(stateStack,true);
@@ -142,6 +146,18 @@ public class DrawActivity extends AppCompatActivity {
                 return true;
             case R.id.options_btn_save_as:
                 new SavePopup(this, this).show(stateStack.getCurrentState().getGraph());
+                return true;
+            case R.id.options_btn_share:
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, GraphWriter.toExact(stateStack.getCurrentState().getGraph()));
+                sendIntent.setType("text/plain");
+
+                Intent shareIntent = Intent.createChooser(sendIntent, null);
+                startActivity(shareIntent);
+                return true;
+            case R.id.options_btn_import:
+                new ImportPopup(this, stateStack).show();
                 return true;
             case R.id.generate_btn_cycle:
                 new GeneratePopup(this, stateStack, new GraphGeneratorCycle()).show();
