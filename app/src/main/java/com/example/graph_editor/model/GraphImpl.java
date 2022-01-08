@@ -1,9 +1,8 @@
 package com.example.graph_editor.model;
 
-import com.example.graph_editor.graphStorage.GraphScanner;
-import com.example.graph_editor.graphStorage.GraphWriter;
-import com.example.graph_editor.graphStorage.InvalidGraphStringException;
-import com.example.graph_editor.model.mathematics.Point;
+import com.example.graph_editor.graph_storage.GraphScanner;
+import com.example.graph_editor.graph_storage.GraphWriter;
+import com.example.graph_editor.graph_storage.InvalidGraphStringException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +12,7 @@ public class GraphImpl implements Graph {
     List<Vertex> vertices = new ArrayList<>();
     VertexFactory vertexFactory;
 
-    GraphImpl(GraphType type) {
+    public GraphImpl(GraphType type) {
         this.type = type;
         vertexFactory = new VertexFactory();
     }

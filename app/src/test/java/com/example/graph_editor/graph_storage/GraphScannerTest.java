@@ -1,13 +1,10 @@
-package com.example.graph_editor.graphStorage;
+package com.example.graph_editor.graph_storage;
 
 import static org.junit.Assert.assertEquals;
 
 import com.example.graph_editor.model.Edge;
 import com.example.graph_editor.model.Graph;
-import com.example.graph_editor.model.GraphFactory;
-import com.example.graph_editor.model.GraphType;
 import com.example.graph_editor.model.Vertex;
-import com.example.graph_editor.model.mathematics.Point;
 
 import org.junit.Test;
 

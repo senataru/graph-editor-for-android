@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,12 +16,17 @@ import com.example.graph_editor.R;
 import com.example.graph_editor.database.SavesDatabase;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.graph_view.NavigationButtonCollection;
-import com.example.graph_editor.graphStorage.GraphScanner;
-import com.example.graph_editor.graphStorage.GraphWriter;
-import com.example.graph_editor.graphStorage.InvalidGraphStringException;
+import com.example.graph_editor.graph_storage.GraphScanner;
+import com.example.graph_editor.graph_storage.GraphWriter;
+import com.example.graph_editor.graph_storage.InvalidGraphStringException;
+import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.GraphFactory;
 import com.example.graph_editor.model.GraphType;
+import com.example.graph_editor.model.graph_generators.GraphGeneratorBipartiteClique;
+import com.example.graph_editor.model.graph_generators.GraphGeneratorClique;
+import com.example.graph_editor.model.graph_generators.GraphGeneratorCycle;
+import com.example.graph_editor.model.graph_generators.GraphGeneratorFullBinaryTree;
 import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
@@ -128,10 +132,28 @@ public class DrawActivity extends AppCompatActivity {
                 graphView.postInvalidate();
                 return true;
             case R.id.options_btn_normalize:
-                Toast.makeText(this, "Not implemented", Toast.LENGTH_SHORT).show();
+                stateStack.backup();
+                State state = stateStack.getCurrentState();
+                DrawManager.normalizeGraph(state.getGraph());
+                Frame frame = state.getFrame();
+                Rectangle newRectangle = DrawManager.getOptimalRectangle(state.getGraph(), 0.1, frame.getRectangle());
+                state.setFrame(new Frame(newRectangle, 1.2));
+                graphView.postInvalidate();
                 return true;
             case R.id.options_btn_save_as:
                 new SavePopup(this, this).show(stateStack.getCurrentState().getGraph());
+                return true;
+            case R.id.generate_btn_cycle:
+                new GeneratePopup(this, stateStack, new GraphGeneratorCycle()).show();
+                return true;
+            case R.id.generate_btn_clique:
+                new GeneratePopup(this, stateStack, new GraphGeneratorClique()).show();
+                return true;
+            case R.id.generate_btn_bipartite_clique:
+                new GeneratePopup(this, stateStack, new GraphGeneratorBipartiteClique()).show();
+                return true;
+            case R.id.generate_btn_full_binary_tree:
+                new GeneratePopup(this, stateStack, new GraphGeneratorFullBinaryTree()).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

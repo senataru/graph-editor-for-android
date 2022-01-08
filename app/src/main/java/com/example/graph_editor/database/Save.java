@@ -4,9 +4,6 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import com.example.graph_editor.graphStorage.GraphWriter;
-import com.example.graph_editor.model.Graph;
-
 @Entity
 public class Save {
     @PrimaryKey(autoGenerate = true)

@@ -8,4 +8,5 @@ public interface UndoRedoStack {
     boolean isUndoPossible();
     boolean isRedoPossible();
     State getCurrentState();
+    void invalidateView();
 }

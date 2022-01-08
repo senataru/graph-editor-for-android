@@ -16,7 +16,7 @@ import com.example.graph_editor.database.Save;
 import com.example.graph_editor.database.SavesDatabase;
 import com.example.graph_editor.draw.Frame;
 import com.example.graph_editor.draw.graph_view.GraphView;
-import com.example.graph_editor.graphStorage.GraphScanner;
+import com.example.graph_editor.graph_storage.GraphScanner;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.mathematics.Rectangle;

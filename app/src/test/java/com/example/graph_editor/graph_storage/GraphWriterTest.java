@@ -1,4 +1,4 @@
-package com.example.graph_editor.graphStorage;
+package com.example.graph_editor.graph_storage;
 
 import static org.junit.Assert.assertEquals;
 

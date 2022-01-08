@@ -10,7 +10,7 @@ import android.widget.Toast;
 import com.example.graph_editor.R;
 import com.example.graph_editor.database.Save;
 import com.example.graph_editor.database.SavesDatabase;
-import com.example.graph_editor.graphStorage.GraphWriter;
+import com.example.graph_editor.graph_storage.GraphWriter;
 import com.example.graph_editor.model.Graph;
 
 public class SavePopup {

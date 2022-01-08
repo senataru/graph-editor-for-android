@@ -23,4 +23,11 @@
     <string name="redo">Redo</string>
     <string name="normalize_graph">Normalize graph</string>
     <string name="save_as">Save as…</string>
+    <string name="generate_graph">Generate graph</string>
+    <string name="clique">Clique</string>
+    <string name="bipartite_clique">Bipartite clique</string>
+    <string name="enter_parameters">Enter parameters</string>
+    <string name="confirm">Confirm</string>
+    <string name="cycle">Cycle</string>
+    <string name="full_binary_tree">Full binary tree</string>
 </resources>

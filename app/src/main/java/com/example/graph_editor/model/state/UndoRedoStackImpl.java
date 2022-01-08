@@ -71,4 +71,9 @@ public class UndoRedoStackImpl implements UndoRedoStack {
     public State getCurrentState() {
         return stack.get(pointer);
     }
+
+    @Override
+    public void invalidateView() {
+        invalidateFunction.run();
+    }
 }

@@ -1,13 +1,9 @@
-package com.example.graph_editor.graphStorage;
+package com.example.graph_editor.graph_storage;
 
 import com.example.graph_editor.model.Edge;
 import com.example.graph_editor.model.Graph;
-import com.example.graph_editor.model.GraphType;
 import com.example.graph_editor.model.Vertex;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.List;
 
 public class GraphWriter {
