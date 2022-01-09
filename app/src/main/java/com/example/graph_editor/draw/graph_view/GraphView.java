@@ -201,4 +201,7 @@ public class GraphView extends View implements ActionModeTypeObserver {
     public Point getRelative(Point point) {
         return new Point(point.getX()/getWidth(), point.getY()/getHeight());
     }
+
+    public UndoRedoStack getStateStack() { return stateStack; }
+
 }

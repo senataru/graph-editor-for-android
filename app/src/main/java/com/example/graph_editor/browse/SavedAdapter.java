@@ -15,6 +15,7 @@ import com.example.graph_editor.R;
 import com.example.graph_editor.database.Save;
 import com.example.graph_editor.database.SavesDatabase;
 import com.example.graph_editor.draw.Frame;
+import com.example.graph_editor.draw.ShareIntent;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.graph_storage.GraphScanner;
 import com.example.graph_editor.model.Graph;
@@ -63,6 +64,7 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
             notifyItemRangeChanged(position, data.size());
             SavesDatabase.getDbInstance(context).saveDao().delete(s);
         });
+        holder.shareButton.setOnClickListener(v -> new ShareIntent(context, holder.dataGraph.getStateStack()).show());
     }
 
     @Override
@@ -81,6 +83,7 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
         GraphView dataGraph;
         Button editButton;
         Button deleteButton;
+        Button shareButton;
 
         public Holder(@NonNull View itemView) {
             super(itemView);
@@ -88,6 +91,7 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
             dataGraph = itemView.findViewById(R.id.dataGraph);
             editButton = itemView.findViewById(R.id.btnEdit);
             deleteButton = itemView.findViewById(R.id.btnDelete);
+            shareButton = itemView.findViewById(R.id.btnShare);
         }
     }
 }

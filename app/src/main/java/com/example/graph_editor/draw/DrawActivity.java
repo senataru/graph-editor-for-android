@@ -122,17 +122,18 @@ public class DrawActivity extends AppCompatActivity {
                     Toast.makeText(this, "Graph saved", Toast.LENGTH_LONG).show();
                 }
                 return true;
-            case R.id.options_btn_clear:
-                stateStack.put(stateStack.getCurrentState());
-                stateStack.getCurrentState().getGraph().getVertices().clear();
-                graphView.postInvalidate();
-                return true;
             case R.id.options_btn_redo:
                 stateStack.redo();
                 graphView.postInvalidate();
                 return true;
             case R.id.options_btn_undo:
                 stateStack.undo();
+                graphView.postInvalidate();
+                return true;
+            //more actions
+            case R.id.options_btn_clear:
+                stateStack.put(stateStack.getCurrentState());
+                stateStack.getCurrentState().getGraph().getVertices().clear();
                 graphView.postInvalidate();
                 return true;
             case R.id.options_btn_normalize:
@@ -148,17 +149,12 @@ public class DrawActivity extends AppCompatActivity {
                 new SavePopup(this, this).show(stateStack.getCurrentState().getGraph());
                 return true;
             case R.id.options_btn_share:
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, GraphWriter.toExact(stateStack.getCurrentState().getGraph()));
-                sendIntent.setType("text/plain");
-
-                Intent shareIntent = Intent.createChooser(sendIntent, null);
-                startActivity(shareIntent);
+                new ShareIntent(this, stateStack).show();
                 return true;
             case R.id.options_btn_import:
                 new ImportPopup(this, stateStack).show();
                 return true;
+            //generate graph
             case R.id.generate_btn_cycle:
                 new GeneratePopup(this, stateStack, new GraphGeneratorCycle()).show();
                 return true;
