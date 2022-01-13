@@ -17,6 +17,7 @@ import com.example.graph_editor.model.state.UndoRedoStack;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class GraphOnTouchListener implements View.OnTouchListener {
 
@@ -26,7 +27,6 @@ public class GraphOnTouchListener implements View.OnTouchListener {
 
     // global variables for easier management
 
-    private State currentState;
     private Graph graph;
     private Frame frame;
     private Point relativePoint;
@@ -43,7 +43,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     public boolean onTouch(View v, MotionEvent event) {
         v.performClick();
 
-        currentState = stateStack.getCurrentState();
+        State currentState = stateStack.getCurrentState();
         frame = currentState.getFrame();
         graph = currentState.getGraph();
 
@@ -101,63 +101,57 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     }
 
     private Vertex edgeFirst = null;
-    private Vertex newVertex = null;
-    private boolean firstAction = true;     // choose first vertex, the choose another
+    private Vertex edgeFirstSnap = null;
+    private Vertex edgeSecond = null;
+    private Vertex edgeSecondSnap = null;
     private boolean actionNewEdge(View v, MotionEvent e) {
-        Vertex nearest = DrawManager.getNearestVertex(graph, frame.getRectangle(), relativePoint, 0.1, Collections.emptySet());
-        Vertex nearestNotNew = DrawManager.getNearestVertex(graph,
-                frame.getRectangle(), relativePoint, 0.1, new HashSet<>(Collections.singleton(newVertex)));
+        switch (e.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                stateStack.backup();
+                Vertex nearest = DrawManager.getNearestVertex(graph, frame.getRectangle(), relativePoint, 0.1, Collections.emptySet());
+                edgeFirst = graph.addVertex();
+                if (nearest != null) {
+                    edgeFirst.setPoint(nearest.getPoint());
+                    edgeFirstSnap = nearest;
+                    edgeSecondSnap = nearest;
+                } else {
+                    edgeFirst.setPoint(absolutePoint);
+                    edgeFirstSnap = null;
+                    edgeSecondSnap = null;
+                }
+                edgeSecond = graph.addVertex();
+                edgeSecond.setPoint(edgeFirst.getPoint());
+                graph.addEdge(edgeFirst, edgeSecond);
+                return true;
+            case MotionEvent.ACTION_MOVE:
+                Set<Vertex> excluded = new HashSet<>();
+                excluded.add(edgeFirst);
+                excluded.add(edgeSecond);
+                Vertex nearestViable = DrawManager.getNearestVertex(graph, frame.getRectangle(), relativePoint, 0.1, excluded);
 
-        if (firstAction) {
-            switch (e.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    stateStack.backup();
-                    if (nearest != null) {
-                        edgeFirst = nearest;
-                    } else {
-                        edgeFirst = graph.addVertex();
-                        edgeFirst.setPoint(absolutePoint);
-                    }
-                    highlighted = edgeFirst;
-                    return true;
-                case MotionEvent.ACTION_MOVE:
-                    break;
-                case MotionEvent.ACTION_UP:
-                    firstAction = false;
-                    break;
-            }
-            return false;
-        } else {
-            switch (e.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    newVertex = graph.addVertex();
-                    newVertex.setPoint(absolutePoint);
-                    highlighted = newVertex;
-                    graph.addEdge(edgeFirst, newVertex);
-                    if (nearest != null) {
-                        newVertex.setPoint(nearest.getPoint());
-                    }
-                    return true;
-                case MotionEvent.ACTION_MOVE:
-                    if (nearestNotNew != null)
-                        newVertex.setPoint(nearestNotNew.getPoint());
-                    else
-                        newVertex.setPoint(absolutePoint);
-                    break;
-                case MotionEvent.ACTION_UP:
-                    if (nearestNotNew == edgeFirst && nearestNotNew != null) {
-                        graph.removeVertex(newVertex);
-                    }
-                    if (nearestNotNew != edgeFirst && nearestNotNew != null) {
-                        graph.removeVertex(newVertex);
-                        graph.addEdge(edgeFirst, nearestNotNew);
-                    }
-                    edgeFirst = null;
-                    newVertex = null;
-                    highlighted = null;
-                    firstAction = true;
-                    break;
-            }
+                if (nearestViable != null) {
+                    edgeSecond.setPoint(nearestViable.getPoint());
+                    edgeSecondSnap = nearestViable;
+                } else {
+                    edgeSecond.setPoint(absolutePoint);
+                    edgeSecondSnap = null;
+                }
+                return true;
+            case MotionEvent.ACTION_UP:
+                // did first vertex snap?
+                if (edgeFirstSnap != null) {
+                    graph.removeVertex(edgeFirst);
+                    edgeFirst = edgeFirstSnap;
+                    graph.addEdge(edgeFirst, edgeSecond);
+                }
+                // did second vertex snap?
+                if (edgeSecondSnap != null) {
+                    graph.removeVertex(edgeSecond);
+                    edgeSecond = edgeSecondSnap;
+                    graph.addEdge(edgeFirst, edgeSecond);
+                }
+                edgeFirst = edgeFirstSnap = edgeSecond = edgeSecondSnap = null;
+                return false;
         }
         return false;
     }

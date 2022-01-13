@@ -76,7 +76,6 @@ public class GraphImpl implements Graph {
                         result.add(edge);
                 }
             }
-
         }
         return result;
     }

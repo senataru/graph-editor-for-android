@@ -35,6 +35,7 @@ public class SavePopup {
             database.saveDao().insertSaves(new Save(name, GraphWriter.toExact(graph), System.currentTimeMillis()));
             popupView.findViewById(R.id.saveBtn).setEnabled(false);
             Toast.makeText(drawActivityActivity.getApplicationContext(), "Graph saved", Toast.LENGTH_LONG).show();
+            dialog.dismiss();
         });
         builder.setView(popupView);
         dialog = builder.create();
