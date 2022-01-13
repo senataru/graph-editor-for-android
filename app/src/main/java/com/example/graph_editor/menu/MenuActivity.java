@@ -20,11 +20,17 @@ import com.example.graph_editor.model.GraphType;
 public class MenuActivity extends AppCompatActivity {
     private SharedPreferences sharedPref;
 
+    static {
+        System.loadLibrary("sample_lib");
+    }
+    public static native int doubleUp(int x);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
+
+        //System.out.println("2*2="+doubleUp(2));
 
         sharedPref = this.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
 
