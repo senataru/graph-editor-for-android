@@ -4,6 +4,7 @@ import com.example.graph_editor.model.Edge;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.Vertex;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GraphWriter {
@@ -60,6 +61,14 @@ public class GraphWriter {
         }
 
         return new String(s);
+    }
 
+    public static String toExactList(List<Graph> list){
+        StringBuilder result = new StringBuilder();
+        for (Graph g : list) {
+            result.append(toExact(g));
+            result.append("#");
+        }
+        return result.substring(0, result.length()-1);
     }
 }

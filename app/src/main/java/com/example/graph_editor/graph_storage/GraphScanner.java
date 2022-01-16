@@ -6,6 +6,7 @@ import com.example.graph_editor.model.GraphType;
 import com.example.graph_editor.model.Vertex;
 import com.example.graph_editor.model.mathematics.Point;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GraphScanner {
@@ -52,5 +53,14 @@ public class GraphScanner {
         }
 
         return g;
+    }
+
+    public static List<Graph> fromExactList(String s) throws InvalidGraphStringException {
+        List<Graph> result = new ArrayList<>();
+        String[] t = s.split("#");
+        for (String g : t) {
+            result.add(fromExact(g));
+        }
+        return result;
     }
 }

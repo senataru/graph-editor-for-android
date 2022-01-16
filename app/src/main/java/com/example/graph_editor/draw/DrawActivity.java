@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -33,7 +34,11 @@ import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.model.state.StateStack;
 import com.example.graph_editor.model.state.StateStackImpl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DrawActivity extends AppCompatActivity {
+    public static final String TAG = "DrawActivity";
     private GraphView graphView;
     private StateStack stateStack;
     private int currentGraphId = -1;
@@ -46,38 +51,58 @@ public class DrawActivity extends AppCompatActivity {
         SharedPreferences sharedPref = this.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
         currentGraphId = sharedPref.getInt("currentGraphId", -1);
         int choiceOrd = sharedPref.getInt("GraphType", 0);
-        GraphType choice = GraphType.values()[choiceOrd];
+        String graphString = sharedPref.getString("currentGraph", null);
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.remove("currentGraphId");
+        editor.remove("GraphType");
+        editor.remove("currentGraph");
+        editor.apply();
 
         graphView = findViewById(R.id.viewGraph);
         ActionModeType.addObserver(graphView);
-        changeMode(ActionModeType.NONE);
 
         Graph graph = null;
-
-        String graphString = sharedPref.getString("currentGraph", null);
-        if (graphString != null) {
+        List<Graph> stack = null;
+        int pointer = 0;
+        ActionModeType modeType = ActionModeType.MOVE_CANVAS;
+        if (savedInstanceState != null &&
+                savedInstanceState.containsKey("GraphStack") &&
+                savedInstanceState.containsKey("Pointer") &&
+                savedInstanceState.containsKey("ActionType")) { // re-initialize
             try {
-                graph = GraphScanner.fromExact(graphString);
+                stack = GraphScanner.fromExactList(savedInstanceState.getString("GraphStack"));
             } catch (InvalidGraphStringException e) {
                 e.printStackTrace();
+                throw new RuntimeException("Failed graph list scanning");
             }
-        } else {
-            graph = new GraphFactory(choice).produce();
+            pointer = savedInstanceState.getInt("Pointer");
+            graph = stack.get(pointer);
+            modeType = ActionModeType.valueOf(savedInstanceState.getString("ActionType"));
+        } else { // either from browse or new graph
+            if (graphString != null) {  // from browse
+                try {
+                    graph = GraphScanner.fromExact(graphString);
+                } catch (InvalidGraphStringException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (graph == null) {
+                GraphType choice = GraphType.values()[choiceOrd];
+                graph = new GraphFactory(choice).produce();
+            }
         }
-
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString("currentGraph", null);
-        editor.remove("currentGraphId");
-        editor.apply();
-
         assert graph != null;
         stateStack = new StateStackImpl(
-            () -> {
-                invalidateOptionsMenu();
-                graphView.update(ActionModeType.getCurrentModeType());
-            },
-            new State(graph, new Frame(new Rectangle(new Point(0, 0), new Point(1, 1)), 1)));
-        // the frame is temporary and will be replaced as soon as possible (when the height will be known)
+                () -> {
+                    invalidateOptionsMenu();
+                    graphView.update(ActionModeType.getCurrentModeType());
+                },
+                // the rectangle is temporary and will be replaced as soon as possible (when the height will be known)
+                new State(graph, new Frame(new Rectangle(new Point(0, 0), new Point(1, 1)), 1)),
+                stack,
+                pointer
+        );
         graphView.initialize(stateStack,true);
 
         NavigationButtonCollection collection = new NavigationButtonCollection(this);
@@ -87,8 +112,24 @@ public class DrawActivity extends AppCompatActivity {
         collection.add(findViewById(R.id.btnMoveCanvas), () -> changeMode(ActionModeType.MOVE_CANVAS));
         collection.add(findViewById(R.id.btnRemoveObject), () -> changeMode(ActionModeType.REMOVE_OBJECT));
 
-        changeMode(ActionModeType.MOVE_CANVAS);
-        collection.setCurrent(findViewById(R.id.btnMoveCanvas));
+        switch (modeType) {
+            case NEW_VERTEX:
+                collection.setCurrent(findViewById(R.id.btnVertex));
+                break;
+            case NEW_EDGE:
+                collection.setCurrent(findViewById(R.id.btnEdge));
+                break;
+            case MOVE_OBJECT:
+                collection.setCurrent(findViewById(R.id.btnMoveObject));
+                break;
+            case MOVE_CANVAS:
+                collection.setCurrent(findViewById(R.id.btnMoveCanvas));
+                break;
+            case REMOVE_OBJECT:
+                collection.setCurrent(findViewById(R.id.btnRemoveObject));
+                break;
+        }
+        changeMode(modeType);
     }
 
     private void changeMode(ActionModeType type) {
@@ -102,23 +143,15 @@ public class DrawActivity extends AppCompatActivity {
         ActionModeType.resetCurrentModeType();
     }
 
-//    private static UndoRedoStack oldStack;
-//    @Override
-//    protected void onSaveInstanceState(@NonNull Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//
-//        DrawActivity.oldStack = stateStack;
-//    }
-//
-//    @Override
-//    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-//        super.onRestoreInstanceState(savedInstanceState);
-//
-//        if (DrawActivity.oldStack != null) {
-//            stateStack = DrawActivity.oldStack;
-//            DrawActivity.oldStack = null;
-//        }
-//    }
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        String s = GraphWriter.toExactList(stateStack.getGraphStack());
+        outState.putString("GraphStack", s);
+        outState.putInt("Pointer", stateStack.getPointer());
+        outState.putString("ActionType", ActionModeType.getCurrentModeType().toString());
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

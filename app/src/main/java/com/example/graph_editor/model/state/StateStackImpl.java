@@ -14,13 +14,22 @@ public class StateStackImpl implements StateStack {
 
     private int pointer;
 
-    public StateStackImpl(Runnable invalidateFunction, State initialState) {
-        stack = new ArrayList<>();
+    public StateStackImpl(Runnable invalidateFunction, State initialState, List<Graph> stack, int pointer) {
         this.invalidateFunction = invalidateFunction;
-        stack.add(initialState.getGraph());
+        if (stack == null) {
+            stack = new ArrayList<>();
+            stack.add(initialState.getGraph());
+        } else {
+            stack.set(pointer, initialState.getGraph());
+        }
         currentState = initialState;
-        pointer = 0;
+        this.stack = stack;
+        this.pointer = pointer;
         invalidateView();
+    }
+
+    public StateStackImpl(Runnable invalidateFunction, State initialState) {
+        this(invalidateFunction, initialState, null, 0);
     }
 
     @Override
@@ -75,6 +84,16 @@ public class StateStackImpl implements StateStack {
     @Override
     public State getCurrentState() {
         return currentState;
+    }
+
+    @Override
+    public List<Graph> getGraphStack() {
+        return stack;
+    }
+
+    @Override
+    public int getPointer() {
+        return pointer;
     }
 
     @Override

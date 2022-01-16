@@ -1,5 +1,9 @@
 package com.example.graph_editor.model.state;
 
+import com.example.graph_editor.model.Graph;
+
+import java.util.List;
+
 public interface StateStack {
     State undo();
     State redo();
@@ -7,5 +11,9 @@ public interface StateStack {
     boolean isUndoPossible();
     boolean isRedoPossible();
     State getCurrentState();    // returns a modifiable copy
+
+    List<Graph> getGraphStack();
+    int getPointer();
+
     void invalidateView();
 }
