@@ -3,12 +3,12 @@ package com.example.graph_editor.draw.graph_view;
 import android.view.ScaleGestureDetector;
 
 import com.example.graph_editor.draw.ActionModeType;
-import com.example.graph_editor.model.state.UndoRedoStack;
+import com.example.graph_editor.model.state.StateStack;
 
 public class GraphOnScaleListener implements ScaleGestureDetector.OnScaleGestureListener {
-    private final UndoRedoStack stateStack;
+    private final StateStack stateStack;
 
-    GraphOnScaleListener(UndoRedoStack stack) {
+    GraphOnScaleListener(StateStack stack) {
         this.stateStack = stack;
     }
 

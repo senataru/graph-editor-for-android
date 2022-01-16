@@ -4,11 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.example.graph_editor.model.state.UndoRedoStack;
-import com.example.graph_editor.model.state.UndoRedoStackImpl;
-
-import org.junit.Test;
-
 public class UndoRedoStackTest {
 //    @Test
 //    public void testUndo() {

@@ -2,7 +2,6 @@ package com.example.graph_editor.draw;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
@@ -31,12 +30,12 @@ import com.example.graph_editor.model.graph_generators.GraphGeneratorFullBinaryT
 import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
-import com.example.graph_editor.model.state.UndoRedoStack;
-import com.example.graph_editor.model.state.UndoRedoStackImpl;
+import com.example.graph_editor.model.state.StateStack;
+import com.example.graph_editor.model.state.StateStackImpl;
 
 public class DrawActivity extends AppCompatActivity {
     private GraphView graphView;
-    private UndoRedoStack stateStack;
+    private StateStack stateStack;
     private int currentGraphId = -1;
 
     @Override
@@ -72,12 +71,13 @@ public class DrawActivity extends AppCompatActivity {
         editor.apply();
 
         assert graph != null;
-        stateStack = new UndoRedoStackImpl(() -> {
-            invalidateOptionsMenu();
-            graphView.postInvalidate();
-        });
+        stateStack = new StateStackImpl(
+            () -> {
+                invalidateOptionsMenu();
+                graphView.update(ActionModeType.getCurrentModeType());
+            },
+            new State(graph, new Frame(new Rectangle(new Point(0, 0), new Point(1, 1)), 1)));
         // the frame is temporary and will be replaced as soon as possible (when the height will be known)
-        stateStack.put(new State(graph, new Frame(new Rectangle(new Point(0, 0), new Point(1, 1)), 1)));
         graphView.initialize(stateStack,true);
 
         NavigationButtonCollection collection = new NavigationButtonCollection(this);
@@ -101,6 +101,24 @@ public class DrawActivity extends AppCompatActivity {
         ActionModeType.removeObserver(graphView);
         ActionModeType.resetCurrentModeType();
     }
+
+//    private static UndoRedoStack oldStack;
+//    @Override
+//    protected void onSaveInstanceState(@NonNull Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//
+//        DrawActivity.oldStack = stateStack;
+//    }
+//
+//    @Override
+//    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+//        super.onRestoreInstanceState(savedInstanceState);
+//
+//        if (DrawActivity.oldStack != null) {
+//            stateStack = DrawActivity.oldStack;
+//            DrawActivity.oldStack = null;
+//        }
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -132,7 +150,7 @@ public class DrawActivity extends AppCompatActivity {
                 return true;
             //more actions
             case R.id.options_btn_clear:
-                stateStack.put(stateStack.getCurrentState());
+                stateStack.backup();
                 stateStack.getCurrentState().getGraph().getVertices().clear();
                 graphView.postInvalidate();
                 return true;

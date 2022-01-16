@@ -22,8 +22,8 @@ import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
-import com.example.graph_editor.model.state.UndoRedoStack;
-import com.example.graph_editor.model.state.UndoRedoStackImpl;
+import com.example.graph_editor.model.state.StateStack;
+import com.example.graph_editor.model.state.StateStackImpl;
 
 import java.util.List;
 
@@ -50,8 +50,10 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
         String graphString = data.get(position).graph;
         try {
             Graph graph = GraphScanner.fromExact(graphString);
-            UndoRedoStack stack = new UndoRedoStackImpl(() -> {});
-            stack.put(new State(graph, new Frame(new Rectangle(new Point(0, 0), new Point(1, 1)), 1)));
+            StateStack stack = new StateStackImpl(
+                () -> {},
+                new State(graph, new Frame(new Rectangle(new Point(0, 0), new Point(1, 1)), 1))
+            );
             holder.dataGraph.initialize(stack, false);
         } catch (Exception e) {
             e.printStackTrace();

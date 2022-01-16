@@ -12,17 +12,16 @@ import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.Vertex;
 import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.state.State;
-import com.example.graph_editor.model.state.UndoRedoStack;
+import com.example.graph_editor.model.state.StateStack;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class GraphOnTouchListener implements View.OnTouchListener {
 
     private final GraphView graphView;
-    private final UndoRedoStack stateStack;
+    private final StateStack stateStack;
     private final ScaleGestureDetector scaleDetector;
 
     // global variables for easier management
@@ -33,7 +32,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     private Point absolutePoint;
     private Vertex highlighted;
 
-    public GraphOnTouchListener(GraphView graphView, UndoRedoStack stateStack, ScaleGestureDetector scaleDetector) {
+    public GraphOnTouchListener(GraphView graphView, StateStack stateStack, ScaleGestureDetector scaleDetector) {
         this.graphView = graphView;
         this.stateStack = stateStack;
         this.scaleDetector = scaleDetector;
@@ -138,17 +137,22 @@ public class GraphOnTouchListener implements View.OnTouchListener {
                 }
                 return true;
             case MotionEvent.ACTION_UP:
-                // did first vertex snap?
-                if (edgeFirstSnap != null) {
+                if (edgeFirst == DrawManager.getNearestVertex(graph, frame.getRectangle(), relativePoint, 0.05, new HashSet<>(Collections.singleton(edgeSecond)))) {
                     graph.removeVertex(edgeFirst);
-                    edgeFirst = edgeFirstSnap;
-                    graph.addEdge(edgeFirst, edgeSecond);
-                }
-                // did second vertex snap?
-                if (edgeSecondSnap != null) {
                     graph.removeVertex(edgeSecond);
-                    edgeSecond = edgeSecondSnap;
-                    graph.addEdge(edgeFirst, edgeSecond);
+                } else {
+                    // did first ver-tex snap?
+                    if (edgeFirstSnap != null) {
+                        graph.removeVertex(edgeFirst);
+                        edgeFirst = edgeFirstSnap;
+                        graph.addEdge(edgeFirst, edgeSecond);
+                    }
+                    // did second vertex snap?
+                    if (edgeSecondSnap != null) {
+                        graph.removeVertex(edgeSecond);
+                        edgeSecond = edgeSecondSnap;
+                        graph.addEdge(edgeFirst, edgeSecond);
+                    }
                 }
                 edgeFirst = edgeFirstSnap = edgeSecond = edgeSecondSnap = null;
                 return false;
@@ -213,7 +217,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     private boolean actionMoveCanvas(View v, MotionEvent e) {
         switch (e.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
-                stateStack.backup();
+//                stateStack.backup();   //only graph changes are backed up
                 mode = Mode.DRAG;
                 prevX = e.getX();
                 prevY = e.getY();

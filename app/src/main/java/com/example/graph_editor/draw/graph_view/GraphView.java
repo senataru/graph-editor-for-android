@@ -25,7 +25,7 @@ import com.example.graph_editor.model.Edge;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.GraphType;
 import com.example.graph_editor.model.state.State;
-import com.example.graph_editor.model.state.UndoRedoStack;
+import com.example.graph_editor.model.state.StateStack;
 import com.example.graph_editor.model.Vertex;
 import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.mathematics.Rectangle;
@@ -39,8 +39,8 @@ public class GraphView extends View implements ActionModeTypeObserver {
     private Paint edgePaint;
     private Paint highlightPaint;
 
-    private UndoRedoStack stateStack;
-
+    private StateStack stateStack;
+    private GraphOnTouchListener onTouchListener;
     public Vertex highlighted = null;
 
     private boolean interactive = false;
@@ -83,7 +83,7 @@ public class GraphView extends View implements ActionModeTypeObserver {
     }
 
     // !! this alone is not enough, all due to height height being lazily calculated
-    public void initialize(UndoRedoStack stack, boolean interactive) {
+    public void initialize(StateStack stack, boolean interactive) {
         this.interactive = interactive;
         this.stateStack = stack;
         isLazyInitialised = false;
@@ -101,7 +101,8 @@ public class GraphView extends View implements ActionModeTypeObserver {
         currentState.setFrame(frame);
         if (interactive) {
             ScaleGestureDetector scaleDetector = new ScaleGestureDetector(getContext(), new GraphOnScaleListener(stateStack));
-            this.setOnTouchListener(new GraphOnTouchListener(this, stateStack, scaleDetector));
+            onTouchListener = new GraphOnTouchListener(this, stateStack, scaleDetector);
+            this.setOnTouchListener(onTouchListener);
         }
         isLazyInitialised = true;
     }
@@ -146,30 +147,27 @@ public class GraphView extends View implements ActionModeTypeObserver {
         float y1 = (float) start.getY() * getHeight();
         float x2 = (float) end.getX() * getWidth();
         float y2 = (float) end.getY() * getHeight();
-        if (type == GraphType.UNDIRECTED) {
-            canvas.drawLine(x1, y1, x2, y2, edgePaint);
-        } else {
+
+        float dx = x2-x1;
+        float dy = y2-y1;
+        if (dx*dx + dy*dy < 0.1*0.1) return;
+
+        canvas.drawLine(x1, y1, x2, y2, edgePaint);
+        if (type == GraphType.DIRECTED) {
             drawArrow(edgePaint, canvas, x1, y1, x2, y2);
         }
     }
 
     //TODO rewrite this function
-    private void drawArrow(Paint paint, Canvas canvas, float from_x, float from_y, float to_x, float to_y)
-    {
+    private void drawArrow(Paint paint, Canvas canvas, float from_x, float from_y, float to_x, float to_y) {
         float angle,anglerad, radius, lineangle;
-
-        //values to change for other appearance *CHANGE THESE FOR OTHER SIZE ARROWHEADS*
-//        radius=(float)getDrawWidth(frame.getScale(), 50);
-        radius=50;
+        radius=(float)getDrawWidth(stateStack.getCurrentState().getFrame().getScale(), 50);
+//        radius=50;
         angle=45;
-
 
         //some angle calculations
         anglerad= (float) (PI*angle/180.0f);
         lineangle= (float) (atan2(to_y-from_y,to_x-from_x));
-
-        //tha line
-        canvas.drawLine(from_x,from_y,to_x,to_y,paint);
 
         //tha triangle
         Path path = new Path();
@@ -202,6 +200,6 @@ public class GraphView extends View implements ActionModeTypeObserver {
         return new Point(point.getX()/getWidth(), point.getY()/getHeight());
     }
 
-    public UndoRedoStack getStateStack() { return stateStack; }
+    public StateStack getStateStack() { return stateStack; }
 
 }

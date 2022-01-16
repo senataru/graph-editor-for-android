@@ -2,18 +2,13 @@ package com.example.graph_editor.draw;
 
 import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.text.InputType;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.graph_editor.R;
@@ -21,25 +16,17 @@ import com.example.graph_editor.graph_storage.GraphScanner;
 import com.example.graph_editor.graph_storage.InvalidGraphStringException;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Graph;
-import com.example.graph_editor.model.InputSanitizer;
-import com.example.graph_editor.model.graph_generators.GraphGenerator;
-import com.example.graph_editor.model.graph_generators.Parameter;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
-import com.example.graph_editor.model.state.UndoRedoStack;
-
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import com.example.graph_editor.model.state.StateStack;
 
 public class ImportPopup {
     private final Context context;
-    private final UndoRedoStack stateStack;
+    private final StateStack stateStack;
 
     private AlertDialog dialog;
 
-    ImportPopup(Context context, UndoRedoStack stateStack) {
+    ImportPopup(Context context, StateStack stateStack) {
         this.context = context;
         this.stateStack = stateStack;
     }

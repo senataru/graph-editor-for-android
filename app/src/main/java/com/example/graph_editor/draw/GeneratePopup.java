@@ -3,7 +3,6 @@ package com.example.graph_editor.draw;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.graphics.Rect;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -21,7 +20,7 @@ import com.example.graph_editor.model.graph_generators.GraphGenerator;
 import com.example.graph_editor.model.graph_generators.Parameter;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
-import com.example.graph_editor.model.state.UndoRedoStack;
+import com.example.graph_editor.model.state.StateStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,12 +28,12 @@ import java.util.Locale;
 
 public class GeneratePopup {
     private final Context context;
-    private final UndoRedoStack stateStack;
+    private final StateStack stateStack;
     private final GraphGenerator generator;
 
     private AlertDialog dialog;
 
-    GeneratePopup(Context context, UndoRedoStack stateStack, GraphGenerator generator) {
+    GeneratePopup(Context context, StateStack stateStack, GraphGenerator generator) {
         this.context = context;
         this.stateStack = stateStack;
         this.generator = generator;
