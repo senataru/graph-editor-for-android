@@ -6,10 +6,10 @@ import java.util.Observable;
 import java.util.Observer;
 
 public enum ActionModeType {
-    NONE, NEW_VERTEX, NEW_EDGE, MOVE_OBJECT, MOVE_CANVAS, ZOOM_CANVAS, REMOVE_OBJECT;
+    NEW_VERTEX, NEW_EDGE, MOVE_OBJECT, MOVE_CANVAS, ZOOM_CANVAS, REMOVE_OBJECT;
 
     private static final List<ActionModeTypeObserver> observers = new ArrayList<>();
-    private static volatile ActionModeType currentType = ActionModeType.NONE;
+    private static volatile ActionModeType currentType = ActionModeType.MOVE_CANVAS;
 
     public static synchronized void addObserver(ActionModeTypeObserver observer) {
         observers.add(observer);
@@ -35,6 +35,6 @@ public enum ActionModeType {
     }
 
     public static synchronized void resetCurrentModeType() {
-        setCurrentModeType(ActionModeType.NONE);
+        setCurrentModeType(ActionModeType.MOVE_CANVAS);
     }
 }

@@ -166,7 +166,7 @@ public class DrawActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.options_btn_save:
                 if(currentGraphId == -1) {
-                    new SavePopup(this, this).show(stateStack.getCurrentState().getGraph());
+                    new SavePopup(this).show(stateStack.getCurrentState().getGraph());
                 } else {
                     SavesDatabase database = SavesDatabase.getDbInstance(getApplicationContext());
                     database.saveDao().updateGraph(currentGraphId, GraphWriter.toExact(stateStack.getCurrentState().getGraph()), System.currentTimeMillis());
@@ -197,7 +197,7 @@ public class DrawActivity extends AppCompatActivity {
                 graphView.postInvalidate();
                 return true;
             case R.id.options_btn_save_as:
-                new SavePopup(this, this).show(stateStack.getCurrentState().getGraph());
+                new SavePopup(this).show(stateStack.getCurrentState().getGraph());
                 return true;
             case R.id.options_btn_share:
                 new ShareIntent(this, stateStack).show();

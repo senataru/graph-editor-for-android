@@ -158,25 +158,21 @@ public class GraphView extends View implements ActionModeTypeObserver {
         }
     }
 
-    //TODO rewrite this function
-    private void drawArrow(Paint paint, Canvas canvas, float from_x, float from_y, float to_x, float to_y) {
-        float angle,anglerad, radius, lineangle;
-        radius=(float)getDrawWidth(stateStack.getCurrentState().getFrame().getScale(), 50);
-//        radius=50;
-        angle=45;
+    private void drawArrow(Paint paint, Canvas canvas, float x1, float y1, float x2, float y2) {
+        float radius = (float)getDrawWidth(stateStack.getCurrentState().getFrame().getScale(), 50);
+        float angle = 45;
 
-        //some angle calculations
-        anglerad= (float) (PI*angle/180.0f);
-        lineangle= (float) (atan2(to_y-from_y,to_x-from_x));
+        float angleRad= (float) (PI*angle/180.0f);
+        float lineAngleRad= (float) (atan2(y2-y1,x2-x1));
 
         //tha triangle
         Path path = new Path();
         path.setFillType(Path.FillType.EVEN_ODD);
-        path.moveTo(to_x, to_y);
-        path.lineTo((float)(to_x-radius*cos(lineangle - (anglerad / 2.0))),
-                (float)(to_y-radius*sin(lineangle - (anglerad / 2.0))));
-        path.lineTo((float)(to_x-radius*cos(lineangle + (anglerad / 2.0))),
-                (float)(to_y-radius*sin(lineangle + (anglerad / 2.0))));
+        path.moveTo(x2, y2);
+        path.lineTo((float)(x2-radius*cos(lineAngleRad - (angleRad / 2.0))),
+                (float)(y2-radius*sin(lineAngleRad - (angleRad / 2.0))));
+        path.lineTo((float)(x2-radius*cos(lineAngleRad + (angleRad / 2.0))),
+                (float)(y2-radius*sin(lineAngleRad + (angleRad / 2.0))));
         path.close();
 
         canvas.drawPath(path, paint);

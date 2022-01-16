@@ -69,7 +69,6 @@ public class GraphOnTouchListener implements View.OnTouchListener {
                 result = actionMoveCanvas(v, event);
                 break;
             case ZOOM_CANVAS:
-            case NONE:
             default:
                 result = false;
                 break;
