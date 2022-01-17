@@ -8,6 +8,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Checkable;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -33,9 +34,13 @@ public class SettingsPopup {
         ((SwitchCompat)popupView.findViewById(R.id.toggle_stylus)).setOnCheckedChangeListener((b, checked) ->
                 Settings.setStylus(context, checked)
         );
+        ((Checkable)popupView.findViewById(R.id.toggle_stylus)).setChecked(Settings.getStylus(context));
+
         ((SwitchCompat)popupView.findViewById(R.id.toggle_buttons)).setOnCheckedChangeListener((b, checked) ->
                 Settings.setButtons(context, checked)
         );
+        ((Checkable)popupView.findViewById(R.id.toggle_buttons)).setChecked(Settings.getButtons(context));
+
         popupView.findViewById(R.id.settings_popup_close).setOnClickListener(v ->
                 dialog.dismiss()
         );

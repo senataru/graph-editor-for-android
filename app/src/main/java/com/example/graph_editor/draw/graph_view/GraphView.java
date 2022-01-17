@@ -165,7 +165,6 @@ public class GraphView extends View implements ActionModeTypeObserver {
         float angleRad= (float) (PI*angle/180.0f);
         float lineAngleRad= (float) (atan2(y2-y1,x2-x1));
 
-        //tha triangle
         Path path = new Path();
         path.setFillType(Path.FillType.EVEN_ODD);
         path.moveTo(x2, y2);

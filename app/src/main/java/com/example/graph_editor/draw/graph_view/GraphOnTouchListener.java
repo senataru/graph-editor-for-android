@@ -5,6 +5,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
+import com.example.graph_editor.draw.Settings;
 import com.example.graph_editor.draw.action_mode_type.ActionModeType;
 import com.example.graph_editor.draw.Frame;
 import com.example.graph_editor.model.DrawManager;
@@ -26,6 +27,8 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     private final StateStack stateStack;
     private final ScaleGestureDetector scaleDetector;
 
+    private Integer currentlyManagedTool = null;
+
     // global variables for easier management
 
     private Graph graph;
@@ -33,6 +36,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     private Point relativePoint;
     private Point absolutePoint;
     private Vertex highlighted;
+    private ActionModeType oldStylusActionMode;
 
     public GraphOnTouchListener(Context context, GraphView graphView, StateStack stateStack, ScaleGestureDetector scaleDetector) {
         this.context = context;
@@ -45,7 +49,10 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     public boolean onTouch(View v, MotionEvent event) {
         v.performClick();
 
+        if (event.getAction() == MotionEvent.ACTION_DOWN && currentlyManagedTool == null)
+            currentlyManagedTool = event.getToolType(0);
 
+        if (event.getToolType(0) != currentlyManagedTool) return true;
 
         State currentState = stateStack.getCurrentState();
         frame = currentState.getFrame();
@@ -54,10 +61,22 @@ public class GraphOnTouchListener implements View.OnTouchListener {
         relativePoint = graphView.getRelative(new Point(event.getX(), event.getY()));
         absolutePoint = DrawManager.getAbsolute(frame.getRectangle(), relativePoint);
         highlighted = graphView.highlighted;
-        ActionModeType currentType = currentState.getActionModeType();
+        boolean stylusMode = Settings.getStylus(context);
+
+        if (stylusMode) {
+            if (currentlyManagedTool == MotionEvent.TOOL_TYPE_FINGER) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    oldStylusActionMode = currentState.getActionModeType();
+                    currentState.setCurrentModeType(ActionModeType.MOVE_CANVAS);
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    currentState.setCurrentModeType(oldStylusActionMode);
+                    oldStylusActionMode = null;
+                }
+            }
+        }
 
         boolean result;
-        switch (currentType) {
+        switch (currentState.getActionModeType()) {
             case NEW_VERTEX:
                 result = actionNewVertex(v, event);
                 break;
@@ -79,6 +98,10 @@ public class GraphOnTouchListener implements View.OnTouchListener {
                 break;
         }
         scaleDetector.onTouchEvent(event);
+
+        if (event.getAction() == MotionEvent.ACTION_UP && currentlyManagedTool == event.getToolType(0))
+            currentlyManagedTool = null;
+
         graphView.highlighted = highlighted;
         graphView.postInvalidate();
         return result;
