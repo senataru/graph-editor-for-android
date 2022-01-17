@@ -30,7 +30,8 @@ public class Frame {
     }
 
     public void rescale(double scale) {
-        double newScale = Math.min(Math.max(scale*this.scale, MIN_SCALE), MAX_SCALE);
+//        double newScale = Math.min(Math.max(scale*this.scale, MIN_SCALE), MAX_SCALE);
+        double newScale = scale*this.scale;
 
         this.rec = new Rectangle(this.rec, newScale/this.scale);
 

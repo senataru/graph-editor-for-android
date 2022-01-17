@@ -17,13 +17,16 @@ import android.widget.Toast;
 import androidx.appcompat.widget.SwitchCompat;
 
 import com.example.graph_editor.R;
+import com.example.graph_editor.draw.graph_view.GraphView;
 
 public class SettingsPopup {
     private final Context context;
+    private final Runnable invalidateFunction;
     private AlertDialog dialog;
 
-    SettingsPopup(Context context) {
+    SettingsPopup(Context context, Runnable invalidateFunction) {
         this.context = context;
+        this.invalidateFunction = invalidateFunction;
     }
 
     public void show() {
@@ -31,15 +34,25 @@ public class SettingsPopup {
         LayoutInflater inflater = (LayoutInflater)context.getSystemService( Context.LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.settings_popup, null);
 
-        ((SwitchCompat)popupView.findViewById(R.id.toggle_stylus)).setOnCheckedChangeListener((b, checked) ->
+        SwitchCompat btnStylus = popupView.findViewById(R.id.toggle_stylus);
+        btnStylus.setOnCheckedChangeListener((b, checked) ->
                 Settings.setStylus(context, checked)
         );
-        ((Checkable)popupView.findViewById(R.id.toggle_stylus)).setChecked(Settings.getStylus(context));
+        ((Checkable)btnStylus).setChecked(Settings.getStylus(context));
 
-        ((SwitchCompat)popupView.findViewById(R.id.toggle_buttons)).setOnCheckedChangeListener((b, checked) ->
+        SwitchCompat btnButtons = popupView.findViewById(R.id.toggle_buttons);
+        btnButtons.setOnCheckedChangeListener((b, checked) ->
                 Settings.setButtons(context, checked)
         );
-        ((Checkable)popupView.findViewById(R.id.toggle_buttons)).setChecked(Settings.getButtons(context));
+        ((Checkable)btnButtons).setChecked(Settings.getButtons(context));
+
+        SwitchCompat btnFixedWidth = popupView.findViewById(R.id.toggle_fixed_width);
+        btnFixedWidth.setOnCheckedChangeListener((buttonView, checked) -> {
+            Settings.setFixedWidth(context, checked);
+            invalidateFunction.run();
+        });
+        ((Checkable)btnFixedWidth).setChecked(Settings.getFixedWidth(context));
+
 
         popupView.findViewById(R.id.settings_popup_close).setOnClickListener(v ->
                 dialog.dismiss()

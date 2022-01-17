@@ -41,4 +41,7 @@
     <string name="are_you_sure_you_want_to_delete_this_graph">Delete this graph?</string>
     <string name="yes">yes</string>
     <string name="no">no</string>
+    <string name="recenter_graph">Recenter graph</string>
+    <string name="fixed_edge_width">Fixed edge width</string>
+    <string name="no_saved_graphs_yet">No graphs saved yet</string>
 </resources>

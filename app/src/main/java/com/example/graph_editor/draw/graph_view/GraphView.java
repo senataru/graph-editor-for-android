@@ -17,6 +17,7 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import com.example.graph_editor.draw.Settings;
 import com.example.graph_editor.draw.action_mode_type.ActionModeType;
 import com.example.graph_editor.draw.action_mode_type.ActionModeTypeObserver;
 import com.example.graph_editor.draw.Frame;
@@ -38,6 +39,7 @@ public class GraphView extends View implements ActionModeTypeObserver {
     private double vertexRadius = baseVertexRadius;
     private Paint edgePaint;
     private Paint highlightPaint;
+    private boolean fixedWidth;
 
     private StateStack stateStack;
     private GraphOnTouchListener onTouchListener;
@@ -115,6 +117,7 @@ public class GraphView extends View implements ActionModeTypeObserver {
             lazyInitialize();
         }
 
+        fixedWidth = Settings.getFixedWidth(getContext());
         State state = stateStack.getCurrentState();
         Frame frame = state.getFrame();
         Graph graph = state.getGraph();
@@ -178,10 +181,7 @@ public class GraphView extends View implements ActionModeTypeObserver {
     }
 
     private double getDrawWidth(double scale, double value) {
-        double fun;
-        fun = scale;
-//        fun = 1;
-//        fun = ((scale-1)*4+1);
+        double fun = fixedWidth ? 1 : scale;
         return value / fun * (getWidth()/1000.0);
     }
 

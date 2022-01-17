@@ -10,56 +10,56 @@
 
     <TextView
         android:id="@+id/textView"
+        style="@style/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/settings"
         android:textSize="50sp"
-        style="@style/title"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.049" />
+        app:layout_constraintVertical_bias="0.0" />
 
-    <RelativeLayout
-        android:id="@+id/rl"
+    <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="20dp"
-        android:paddingHorizontal="10dp"
-        android:autofillHints="copy a graph here"
-        android:maxLines="10"
-        app:layout_constraintBottom_toTopOf="@+id/settings_popup_close"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.266"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.0"
-        android:inputType="textMultiLine"
-        android:hint="@string/import_graph">
+        app:layout_constraintVertical_bias="0.0">
+
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/toggle_stylus"
+            style="@style/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
             android:text="@string/settings_text_stylus"
-            android:textSize="30sp"
-            style="@style/title"
-            />
+            android:textSize="30sp" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/toggle_buttons"
+            style="@style/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_below="@+id/toggle_stylus"
             android:text="@string/settings_text_buttons"
-            android:textSize="30sp"
-            style="@style/title"/>
-    </RelativeLayout>
+            android:textSize="30sp" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/toggle_fixed_width"
+            style="@style/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/fixed_edge_width"
+            android:textSize="30sp" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/settings_popup_close"
@@ -71,7 +71,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.919"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
         app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

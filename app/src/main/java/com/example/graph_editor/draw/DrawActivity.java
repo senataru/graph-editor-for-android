@@ -190,8 +190,15 @@ public class DrawActivity extends AppCompatActivity {
                 state.setFrame(new Frame(newRectangle, 1.2));
                 graphView.postInvalidate();
                 return true;
+            case R.id.options_btn_recenter:
+                State state1 = stateStack.getCurrentState();
+                Frame frame1 = state1.getFrame();
+                Rectangle newRectangle1 = DrawManager.getOptimalRectangle(state1.getGraph(), 0.1, frame1.getRectangle());
+                state1.setFrame(new Frame(newRectangle1, newRectangle1.getWidth()));
+                graphView.postInvalidate();
+                return true;
             case R.id.options_btn_settings:
-                new SettingsPopup(this).show();
+                new SettingsPopup(this, ()->graphView.postInvalidate()).show();
                 return true;
             case R.id.options_btn_save_as:
                 new SavePopup(this).show(stateStack.getCurrentState().getGraph());

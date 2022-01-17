@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import com.example.graph_editor.R;
 import com.example.graph_editor.database.SavesDatabase;
@@ -25,7 +26,6 @@ public class BrowseActivity extends AppCompatActivity{
 
         saved = findViewById(R.id.saved);
 
-//        changeActivity("UNDIRECTED\n3 2\n0 0.0 0.0\n1 0.0 1.0\n2 1.0 1.0\n0 1\n1 2\n");
     }
 
     @Override
@@ -36,6 +36,9 @@ public class BrowseActivity extends AppCompatActivity{
                 database.saveDao().getAllSaves(), this);
         saved.setAdapter(adapter);
         saved.setLayoutManager(new LinearLayoutManager(this));
+
+        TextView noSavedGraphs = findViewById(R.id.txt_no_saved_graphs);
+        if (adapter.data.size() > 0) noSavedGraphs.setAlpha(0f);
     }
 
     public void changeActivity(String graphString, int id) {

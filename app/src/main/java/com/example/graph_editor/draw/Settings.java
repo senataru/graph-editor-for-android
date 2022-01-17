@@ -17,6 +17,14 @@ public class Settings {
         editor.putBoolean("settingsButtons", checked);
         editor.apply();
     }
+    public static void setFixedWidth(Context context, boolean checked) {
+        SharedPreferences sharedPref = context.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean("settingsFixedWidth", checked);
+        editor.apply();
+    }
+
+
     public static boolean getStylus(Context context) {
         SharedPreferences sharedPref = context.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
         return sharedPref.getBoolean("settingsStylus", false);
@@ -24,5 +32,9 @@ public class Settings {
     public static boolean getButtons(Context context) {
         SharedPreferences sharedPref = context.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
         return sharedPref.getBoolean("settingsButtons", false);
+    }
+    public static boolean getFixedWidth(Context context) {
+        SharedPreferences sharedPref = context.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
+        return sharedPref.getBoolean("settingsFixedWidth", false);
     }
 }
