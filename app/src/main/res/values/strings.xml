@@ -38,4 +38,7 @@
     <string name="close">Close</string>
     <string name="settings_text_stylus">Stylus mode</string>
     <string name="settings_text_buttons">Buttons on top</string>
+    <string name="are_you_sure_you_want_to_delete_this_graph">Delete this graph?</string>
+    <string name="yes">yes</string>
+    <string name="no">no</string>
 </resources>

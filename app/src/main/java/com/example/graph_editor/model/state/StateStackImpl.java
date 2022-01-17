@@ -33,6 +33,7 @@ public class StateStackImpl implements StateStack {
 
     @Override
     public State undo() {
+        stack.set(pointer, currentState.getGraph());
         pointer = Math.max(pointer-1, 0);
         currentState.setGraph(stack.get(pointer));
         invalidateView();

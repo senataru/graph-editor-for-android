@@ -56,6 +56,7 @@ public class ImportPopup {
                 Toast.makeText(context, "Invalid graph", Toast.LENGTH_SHORT).show();
                 return;
             }
+            stateStack.backup();
             Rectangle oldRec = stateStack.getCurrentState().getFrame().getRectangle();
             Rectangle optimalRec = DrawManager.getOptimalRectangle(g, 0.1, oldRec);
             State currentState = stateStack.getCurrentState();

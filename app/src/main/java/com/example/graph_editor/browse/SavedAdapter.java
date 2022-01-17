@@ -61,13 +61,15 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
             e.printStackTrace();
         }
         holder.editButton.setOnClickListener(v -> browseActivity.changeActivity(graphString, data.get(position).uid));
-        holder.deleteButton.setOnClickListener(v -> {
-            Save s = data.get(position);
-            data.remove(position);
-            notifyItemRemoved(position);
-            notifyItemRangeChanged(position, data.size());
-            SavesDatabase.getDbInstance(context).saveDao().delete(s);
-        });
+        holder.deleteButton.setOnClickListener(v ->
+                new ConfirmPopup(context, holder.dataGraph.getStateStack().getCurrentState().getGraph(), () -> {
+                    Save s = data.get(position);
+                    data.remove(position);
+                    notifyItemRemoved(position);
+                    notifyItemRangeChanged(position, data.size());
+                    SavesDatabase.getDbInstance(context).saveDao().delete(s);
+                }).show()
+        );
         holder.shareButton.setOnClickListener(v -> new ShareIntent(context, holder.dataGraph.getStateStack()).show());
     }
 
