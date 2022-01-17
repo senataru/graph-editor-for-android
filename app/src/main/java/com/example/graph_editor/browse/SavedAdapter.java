@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -84,9 +85,9 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
     static class Holder extends RecyclerView.ViewHolder {
         TextView txtName;
         GraphView dataGraph;
-        Button editButton;
-        Button deleteButton;
-        Button shareButton;
+        ImageButton editButton;
+        ImageButton deleteButton;
+        ImageButton shareButton;
 
         public Holder(@NonNull View itemView) {
             super(itemView);

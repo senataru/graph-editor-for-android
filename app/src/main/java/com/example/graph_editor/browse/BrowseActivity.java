@@ -24,13 +24,18 @@ public class BrowseActivity extends AppCompatActivity{
         setContentView(R.layout.activity_browse);
 
         saved = findViewById(R.id.saved);
+
+//        changeActivity("UNDIRECTED\n3 2\n0 0.0 0.0\n1 0.0 1.0\n2 1.0 1.0\n0 1\n1 2\n");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         database = SavesDatabase.getDbInstance(getApplicationContext());
         adapter = new SavedAdapter(this,
                 database.saveDao().getAllSaves(), this);
         saved.setAdapter(adapter);
         saved.setLayoutManager(new LinearLayoutManager(this));
-
-//        changeActivity("UNDIRECTED\n3 2\n0 0.0 0.0\n1 0.0 1.0\n2 1.0 1.0\n0 1\n1 2\n");
     }
 
     public void changeActivity(String graphString, int id) {
@@ -42,6 +47,5 @@ public class BrowseActivity extends AppCompatActivity{
 
         Intent intent = new Intent(this, DrawActivity.class);
         startActivity(intent);
-        finish();
     }
 }

@@ -19,12 +19,13 @@
 
             <TextView
                 android:id="@+id/txtName"
-                android:layout_width="170dp"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:paddingBottom="10dp"
                 android:text="@string/name"
                 android:textSize="30sp"
+                style="@style/title"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -52,47 +53,52 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <Button
+            <ImageButton
                 android:id="@+id/btnEdit"
-                android:layout_width="40dp"
+                android:layout_width="50dp"
                 android:layout_height="40dp"
                 android:layout_marginStart="16dp"
                 android:paddingHorizontal="5dp"
-                android:text="@string/edit"
-                android:textSize="12sp"
+                android:src="@drawable/edit"
+                android:scaleType="fitCenter"
+                android:backgroundTint="@color/teal_200"
+                android:contentDescription="@string/edit"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txtName" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/btnDelete"
-                android:layout_width="60dp"
+                android:layout_width="50dp"
                 android:layout_height="40dp"
-                android:layout_marginStart="12dp"
+                android:layout_marginStart="1dp"
                 android:backgroundTint="@color/light_red"
+                android:paddingVertical="11dp"
+                android:contentDescription="@string/delete"
                 android:paddingHorizontal="5dp"
-                android:text="@string/delete"
-                android:textSize="12sp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/delete"
                 app:layout_constraintBottom_toBottomOf="@+id/btnEdit"
-                app:layout_constraintEnd_toEndOf="@+id/txtName"
-                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintEnd_toStartOf="@+id/btnShare"
                 app:layout_constraintStart_toEndOf="@+id/btnEdit"
                 app:layout_constraintTop_toBottomOf="@+id/txtName"
                 app:layout_constraintVertical_bias="1.0" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/btnShare"
                 android:layout_width="50dp"
                 android:layout_height="40dp"
                 android:layout_marginTop="9dp"
+                android:layout_marginStart="1dp"
                 android:backgroundTint="@color/grey"
                 android:paddingHorizontal="5dp"
-                android:text="@string/shar"
-                android:textSize="12sp"
+                android:paddingVertical="11dp"
+                android:contentDescription="@string/shar"
+                android:src="@drawable/share"
+                android:scaleType="fitCenter"
                 app:layout_constraintBottom_toBottomOf="@+id/btnEdit"
                 app:layout_constraintEnd_toEndOf="@+id/txtName"
                 app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toEndOf="@+id/btnDelete"
                 app:layout_constraintTop_toBottomOf="@+id/txtName"
                 app:layout_constraintVertical_bias="1.0" />
 
