@@ -8,6 +8,7 @@
     <style name="title">
         <item name="android:fontFamily">@font/amatic_sc</item>
         <item name="android:textSize">70sp</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 
 </resources>

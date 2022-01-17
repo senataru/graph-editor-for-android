@@ -34,4 +34,8 @@
     <string name="import_graph">Import graph</string>
     <string name="input_your_graph">Input your graph</string>
     <string name="shar">shar</string>
+    <string name="settings">Settings</string>
+    <string name="close">Close</string>
+    <string name="settings_text_stylus">Stylus mode</string>
+    <string name="settings_text_buttons">Buttons on top</string>
 </resources>

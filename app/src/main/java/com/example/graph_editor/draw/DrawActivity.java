@@ -196,6 +196,9 @@ public class DrawActivity extends AppCompatActivity {
                 state.setFrame(new Frame(newRectangle, 1.2));
                 graphView.postInvalidate();
                 return true;
+            case R.id.options_btn_settings:
+                new SettingsPopup(this).show();
+                return true;
             case R.id.options_btn_save_as:
                 new SavePopup(this).show(stateStack.getCurrentState().getGraph());
                 return true;

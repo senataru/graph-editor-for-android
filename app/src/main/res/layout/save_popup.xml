@@ -5,51 +5,52 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/main_menu_color"
-    android:paddingBottom="30dp">
+    android:paddingBottom="30dp"
+    android:padding="30dp">
 
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
+        android:gravity="center"
         android:text="@string/save_your_graph"
-        android:textSize="30sp"
+        android:textSize="50sp"
         style="@style/title"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.049" />
 
     <EditText
         android:id="@+id/nameEditText"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="26dp"
-        android:width="185dp"
-        android:autofillHints=""
-        android:ems="10"
-        android:hint="@string/enter_graph_name"
-        android:inputType="textPersonName"
+        android:layout_marginTop="16dp"
+        android:autofillHints="copy a graph here"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/saveBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title" />
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:layout_constraintVertical_bias="0.0"
+        android:inputType="text"
+        android:hint="@string/enter_graph_name" />
 
     <Button
         android:id="@+id/saveBtn"
+        style="@style/menu_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="28dp"
-        android:minWidth="60dip"
-        android:minHeight="40dip"
-        android:paddingLeft="0dp"
-        android:paddingRight="0dp"
+        android:layout_marginTop="100dp"
         android:text="@string/save"
-        android:textSize="14sp"
-        style="@style/menu_button"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title" />
-
-
+        app:layout_constraintHorizontal_bias="0.919"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:layout_constraintVertical_bias="1.0" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
