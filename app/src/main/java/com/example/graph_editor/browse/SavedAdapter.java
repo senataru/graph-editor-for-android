@@ -16,6 +16,7 @@ import com.example.graph_editor.database.Save;
 import com.example.graph_editor.database.SavesDatabase;
 import com.example.graph_editor.draw.Frame;
 import com.example.graph_editor.draw.ShareIntent;
+import com.example.graph_editor.draw.action_mode_type.ActionModeType;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.graph_storage.GraphScanner;
 import com.example.graph_editor.model.Graph;
@@ -52,7 +53,7 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
             Graph graph = GraphScanner.fromExact(graphString);
             StateStack stack = new StateStackImpl(
                 () -> {},
-                new State(graph, new Frame(new Rectangle(new Point(0, 0), new Point(1, 1)), 1))
+                new State(graph, new Frame(new Rectangle(new Point(0, 0), new Point(1, 1)), 1), ActionModeType.MOVE_CANVAS)
             );
             holder.dataGraph.initialize(stack, false);
         } catch (Exception e) {

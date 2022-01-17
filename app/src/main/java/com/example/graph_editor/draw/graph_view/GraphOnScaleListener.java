@@ -2,7 +2,7 @@ package com.example.graph_editor.draw.graph_view;
 
 import android.view.ScaleGestureDetector;
 
-import com.example.graph_editor.draw.ActionModeType;
+import com.example.graph_editor.draw.action_mode_type.ActionModeType;
 import com.example.graph_editor.model.state.StateStack;
 
 public class GraphOnScaleListener implements ScaleGestureDetector.OnScaleGestureListener {
@@ -22,8 +22,8 @@ public class GraphOnScaleListener implements ScaleGestureDetector.OnScaleGesture
 
     @Override
     public boolean onScaleBegin(ScaleGestureDetector detector) {
-        if (ActionModeType.getCurrentModeType() == ActionModeType.MOVE_CANVAS) {
-            ActionModeType.setCurrentModeType(ActionModeType.ZOOM_CANVAS);
+        if (stateStack.getCurrentState().getActionModeType() == ActionModeType.MOVE_CANVAS) {
+            stateStack.getCurrentState().setCurrentModeType(ActionModeType.ZOOM_CANVAS);
 //            stateStack.backup();     // unnecessary - every scale begins with move, and move is already backed up
             return true;
         }
@@ -32,7 +32,6 @@ public class GraphOnScaleListener implements ScaleGestureDetector.OnScaleGesture
 
     @Override
     public void onScaleEnd(ScaleGestureDetector detector) {
-        ActionModeType.setCurrentModeType(ActionModeType.MOVE_CANVAS);
-
+        stateStack.getCurrentState().setCurrentModeType(ActionModeType.MOVE_CANVAS);
     }
 }

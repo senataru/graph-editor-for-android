@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.graph_editor.R;
 import com.example.graph_editor.database.SavesDatabase;
+import com.example.graph_editor.draw.action_mode_type.ActionModeType;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.graph_view.NavigationButtonCollection;
 import com.example.graph_editor.graph_storage.GraphScanner;
@@ -34,7 +34,6 @@ import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.model.state.StateStack;
 import com.example.graph_editor.model.state.StateStackImpl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DrawActivity extends AppCompatActivity {
@@ -60,7 +59,6 @@ public class DrawActivity extends AppCompatActivity {
         editor.apply();
 
         graphView = findViewById(R.id.viewGraph);
-        ActionModeType.addObserver(graphView);
 
         Graph graph = null;
         List<Graph> stack = null;
@@ -96,21 +94,22 @@ public class DrawActivity extends AppCompatActivity {
         stateStack = new StateStackImpl(
                 () -> {
                     invalidateOptionsMenu();
-                    graphView.update(ActionModeType.getCurrentModeType());
+                    graphView.update(stateStack.getCurrentState().getActionModeType());
                 },
                 // the rectangle is temporary and will be replaced as soon as possible (when the height will be known)
-                new State(graph, new Frame(new Rectangle(new Point(0, 0), new Point(1, 1)), 1)),
+                new State(graph, new Frame(new Rectangle(new Point(0, 0), new Point(1, 1)), 1), ActionModeType.MOVE_CANVAS),
                 stack,
                 pointer
         );
         graphView.initialize(stateStack,true);
+        stateStack.getCurrentState().addObserver(graphView);
 
         NavigationButtonCollection collection = new NavigationButtonCollection(this);
-        collection.add(findViewById(R.id.btnVertex), () -> changeMode(ActionModeType.NEW_VERTEX));
-        collection.add(findViewById(R.id.btnEdge), () -> changeMode(ActionModeType.NEW_EDGE));
-        collection.add(findViewById(R.id.btnMoveObject), () -> changeMode(ActionModeType.MOVE_OBJECT));
-        collection.add(findViewById(R.id.btnMoveCanvas), () -> changeMode(ActionModeType.MOVE_CANVAS));
-        collection.add(findViewById(R.id.btnRemoveObject), () -> changeMode(ActionModeType.REMOVE_OBJECT));
+        collection.add(findViewById(R.id.btnVertex), () -> stateStack.getCurrentState().setCurrentModeType(ActionModeType.NEW_VERTEX));
+        collection.add(findViewById(R.id.btnEdge), () -> stateStack.getCurrentState().setCurrentModeType(ActionModeType.NEW_EDGE));
+        collection.add(findViewById(R.id.btnMoveObject), () -> stateStack.getCurrentState().setCurrentModeType(ActionModeType.MOVE_OBJECT));
+        collection.add(findViewById(R.id.btnMoveCanvas), () -> stateStack.getCurrentState().setCurrentModeType(ActionModeType.MOVE_CANVAS));
+        collection.add(findViewById(R.id.btnRemoveObject), () -> stateStack.getCurrentState().setCurrentModeType(ActionModeType.REMOVE_OBJECT));
 
         switch (modeType) {
             case NEW_VERTEX:
@@ -129,18 +128,13 @@ public class DrawActivity extends AppCompatActivity {
                 collection.setCurrent(findViewById(R.id.btnRemoveObject));
                 break;
         }
-        changeMode(modeType);
-    }
-
-    private void changeMode(ActionModeType type) {
-        ActionModeType.setCurrentModeType(type);
+        stateStack.getCurrentState().setCurrentModeType(modeType);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ActionModeType.removeObserver(graphView);
-        ActionModeType.resetCurrentModeType();
+        stateStack.getCurrentState().removeObserver(graphView);
     }
 
     @Override
@@ -150,7 +144,7 @@ public class DrawActivity extends AppCompatActivity {
         String s = GraphWriter.toExactList(stateStack.getGraphStack());
         outState.putString("GraphStack", s);
         outState.putInt("Pointer", stateStack.getPointer());
-        outState.putString("ActionType", ActionModeType.getCurrentModeType().toString());
+        outState.putString("ActionType", stateStack.getCurrentState().getActionModeType().toString());
     }
 
     @Override

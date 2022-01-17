@@ -1,10 +1,11 @@
 package com.example.graph_editor.draw.graph_view;
 
+import android.content.Context;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
-import com.example.graph_editor.draw.ActionModeType;
+import com.example.graph_editor.draw.action_mode_type.ActionModeType;
 import com.example.graph_editor.draw.Frame;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Edge;
@@ -20,6 +21,7 @@ import java.util.Set;
 
 public class GraphOnTouchListener implements View.OnTouchListener {
 
+    private final Context context;
     private final GraphView graphView;
     private final StateStack stateStack;
     private final ScaleGestureDetector scaleDetector;
@@ -32,7 +34,8 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     private Point absolutePoint;
     private Vertex highlighted;
 
-    public GraphOnTouchListener(GraphView graphView, StateStack stateStack, ScaleGestureDetector scaleDetector) {
+    public GraphOnTouchListener(Context context, GraphView graphView, StateStack stateStack, ScaleGestureDetector scaleDetector) {
+        this.context = context;
         this.graphView = graphView;
         this.stateStack = stateStack;
         this.scaleDetector = scaleDetector;
@@ -42,6 +45,8 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     public boolean onTouch(View v, MotionEvent event) {
         v.performClick();
 
+
+
         State currentState = stateStack.getCurrentState();
         frame = currentState.getFrame();
         graph = currentState.getGraph();
@@ -49,7 +54,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
         relativePoint = graphView.getRelative(new Point(event.getX(), event.getY()));
         absolutePoint = DrawManager.getAbsolute(frame.getRectangle(), relativePoint);
         highlighted = graphView.highlighted;
-        ActionModeType currentType = ActionModeType.getCurrentModeType();
+        ActionModeType currentType = currentState.getActionModeType();
 
         boolean result;
         switch (currentType) {

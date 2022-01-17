@@ -17,8 +17,8 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import com.example.graph_editor.draw.ActionModeType;
-import com.example.graph_editor.draw.ActionModeTypeObserver;
+import com.example.graph_editor.draw.action_mode_type.ActionModeType;
+import com.example.graph_editor.draw.action_mode_type.ActionModeTypeObserver;
 import com.example.graph_editor.draw.Frame;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Edge;
@@ -101,7 +101,7 @@ public class GraphView extends View implements ActionModeTypeObserver {
         currentState.setFrame(frame);
         if (interactive) {
             ScaleGestureDetector scaleDetector = new ScaleGestureDetector(getContext(), new GraphOnScaleListener(stateStack));
-            onTouchListener = new GraphOnTouchListener(this, stateStack, scaleDetector);
+            onTouchListener = new GraphOnTouchListener(getContext(), this, stateStack, scaleDetector);
             this.setOnTouchListener(onTouchListener);
         }
         isLazyInitialised = true;

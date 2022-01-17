@@ -25,7 +25,6 @@ public class StateStackImpl implements StateStack {
         currentState = initialState;
         this.stack = stack;
         this.pointer = pointer;
-        invalidateView();
     }
 
     public StateStackImpl(Runnable invalidateFunction, State initialState) {
