@@ -19,12 +19,13 @@
 
             <TextView
                 android:id="@+id/txtName"
-                android:layout_width="170dp"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:paddingBottom="10dp"
                 android:text="@string/name"
                 android:textSize="30sp"
+                style="@style/title"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -72,7 +73,7 @@
                 android:layout_height="40dp"
                 android:layout_marginStart="1dp"
                 android:backgroundTint="@color/light_red"
-                android:paddingVertical="10dp"
+                android:paddingVertical="11dp"
                 android:contentDescription="@string/delete"
                 android:paddingHorizontal="5dp"
                 android:scaleType="fitCenter"
