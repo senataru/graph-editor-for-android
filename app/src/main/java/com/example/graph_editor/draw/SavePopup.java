@@ -16,8 +16,11 @@ import com.example.graph_editor.model.Graph;
 public class SavePopup {
     Context context;
     AlertDialog dialog;
-    SavePopup(Context context) {
+    Runnable afterTask;
+
+    SavePopup(Context context, Runnable afterTask) {
         this.context = context;
+        this.afterTask = afterTask;
     }
     public void show(Graph graph) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -34,6 +37,7 @@ public class SavePopup {
             database.saveDao().insertSaves(new Save(name, GraphWriter.toExact(graph), System.currentTimeMillis()));
             Toast.makeText(context.getApplicationContext(), "Graph saved", Toast.LENGTH_LONG).show();
             dialog.dismiss();
+            afterTask.run();
         });
 
         builder.setView(popupView);

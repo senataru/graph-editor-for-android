@@ -16,8 +16,6 @@ import com.example.graph_editor.draw.DrawActivity;
 
 public class BrowseActivity extends AppCompatActivity{
     RecyclerView saved;
-    SavesDatabase database;
-    SavedAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +29,8 @@ public class BrowseActivity extends AppCompatActivity{
     @Override
     protected void onResume() {
         super.onResume();
-        database = SavesDatabase.getDbInstance(getApplicationContext());
-        adapter = new SavedAdapter(this,
+        SavesDatabase database = SavesDatabase.getDbInstance(getApplicationContext());
+        SavedAdapter adapter = new SavedAdapter(this,
                 database.saveDao().getAllSaves(), this);
         saved.setAdapter(adapter);
         saved.setLayoutManager(new LinearLayoutManager(this));

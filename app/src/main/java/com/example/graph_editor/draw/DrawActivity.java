@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.graph_editor.R;
+import com.example.graph_editor.database.SaveDao;
 import com.example.graph_editor.database.SavesDatabase;
 import com.example.graph_editor.draw.action_mode_type.ActionModeType;
 import com.example.graph_editor.draw.graph_view.GraphView;
@@ -41,6 +42,7 @@ public class DrawActivity extends AppCompatActivity {
     private GraphView graphView;
     private StateStack stateStack;
     private int currentGraphId = -1;
+    private String graphString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +52,7 @@ public class DrawActivity extends AppCompatActivity {
         SharedPreferences sharedPref = this.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
         currentGraphId = sharedPref.getInt("currentGraphId", -1);
         int choiceOrd = sharedPref.getInt("GraphType", 0);
-        String graphString = sharedPref.getString("currentGraph", null);
+        graphString = sharedPref.getString("currentGraph", null);
 
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.remove("currentGraphId");
@@ -154,18 +156,23 @@ public class DrawActivity extends AppCompatActivity {
         return true;
     }
 
+    public void makeSave(Runnable afterTask) {
+        if(currentGraphId == -1) {
+            new SavePopup(this, afterTask).show(stateStack.getCurrentState().getGraph());
+        } else {
+            SavesDatabase database = SavesDatabase.getDbInstance(getApplicationContext());
+            database.saveDao().updateGraph(currentGraphId, GraphWriter.toExact(stateStack.getCurrentState().getGraph()), System.currentTimeMillis());
+            Toast.makeText(this, "Graph saved", Toast.LENGTH_LONG).show();
+            afterTask.run();
+        }
+    }
+
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.options_btn_save:
-                if(currentGraphId == -1) {
-                    new SavePopup(this).show(stateStack.getCurrentState().getGraph());
-                } else {
-                    SavesDatabase database = SavesDatabase.getDbInstance(getApplicationContext());
-                    database.saveDao().updateGraph(currentGraphId, GraphWriter.toExact(stateStack.getCurrentState().getGraph()), System.currentTimeMillis());
-                    Toast.makeText(this, "Graph saved", Toast.LENGTH_LONG).show();
-                }
+                makeSave(()->{});
                 return true;
             case R.id.options_btn_redo:
                 stateStack.redo();
@@ -201,7 +208,7 @@ public class DrawActivity extends AppCompatActivity {
                 new SettingsPopup(this, ()->graphView.postInvalidate()).show();
                 return true;
             case R.id.options_btn_save_as:
-                new SavePopup(this).show(stateStack.getCurrentState().getGraph());
+                new SavePopup(this, ()->{}).show(stateStack.getCurrentState().getGraph());
                 return true;
             case R.id.options_btn_share:
                 new ShareIntent(this, stateStack).show();
@@ -225,6 +232,21 @@ public class DrawActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Graph graph = stateStack.getCurrentState().getGraph();
+        if(currentGraphId == -1) {
+            if(GraphWriter.toExact(graph).equals(GraphWriter.toExact(new GraphFactory(graph.getType()).produce()))) {
+                super.onBackPressed();
+                return;
+            }
+        } else if(GraphWriter.toExact(graph).equals(graphString)) {
+            super.onBackPressed();
+            return;
+        }
+        new DiscardPopup(this, super::onBackPressed, () -> makeSave(super::onBackPressed)).show();
     }
 
     @Override

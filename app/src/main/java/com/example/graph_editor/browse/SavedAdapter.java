@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.graph_editor.R;
 import com.example.graph_editor.database.Save;
+import com.example.graph_editor.database.SaveDao;
 import com.example.graph_editor.database.SavesDatabase;
 import com.example.graph_editor.draw.Frame;
 import com.example.graph_editor.draw.ShareIntent;
@@ -60,7 +61,12 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        holder.editButton.setOnClickListener(v -> browseActivity.changeActivity(graphString, data.get(position).uid));
+        holder.editButton.setOnClickListener(v -> {
+            Save s = data.get(position);
+            SaveDao dao = SavesDatabase.getDbInstance(context).saveDao();
+            dao.updateGraph(s.uid, s.graph, System.currentTimeMillis());
+            browseActivity.changeActivity(graphString, data.get(position).uid);
+        });
         holder.deleteButton.setOnClickListener(v ->
                 new ConfirmPopup(context, holder.dataGraph.getStateStack().getCurrentState().getGraph(), () -> {
                     Save s = data.get(position);
