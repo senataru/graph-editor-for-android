@@ -68,7 +68,8 @@ public class Geometry {
         double diffX = 1.0/(1 << layer);
 
         double x = diffX/2 + diffX * ind;
-        double y = 1-(1-diffY*layer);
+//        double y = 1-(1-diffY*layer);
+        double y = 1.0-1.0/(1<<layer);
         return new Point(x, y);
     }
 

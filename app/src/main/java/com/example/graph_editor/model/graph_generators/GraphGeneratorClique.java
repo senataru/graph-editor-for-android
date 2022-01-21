@@ -16,7 +16,7 @@ public class GraphGeneratorClique implements GraphGenerator {
     @Override
     public List<Parameter> getParameters() {
         List<Parameter> parameters = new ArrayList<>();
-        parameters.add(new Parameter("Vertices", 3, 99));
+        parameters.add(new Parameter("Vertices", 3, 64));
         return parameters;
     }
 

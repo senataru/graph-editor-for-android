@@ -1,4 +1,4 @@
-package com.example.graph_editor.draw;
+package com.example.graph_editor.draw.popups;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -18,7 +18,7 @@ public class SavePopup {
     AlertDialog dialog;
     Runnable afterTask;
 
-    SavePopup(Context context, Runnable afterTask) {
+    public SavePopup(Context context, Runnable afterTask) {
         this.context = context;
         this.afterTask = afterTask;
     }

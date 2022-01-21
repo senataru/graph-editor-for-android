@@ -1,4 +1,4 @@
-package com.example.graph_editor.draw;
+package com.example.graph_editor.draw.popups;
 
 import android.content.Context;
 import android.content.Intent;

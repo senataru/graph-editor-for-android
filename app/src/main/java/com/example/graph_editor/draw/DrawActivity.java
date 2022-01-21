@@ -13,11 +13,15 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.graph_editor.R;
-import com.example.graph_editor.database.SaveDao;
 import com.example.graph_editor.database.SavesDatabase;
 import com.example.graph_editor.draw.action_mode_type.ActionModeType;
 import com.example.graph_editor.draw.graph_view.GraphView;
-import com.example.graph_editor.draw.graph_view.NavigationButtonCollection;
+import com.example.graph_editor.draw.popups.DiscardPopup;
+import com.example.graph_editor.draw.popups.GeneratePopup;
+import com.example.graph_editor.draw.popups.ImportPopup;
+import com.example.graph_editor.draw.popups.SavePopup;
+import com.example.graph_editor.draw.popups.SettingsPopup;
+import com.example.graph_editor.draw.popups.ShareIntent;
 import com.example.graph_editor.graph_storage.GraphScanner;
 import com.example.graph_editor.graph_storage.GraphWriter;
 import com.example.graph_editor.graph_storage.InvalidGraphStringException;
@@ -29,6 +33,7 @@ import com.example.graph_editor.model.graph_generators.GraphGeneratorBipartiteCl
 import com.example.graph_editor.model.graph_generators.GraphGeneratorClique;
 import com.example.graph_editor.model.graph_generators.GraphGeneratorCycle;
 import com.example.graph_editor.model.graph_generators.GraphGeneratorFullBinaryTree;
+import com.example.graph_editor.model.mathematics.Frame;
 import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
@@ -106,30 +111,14 @@ public class DrawActivity extends AppCompatActivity {
         graphView.initialize(stateStack,true);
         stateStack.getCurrentState().addObserver(graphView);
 
-        NavigationButtonCollection collection = new NavigationButtonCollection(this);
-        collection.add(findViewById(R.id.btnVertex), () -> stateStack.getCurrentState().setCurrentModeType(ActionModeType.NEW_VERTEX));
-        collection.add(findViewById(R.id.btnEdge), () -> stateStack.getCurrentState().setCurrentModeType(ActionModeType.NEW_EDGE));
-        collection.add(findViewById(R.id.btnMoveObject), () -> stateStack.getCurrentState().setCurrentModeType(ActionModeType.MOVE_OBJECT));
-        collection.add(findViewById(R.id.btnMoveCanvas), () -> stateStack.getCurrentState().setCurrentModeType(ActionModeType.MOVE_CANVAS));
-        collection.add(findViewById(R.id.btnRemoveObject), () -> stateStack.getCurrentState().setCurrentModeType(ActionModeType.REMOVE_OBJECT));
+        NavigationButtonCollection buttonCollection = new NavigationButtonCollection(this, stateStack);
+        buttonCollection.add(findViewById(R.id.btnVertex), ActionModeType.NEW_VERTEX);
+        buttonCollection.add(findViewById(R.id.btnEdge), ActionModeType.NEW_EDGE);
+        buttonCollection.add(findViewById(R.id.btnMoveObject), ActionModeType.MOVE_OBJECT);
+        buttonCollection.add(findViewById(R.id.btnMoveCanvas), ActionModeType.MOVE_CANVAS);
+        buttonCollection.add(findViewById(R.id.btnRemoveObject), ActionModeType.REMOVE_OBJECT);
 
-        switch (modeType) {
-            case NEW_VERTEX:
-                collection.setCurrent(findViewById(R.id.btnVertex));
-                break;
-            case NEW_EDGE:
-                collection.setCurrent(findViewById(R.id.btnEdge));
-                break;
-            case MOVE_OBJECT:
-                collection.setCurrent(findViewById(R.id.btnMoveObject));
-                break;
-            case MOVE_CANVAS:
-                collection.setCurrent(findViewById(R.id.btnMoveCanvas));
-                break;
-            case REMOVE_OBJECT:
-                collection.setCurrent(findViewById(R.id.btnRemoveObject));
-                break;
-        }
+        buttonCollection.setCurrent(modeType);
         stateStack.getCurrentState().setCurrentModeType(modeType);
     }
 
@@ -170,6 +159,8 @@ public class DrawActivity extends AppCompatActivity {
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (stateStack.getCurrentState().isCurrentlyModified()) return false;
+
         switch (item.getItemId()) {
             case R.id.options_btn_save:
                 makeSave(()->{});

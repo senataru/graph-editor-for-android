@@ -1,13 +1,9 @@
 package com.example.graph_editor.model;
 
-import android.util.Pair;
-
-import com.example.graph_editor.draw.Frame;
 import com.example.graph_editor.model.mathematics.Geometry;
 import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.mathematics.Rectangle;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 

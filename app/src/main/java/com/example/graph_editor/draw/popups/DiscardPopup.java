@@ -1,4 +1,4 @@
-package com.example.graph_editor.draw;
+package com.example.graph_editor.draw.popups;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -15,7 +15,7 @@ public class DiscardPopup {
 
     AlertDialog dialog;
 
-    DiscardPopup(Context context, Runnable deleteFunction, Runnable saveFunction) {
+    public DiscardPopup(Context context, Runnable deleteFunction, Runnable saveFunction) {
         this.context = context;
         this.deleteFunction = deleteFunction;
         this.saveFunction = saveFunction;

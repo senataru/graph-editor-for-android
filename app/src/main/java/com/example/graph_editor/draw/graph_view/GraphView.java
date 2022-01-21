@@ -20,7 +20,7 @@ import androidx.annotation.Nullable;
 import com.example.graph_editor.draw.Settings;
 import com.example.graph_editor.draw.action_mode_type.ActionModeType;
 import com.example.graph_editor.draw.action_mode_type.ActionModeTypeObserver;
-import com.example.graph_editor.draw.Frame;
+import com.example.graph_editor.model.mathematics.Frame;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Edge;
 import com.example.graph_editor.model.Graph;

@@ -1,6 +1,6 @@
 package com.example.graph_editor.model.state;
 
-import com.example.graph_editor.draw.Frame;
+import com.example.graph_editor.model.mathematics.Frame;
 import com.example.graph_editor.draw.action_mode_type.ActionModeType;
 import com.example.graph_editor.draw.action_mode_type.ActionModeTypeObserver;
 import com.example.graph_editor.model.Graph;
@@ -12,6 +12,7 @@ public class State {
     private Graph graph;
     private Frame frame;
     private ActionModeType actionModeType;
+    private boolean currentlyModified; //more accurately - isCurrentlyTouched, if true ignore button presses
     private final List<ActionModeTypeObserver> observers = new ArrayList<>();
 
     public State(Graph graph, Frame frame, ActionModeType actionModeType) {
@@ -23,6 +24,7 @@ public class State {
     public Graph getGraph() { return graph; }
     public Frame getFrame() { return frame; }
     public ActionModeType getActionModeType() { return actionModeType; }
+    public boolean isCurrentlyModified() { return currentlyModified; }
 
     public void setGraph(Graph graph) { this.graph = graph; }
     public void setFrame(Frame frame) { this.frame = frame; }
@@ -30,6 +32,7 @@ public class State {
         actionModeType = modeType;
         tellObservers();
     }
+    public void setCurrentlyModified(boolean value) { this.currentlyModified = value; }
 
     public synchronized void addObserver(ActionModeTypeObserver observer) {
         observers.add(observer);

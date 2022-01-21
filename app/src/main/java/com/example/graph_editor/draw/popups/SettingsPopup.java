@@ -1,4 +1,4 @@
-package com.example.graph_editor.draw;
+package com.example.graph_editor.draw.popups;
 
 import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
 
@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.appcompat.widget.SwitchCompat;
 
 import com.example.graph_editor.R;
+import com.example.graph_editor.draw.Settings;
 import com.example.graph_editor.draw.graph_view.GraphView;
 
 public class SettingsPopup {
@@ -24,7 +25,7 @@ public class SettingsPopup {
     private final Runnable invalidateFunction;
     private AlertDialog dialog;
 
-    SettingsPopup(Context context, Runnable invalidateFunction) {
+    public SettingsPopup(Context context, Runnable invalidateFunction) {
         this.context = context;
         this.invalidateFunction = invalidateFunction;
     }

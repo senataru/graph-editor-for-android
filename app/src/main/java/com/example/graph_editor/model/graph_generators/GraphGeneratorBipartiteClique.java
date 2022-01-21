@@ -13,8 +13,8 @@ public class GraphGeneratorBipartiteClique implements GraphGenerator {
     @Override
     public List<Parameter> getParameters() {
         List<Parameter> parameters = new ArrayList<>();
-        parameters.add(new Parameter("Left vertices", 1, 20));
-        parameters.add(new Parameter("Right vertices", 1, 20));
+        parameters.add(new Parameter("Left vertices", 1, 32));
+        parameters.add(new Parameter("Right vertices", 1, 32));
         return parameters;
     }
 

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -16,8 +15,8 @@ import com.example.graph_editor.R;
 import com.example.graph_editor.database.Save;
 import com.example.graph_editor.database.SaveDao;
 import com.example.graph_editor.database.SavesDatabase;
-import com.example.graph_editor.draw.Frame;
-import com.example.graph_editor.draw.ShareIntent;
+import com.example.graph_editor.model.mathematics.Frame;
+import com.example.graph_editor.draw.popups.ShareIntent;
 import com.example.graph_editor.draw.action_mode_type.ActionModeType;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.graph_storage.GraphScanner;

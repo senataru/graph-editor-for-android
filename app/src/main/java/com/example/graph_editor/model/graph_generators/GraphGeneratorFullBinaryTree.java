@@ -13,7 +13,7 @@ public class GraphGeneratorFullBinaryTree implements GraphGenerator {
     @Override
     public List<Parameter> getParameters() {
         List<Parameter> parameters = new ArrayList<>();
-        parameters.add(new Parameter("Layers", 2, 7));
+        parameters.add(new Parameter("Layers", 2, 8));
         return parameters;
     }
 

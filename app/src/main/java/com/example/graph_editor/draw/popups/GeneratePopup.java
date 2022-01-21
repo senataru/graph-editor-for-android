@@ -1,4 +1,4 @@
-package com.example.graph_editor.draw;
+package com.example.graph_editor.draw.popups;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -18,6 +18,7 @@ import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.InputSanitizer;
 import com.example.graph_editor.model.graph_generators.GraphGenerator;
 import com.example.graph_editor.model.graph_generators.Parameter;
+import com.example.graph_editor.model.mathematics.Frame;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.model.state.StateStack;
@@ -33,7 +34,7 @@ public class GeneratePopup {
 
     private AlertDialog dialog;
 
-    GeneratePopup(Context context, StateStack stateStack, GraphGenerator generator) {
+    public GeneratePopup(Context context, StateStack stateStack, GraphGenerator generator) {
         this.context = context;
         this.stateStack = stateStack;
         this.generator = generator;

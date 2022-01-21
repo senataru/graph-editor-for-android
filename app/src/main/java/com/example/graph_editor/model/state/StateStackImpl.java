@@ -88,6 +88,7 @@ public class StateStackImpl implements StateStack {
 
     @Override
     public List<Graph> getGraphStack() {
+        stack.set(pointer, currentState.getGraph());
         return stack;
     }
 

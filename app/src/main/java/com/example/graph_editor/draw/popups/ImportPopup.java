@@ -1,4 +1,4 @@
-package com.example.graph_editor.draw;
+package com.example.graph_editor.draw.popups;
 
 import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
 
@@ -16,6 +16,7 @@ import com.example.graph_editor.graph_storage.GraphScanner;
 import com.example.graph_editor.graph_storage.InvalidGraphStringException;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Graph;
+import com.example.graph_editor.model.mathematics.Frame;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.model.state.StateStack;
@@ -26,7 +27,7 @@ public class ImportPopup {
 
     private AlertDialog dialog;
 
-    ImportPopup(Context context, StateStack stateStack) {
+    public ImportPopup(Context context, StateStack stateStack) {
         this.context = context;
         this.stateStack = stateStack;
     }

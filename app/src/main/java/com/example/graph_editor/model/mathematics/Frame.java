@@ -1,12 +1,4 @@
-package com.example.graph_editor.draw;
-
-import android.util.Pair;
-
-import com.example.graph_editor.R;
-import com.example.graph_editor.model.mathematics.Point;
-import com.example.graph_editor.model.mathematics.Rectangle;
-
-import java.util.function.Function;
+package com.example.graph_editor.model.mathematics;
 
 public class Frame {
     private Rectangle rec;

@@ -7,7 +7,7 @@ import android.view.View;
 
 import com.example.graph_editor.draw.Settings;
 import com.example.graph_editor.draw.action_mode_type.ActionModeType;
-import com.example.graph_editor.draw.Frame;
+import com.example.graph_editor.model.mathematics.Frame;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Edge;
 import com.example.graph_editor.model.Graph;
@@ -49,14 +49,16 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     public boolean onTouch(View v, MotionEvent event) {
         v.performClick();
 
-        if (event.getAction() == MotionEvent.ACTION_DOWN && currentlyManagedTool == null)
-            currentlyManagedTool = event.getToolType(0);
-
-        if (event.getToolType(0) != currentlyManagedTool) return true;
-
         State currentState = stateStack.getCurrentState();
         frame = currentState.getFrame();
         graph = currentState.getGraph();
+
+        if (event.getAction() == MotionEvent.ACTION_DOWN && currentlyManagedTool == null) {
+            currentlyManagedTool = event.getToolType(0);
+            currentState.setCurrentlyModified(true);
+        }
+
+        if (event.getToolType(0) != currentlyManagedTool) return true;
 
         relativePoint = graphView.getRelative(new Point(event.getX(), event.getY()));
         absolutePoint = DrawManager.getAbsolute(frame.getRectangle(), relativePoint);
@@ -99,8 +101,10 @@ public class GraphOnTouchListener implements View.OnTouchListener {
         }
         scaleDetector.onTouchEvent(event);
 
-        if (event.getAction() == MotionEvent.ACTION_UP && currentlyManagedTool == event.getToolType(0))
+        if (event.getAction() == MotionEvent.ACTION_UP && currentlyManagedTool == event.getToolType(0)) {
             currentlyManagedTool = null;
+            currentState.setCurrentlyModified(false);
+        }
 
         graphView.highlighted = highlighted;
         graphView.postInvalidate();
