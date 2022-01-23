@@ -1,14 +1,19 @@
 package com.example.graph_editor.draw;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -18,7 +23,6 @@ import com.example.graph_editor.draw.action_mode_type.ActionModeType;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.DiscardPopup;
 import com.example.graph_editor.draw.popups.GeneratePopup;
-import com.example.graph_editor.draw.popups.ImportPopup;
 import com.example.graph_editor.draw.popups.SavePopup;
 import com.example.graph_editor.draw.popups.SettingsPopup;
 import com.example.graph_editor.draw.popups.ShareIntent;
@@ -40,6 +44,10 @@ import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.model.state.StateStack;
 import com.example.graph_editor.model.state.StateStackImpl;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.List;
 
 public class DrawActivity extends AppCompatActivity {
@@ -156,6 +164,63 @@ public class DrawActivity extends AppCompatActivity {
         }
     }
 
+    ActivityResultLauncher<Intent> importActivityResultLauncher = registerForActivityResult(
+        new ActivityResultContracts.StartActivityForResult(),
+        result -> {
+            if( result.getResultCode() != Activity.RESULT_OK || result.getData() == null)
+                return;
+            Uri uri = result.getData().getData();
+            Graph g;
+            try {
+                String content;
+                try {
+                    InputStream in = getContentResolver().openInputStream(uri);
+                    BufferedReader r = new BufferedReader(new InputStreamReader(in));
+                    StringBuilder total = new StringBuilder();
+                    for (String line; (line = r.readLine()) != null; ) {
+                        total.append(line).append('\n');
+                    }
+                    content = total.toString();
+                    System.out.println(content);
+                }catch (Exception e) {
+                    Toast.makeText(this, "Invalid text", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                g = GraphScanner.fromExact(content);
+            } catch (InvalidGraphStringException e) {
+                Toast.makeText(this, "Invalid graph", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            stateStack.backup();
+            Rectangle oldRec = stateStack.getCurrentState().getFrame().getRectangle();
+            Rectangle optimalRec = DrawManager.getOptimalRectangle(g, 0.1, oldRec);
+            State currentState = stateStack.getCurrentState();
+            currentState.setGraph(g);
+            currentState.setFrame(new Frame(optimalRec, optimalRec.getWidth()));
+            stateStack.invalidateView();
+
+            Toast.makeText(this, "Import complete", Toast.LENGTH_SHORT).show();
+        }
+    );
+
+    ActivityResultLauncher<Intent> exportActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if( result.getResultCode() != Activity.RESULT_OK || result.getData() == null)
+                    return;
+                Uri uri = result.getData().getData();
+                try {
+                    OutputStream outputStream = getContentResolver().openOutputStream(uri);
+                    outputStream.write(GraphWriter.toExact(stateStack.getCurrentState().getGraph()).getBytes());
+                    outputStream.close();
+                } catch (Exception e) {
+                    Toast.makeText(this, "Invalid text", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Toast.makeText(this, "Export complete", Toast.LENGTH_SHORT).show();
+            }
+    );
+
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -205,7 +270,18 @@ public class DrawActivity extends AppCompatActivity {
                 new ShareIntent(this, stateStack).show();
                 return true;
             case R.id.options_btn_import:
-                new ImportPopup(this, stateStack).show();
+                Intent importIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                importIntent.setType("text/plain");
+
+                importIntent = Intent.createChooser(importIntent, "Choose file containing a graph");
+                importActivityResultLauncher.launch(importIntent);
+                return true;
+            case R.id.options_btn_export:
+                Intent exportIntent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                exportIntent.setType("text/plain");
+                exportIntent.addCategory(Intent.CATEGORY_OPENABLE);
+                exportIntent = Intent.createChooser(exportIntent, "Choose where to save the graph");
+                exportActivityResultLauncher.launch(exportIntent);
                 return true;
             //generate graph
             case R.id.generate_btn_cycle:

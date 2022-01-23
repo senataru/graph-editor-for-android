@@ -37,6 +37,11 @@
         app:showAsAction="never" >
     </item>
 
+    <item android:id="@+id/options_btn_export"
+        android:title="@string/export_graph"
+        app:showAsAction="never" >
+    </item>
+
     <item android:id="@+id/options_btn_clear"
         android:title="@string/clear_graph"
         app:showAsAction="never" >
