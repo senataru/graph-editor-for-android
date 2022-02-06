@@ -48,4 +48,6 @@
     <string name="are_you_sure_you_want_to_exit">Do you want to save changes?</string>
     <string name="cancel">Cancel</string>
     <string name="export_graph">Export graph</string>
+    <string name="creators">Creators</string>
+    <string name="creators_content">Aleksander Katan - creator \nRoch Wójtowicz - creator \nBartołomiej Bosek - project patron \n</string>
 </resources>

@@ -14,7 +14,7 @@ import com.example.graph_editor.R;
 import com.example.graph_editor.database.SavesDatabase;
 import com.example.graph_editor.draw.DrawActivity;
 
-public class BrowseActivity extends AppCompatActivity{
+public class BrowseActivity extends AppCompatActivity {
     RecyclerView saved;
 
     @Override

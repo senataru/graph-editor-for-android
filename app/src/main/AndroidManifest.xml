@@ -15,6 +15,9 @@
             android:name=".browse.BrowseActivity"
             android:exported="false" />
         <activity
+            android:name=".menu.CreatorsActivity"
+            android:exported="false" />
+        <activity
             android:name=".draw.DrawActivity"
             android:exported="false" />
         <activity

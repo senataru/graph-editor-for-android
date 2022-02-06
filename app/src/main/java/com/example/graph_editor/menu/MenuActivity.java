@@ -42,6 +42,12 @@ public class MenuActivity extends AppCompatActivity {
 
         Button btnCreate = findViewById(R.id.btnCreate);
         btnCreate.setOnClickListener(v -> displayGraphTypePopup());
+
+        Button btnCreators = findViewById(R.id.btnCreators);
+        btnCreators.setOnClickListener(v -> {
+            Intent intent = new Intent(this, CreatorsActivity.class);
+            startActivity(intent);
+        });
     }
 
 
