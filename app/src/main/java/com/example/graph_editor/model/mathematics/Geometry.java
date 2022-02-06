@@ -16,7 +16,7 @@ public class Geometry {
     }
 
     public static Point centerPoint(Point a, Point b) {
-        return new Point((a.getX()+b.getY())/2, (a.getY()+b.getY())/2);
+        return new Point((a.getX()+b.getX())/2, (a.getY()+b.getY())/2);
     }
 
     // distance from point x to segment ab

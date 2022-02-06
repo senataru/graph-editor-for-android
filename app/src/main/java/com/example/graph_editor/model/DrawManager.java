@@ -128,13 +128,16 @@ public class DrawManager {
     }
 
     // all points are absolutes
-    public static Frame getZoomedRectangle(Frame original, Point startA, Point startB, Point endA, Point endB) {
-        double x = Geometry.distance(startA, startB), y = Geometry.distance(endA, endB);
+    public static Frame getZoomedRectangle(Frame original, Point startA, Point startB, Point endARelative, Point endBRelative) {
         Frame result = original.deepCopy();
-        result.rescale(y/x);
+        Point endA = getAbsolute(result.getRectangle(), endARelative);
+        Point endB = getAbsolute(result.getRectangle(), endBRelative);
+        double x = Geometry.distance(startA, startB), y = Geometry.distance(endA, endB);
+        result.rescale(x/y);
         Point startCenter = Geometry.centerPoint(startA, startB),
                 endCenter = Geometry.centerPoint(endA, endB);
-        result.translate(startCenter.getX()-endCenter.getX(), startCenter.getY()-endCenter.getY());
+        result.translate((-startCenter.getX()+endCenter.getX())/result.getScale(), (-startCenter.getY()+endCenter.getY())/result.getScale());
+
         return result;
     }
 }

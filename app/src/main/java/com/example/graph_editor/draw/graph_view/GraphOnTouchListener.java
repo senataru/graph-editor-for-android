@@ -7,7 +7,6 @@ import android.view.View;
 
 import com.example.graph_editor.draw.Settings;
 import com.example.graph_editor.draw.action_mode_type.ActionModeType;
-import com.example.graph_editor.draw.popups.MessagePopup;
 import com.example.graph_editor.model.mathematics.Frame;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Edge;
@@ -27,8 +26,6 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     private final GraphView graphView;
     private final StateStack stateStack;
     private final ScaleGestureDetector scaleDetector;
-
-    private Integer currentlyManagedTool = null;
 
     // global variables for easier management
 
@@ -54,14 +51,6 @@ public class GraphOnTouchListener implements View.OnTouchListener {
         frame = currentState.getFrame();
         graph = currentState.getGraph();
 
-//        if (event.getAction() == MotionEvent.ACTION_DOWN && currentlyManagedTool == null) {
-//            currentlyManagedTool = event.getToolType(0);
-//            currentState.setCurrentlyModified(true);
-//        }
-//
-//        if (event.getToolType(0) != currentlyManagedTool) return true;
-
-
         relativePoint = graphView.getRelative(new Point(event.getX(), event.getY()));
         absolutePoint = DrawManager.getAbsolute(frame.getRectangle(), relativePoint);
         highlighted = graphView.highlighted;
@@ -75,19 +64,6 @@ public class GraphOnTouchListener implements View.OnTouchListener {
                 }
             }
         }
-
-//        StringBuilder s = new StringBuilder();
-////        s.append("managed tool: ");
-////        s.append(currentlyManagedTool);
-//        s.append("\nstylus mode: ");
-//        s.append(stylusMode);
-//        s.append("\nactual tool: ");
-//        s.append(event.getToolType(0));
-//        s.append("\nactionMode: ");
-//        s.append(currentState.getActionModeType());
-//        if (Settings.getButtons(context))
-//            new MessagePopup(context, new String(s)).show();
-
 
         boolean result;
         switch (currentState.getActionModeType()) {
@@ -107,11 +83,13 @@ public class GraphOnTouchListener implements View.OnTouchListener {
                 result = actionMoveCanvas(v, event);
                 break;
             case ZOOM_CANVAS:
+                result = actionZoomCanvas(v, event);
+                break;
             default:
                 result = false;
                 break;
         }
-        scaleDetector.onTouchEvent(event);
+//        scaleDetector.onTouchEvent(event);
 
         if (stylusMode) {
             if (event.getToolType(0) == MotionEvent.TOOL_TYPE_FINGER) {
@@ -121,11 +99,6 @@ public class GraphOnTouchListener implements View.OnTouchListener {
                 }
             }
         }
-
-//        if (event.getAction() == MotionEvent.ACTION_UP && currentlyManagedTool == event.getToolType(0)) {
-//            currentlyManagedTool = null;
-//            currentState.setCurrentlyModified(false);
-//        }
 
         graphView.highlighted = highlighted;
         graphView.postInvalidate();
@@ -256,43 +229,103 @@ public class GraphOnTouchListener implements View.OnTouchListener {
         return true;
     }
 
-    private enum Mode {
-        NONE,
-        DRAG,
-        ZOOM
-    }
     private float prevX = 0f;
     private float prevY = 0f;
     private float dx = 0f;
     private float dy = 0f;
-    private Mode mode = Mode.NONE;
     private boolean actionMoveCanvas(View v, MotionEvent e) {
+        System.out.println("MOVE");
         switch (e.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
 //                stateStack.backup();   //only graph changes are backed up
-                mode = Mode.DRAG;
                 prevX = e.getX();
                 prevY = e.getY();
                 dx = 0;
                 dy = 0;
+                int indexA = (e.getAction() >> MotionEvent.ACTION_POINTER_INDEX_SHIFT);
+                firstPointerId = e.getPointerId(indexA);
+                prevAbsolute = DrawManager.getAbsolute(stateStack.getCurrentState().getFrame().getRectangle(),
+                        graphView.getRelative(new Point(e.getX(indexA), e.getY(indexA))));
                 break;
             case MotionEvent.ACTION_MOVE:
                 dx = e.getX() - prevX;
                 dy = e.getY() - prevY;
                 prevX = e.getX();
                 prevY = e.getY();
+//                prevAbsolute = absolutePoint;
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
-                mode = Mode.ZOOM;
+                // initialize zoom variables
+                initial = stateStack.getCurrentState().getFrame().deepCopy();
+                int indexB = (e.getAction() >> MotionEvent.ACTION_POINTER_INDEX_SHIFT);
+                secondPointerId = e.getPointerId(indexB);
+                secondAbsoluteStart = DrawManager.getAbsolute(stateStack.getCurrentState().getFrame().getRectangle(),
+                        graphView.getRelative(new Point(e.getX(indexB), e.getY(indexB))));
+                firstAbsoluteStart = prevAbsolute;
+//                firstRelativeEnd = firstAbsoluteStart;
+//                secondRelativeEnd = secondAbsoluteStart;
+                stateStack.getCurrentState().setCurrentModeType(ActionModeType.ZOOM_CANVAS);
                 break;
+            case MotionEvent.ACTION_UP:
+                break;
+        }
+        frame.translate(dx/v.getWidth(), dy/v.getWidth());
+        return true;
+    }
+
+    private Point prevAbsolute = null;
+    private Frame initial;
+    private int firstPointerId;
+    private int secondPointerId;
+    private Point firstAbsoluteStart;
+    private Point secondAbsoluteStart;
+    private Point firstRelativeEnd;
+    private Point secondRelativeEnd;
+    private boolean actionZoomCanvas(View v, MotionEvent e) {
+        int id = e.getPointerId(e.getActionIndex());
+        System.out.println("ZOOM");
+        System.out.println("A" + firstPointerId);
+        System.out.println("B" + secondPointerId);
+        System.out.println(id);
+        switch (e.getAction() & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_MOVE:
+                int indexA = e.findPointerIndex(firstPointerId);
+                int indexB = e.findPointerIndex(secondPointerId);
+
+                if (indexA == -1 || indexB == -1) break;
+
+                firstRelativeEnd = graphView.getRelative(new Point(e.getX(indexA), e.getY(indexA)));
+                secondRelativeEnd = graphView.getRelative(new Point(e.getX(indexB), e.getY(indexB)));
+
+//                if (firstRelativeEnd == null || secondRelativeEnd == null) break;
+
+//                StringBuilder s = new StringBuilder();
+                Frame newFrame = DrawManager.getZoomedRectangle(initial, firstAbsoluteStart, secondAbsoluteStart, firstRelativeEnd, secondRelativeEnd);
+//                s.append("ELO\n");
+//                s.append(firstAbsoluteStart.toString() + "\n\n");
+//                s.append(secondAbsoluteStart.toString() + "\n\n");
+//                s.append(firstRelativeEnd.toString() + "\n\n");
+//                s.append(secondRelativeEnd.toString() + "\n\n");
+//                s.append("old\n");
+//                s.append(frame.getRectangle().getLeftTop() + "\n\n");
+//                s.append(frame.getRectangle().getRightBot() + "\n\n");
+//                s.append(frame.getScale() + "\n\n");
+//                s.append("new\n");
+//                s.append(newFrame.getRectangle().getLeftTop() + "\n\n");
+//                s.append(newFrame.getRectangle().getRightBot() + "\n\n");
+//                s.append(newFrame.getScale() + "\n\n");
+//                System.out.println(new String(s));
+                stateStack.getCurrentState().setFrame(newFrame);
+
+            case MotionEvent.ACTION_POINTER_DOWN:
             case MotionEvent.ACTION_POINTER_UP:
                 break;
             case MotionEvent.ACTION_UP:
-                mode = Mode.NONE;
+                stateStack.getCurrentState().setCurrentModeType(ActionModeType.MOVE_CANVAS);
                 break;
         }
-        if (mode == Mode.DRAG)
-            frame.translate(dx/v.getWidth(), dy/v.getWidth());
+
+
         return true;
     }
 }

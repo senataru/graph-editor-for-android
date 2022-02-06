@@ -25,18 +25,18 @@ public class Frame {
 //        double newScale = Math.min(Math.max(scale*this.scale, MIN_SCALE), MAX_SCALE);
         double newScale = scale*this.scale;
 
-        this.rec = new Rectangle(this.rec, newScale/this.scale);
+        this.rec = new Rectangle(this.rec, newScale/getScale());
 
         this.scale = newScale;
     }
 
     public void translate(double dxNew, double dyNew) {
-        this.rec = new Rectangle(this.rec, dxNew*scale, dyNew*scale);
+        this.rec = new Rectangle(this.rec, dxNew*getScale(), dyNew*getScale());
     }
 
-    public double getScale() { return this.scale; }
+    public double getScale() { return this.rec.getWidth(); }
 
     public Frame deepCopy() {
-        return new Frame(rec.deepCopy(), scale);
+        return new Frame(rec.deepCopy(), getScale());
     }
 }
