@@ -7,6 +7,7 @@ import android.view.View;
 
 import com.example.graph_editor.draw.Settings;
 import com.example.graph_editor.draw.action_mode_type.ActionModeType;
+import com.example.graph_editor.draw.popups.MessagePopup;
 import com.example.graph_editor.model.mathematics.Frame;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Edge;
@@ -53,12 +54,13 @@ public class GraphOnTouchListener implements View.OnTouchListener {
         frame = currentState.getFrame();
         graph = currentState.getGraph();
 
-        if (event.getAction() == MotionEvent.ACTION_DOWN && currentlyManagedTool == null) {
-            currentlyManagedTool = event.getToolType(0);
-            currentState.setCurrentlyModified(true);
-        }
+//        if (event.getAction() == MotionEvent.ACTION_DOWN && currentlyManagedTool == null) {
+//            currentlyManagedTool = event.getToolType(0);
+//            currentState.setCurrentlyModified(true);
+//        }
+//
+//        if (event.getToolType(0) != currentlyManagedTool) return true;
 
-        if (event.getToolType(0) != currentlyManagedTool) return true;
 
         relativePoint = graphView.getRelative(new Point(event.getX(), event.getY()));
         absolutePoint = DrawManager.getAbsolute(frame.getRectangle(), relativePoint);
@@ -66,16 +68,26 @@ public class GraphOnTouchListener implements View.OnTouchListener {
         boolean stylusMode = Settings.getStylus(context);
 
         if (stylusMode) {
-            if (currentlyManagedTool == MotionEvent.TOOL_TYPE_FINGER) {
+            if (event.getToolType(0) == MotionEvent.TOOL_TYPE_FINGER) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     oldStylusActionMode = currentState.getActionModeType();
                     currentState.setCurrentModeType(ActionModeType.MOVE_CANVAS);
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    currentState.setCurrentModeType(oldStylusActionMode);
-                    oldStylusActionMode = null;
                 }
             }
         }
+
+//        StringBuilder s = new StringBuilder();
+////        s.append("managed tool: ");
+////        s.append(currentlyManagedTool);
+//        s.append("\nstylus mode: ");
+//        s.append(stylusMode);
+//        s.append("\nactual tool: ");
+//        s.append(event.getToolType(0));
+//        s.append("\nactionMode: ");
+//        s.append(currentState.getActionModeType());
+//        if (Settings.getButtons(context))
+//            new MessagePopup(context, new String(s)).show();
+
 
         boolean result;
         switch (currentState.getActionModeType()) {
@@ -101,10 +113,19 @@ public class GraphOnTouchListener implements View.OnTouchListener {
         }
         scaleDetector.onTouchEvent(event);
 
-        if (event.getAction() == MotionEvent.ACTION_UP && currentlyManagedTool == event.getToolType(0)) {
-            currentlyManagedTool = null;
-            currentState.setCurrentlyModified(false);
+        if (stylusMode) {
+            if (event.getToolType(0) == MotionEvent.TOOL_TYPE_FINGER) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    currentState.setCurrentModeType(oldStylusActionMode);
+                    oldStylusActionMode = null;
+                }
+            }
         }
+
+//        if (event.getAction() == MotionEvent.ACTION_UP && currentlyManagedTool == event.getToolType(0)) {
+//            currentlyManagedTool = null;
+//            currentState.setCurrentlyModified(false);
+//        }
 
         graphView.highlighted = highlighted;
         graphView.postInvalidate();

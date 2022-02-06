@@ -125,4 +125,10 @@ public class DrawManager {
 
         return new Rectangle(resultLeftTop, resultRightBot);
     }
+
+    // all points are absolutes
+    public static Rectangle getZoomedRectangle(Rectangle original, Point startA, Point startB, Point endA, Point endB) {
+        //TODO: implement
+        return null;
+    }
 }

@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -166,7 +167,7 @@ public class DrawActivity extends AppCompatActivity {
 
     ActivityResultLauncher<Intent> importActivityResultLauncher = registerForActivityResult(
         new ActivityResultContracts.StartActivityForResult(),
-        result -> {
+        (ActivityResult result) -> {
             if( result.getResultCode() != Activity.RESULT_OK || result.getData() == null)
                 return;
             Uri uri = result.getData().getData();
