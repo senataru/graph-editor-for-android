@@ -10,18 +10,22 @@ public class Geometry {
         return a-b < NEARLY_ZERO && b-a < NEARLY_ZERO;
     }
     public static double distance(Point a, Point b) {
-        double xDiff = a.x-b.x;
-        double yDiff = a.y-b.y;
+        double xDiff = a.getX()-b.getX();
+        double yDiff = a.getY()-b.getY();
         return Math.sqrt( xDiff*xDiff + yDiff*yDiff );
+    }
+
+    public static Point centerPoint(Point a, Point b) {
+        return new Point((a.getX()+b.getY())/2, (a.getY()+b.getY())/2);
     }
 
     // distance from point x to segment ab
     public static double distanceFromSegment(Point x, Point a, Point b) {
         if(a.equals(b))
             return distance(x, b);
-        Point ax = new Point(x.x-a.x, x.y-a.y);
-        Point ab = new Point(b.x-a.x, b.y-a.y);
-        double projection = (ab.x*ax.x + ab.y*ax.y)/ab.length();
+        Point ax = new Point(x.getX()-a.getX(), x.getY()-a.getY());
+        Point ab = new Point(b.getX()-a.getX(), b.getY()-a.getY());
+        double projection = (ab.getX()*ax.getX() + ab.getY()*ax.getY())/ab.length();
         double distance = min(max(projection, 0), ab.length());
         return distance(x, getOnSegment(a, b, distance));
     }
@@ -31,7 +35,7 @@ public class Geometry {
         if(start.equals(target))
             throw new RuntimeException("Frame size equals 0 or is negative");
         double part = distance / distance(start, target);
-        return new Point(start.x+(target.x-start.x)*part, start.y+(target.y-start.y)*part);
+        return new Point(start.getX()+(target.getX()-start.getX())*part, start.getY()+(target.getY()-start.getY())*part);
     }
 
     //angle in degrees, 0 is to the right

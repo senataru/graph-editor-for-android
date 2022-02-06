@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 
 public class Point {
     public static Point ZERO = new Point(0, 0);
-    final double x, y;
+    private final double x, y;
     public Point(double x, double y) {
         this.x = x;
         this.y = y;

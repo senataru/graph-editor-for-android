@@ -1,5 +1,6 @@
 package com.example.graph_editor.model;
 
+import com.example.graph_editor.model.mathematics.Frame;
 import com.example.graph_editor.model.mathematics.Geometry;
 import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.mathematics.Rectangle;
@@ -127,8 +128,13 @@ public class DrawManager {
     }
 
     // all points are absolutes
-    public static Rectangle getZoomedRectangle(Rectangle original, Point startA, Point startB, Point endA, Point endB) {
-        //TODO: implement
-        return null;
+    public static Frame getZoomedRectangle(Frame original, Point startA, Point startB, Point endA, Point endB) {
+        double x = Geometry.distance(startA, startB), y = Geometry.distance(endA, endB);
+        Frame result = original.deepCopy();
+        result.rescale(y/x);
+        Point startCenter = Geometry.centerPoint(startA, startB),
+                endCenter = Geometry.centerPoint(endA, endB);
+        result.translate(startCenter.getX()-endCenter.getX(), startCenter.getY()-endCenter.getY());
+        return result;
     }
 }
