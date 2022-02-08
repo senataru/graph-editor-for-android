@@ -27,20 +27,16 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     private final StateStack stateStack;
     private final ScaleGestureDetector scaleDetector;
 
-    // global variables for easier management
 
-    private Graph graph;
-    private Rectangle rectangle;
-    private Point relativePoint;
-    private Point absolutePoint;
-    private Vertex highlighted;
-    private ActionModeType oldStylusActionMode;
+    OnTouchListenerData data;
 
     public GraphOnTouchListener(Context context, GraphView graphView, StateStack stateStack, ScaleGestureDetector scaleDetector) {
         this.context = context;
         this.graphView = graphView;
         this.stateStack = stateStack;
         this.scaleDetector = scaleDetector;
+
+        this.data = new OnTouchListenerData();
     }
 
     @Override
@@ -48,18 +44,18 @@ public class GraphOnTouchListener implements View.OnTouchListener {
         v.performClick();
 
         State currentState = stateStack.getCurrentState();
-        rectangle = currentState.getRectangle();
-        graph = currentState.getGraph();
+        data.rectangle = currentState.getRectangle();
+        data.graph = currentState.getGraph();
 
-        relativePoint = graphView.getRelative(new Point(event.getX(), event.getY()));
-        absolutePoint = DrawManager.getAbsolute(rectangle, relativePoint);
-        highlighted = graphView.highlighted;
+        data.relativePoint = graphView.getRelative(new Point(event.getX(), event.getY()));
+        data.absolutePoint = DrawManager.getAbsolute(data.rectangle, data.relativePoint);
+        data.highlighted = graphView.highlighted;
         boolean stylusMode = Settings.getStylus(context);
 
         if (stylusMode) {
             if (event.getToolType(0) == MotionEvent.TOOL_TYPE_FINGER) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    oldStylusActionMode = currentState.getActionModeType();
+                    data.oldStylusActionMode = currentState.getActionModeType();
                     currentState.setCurrentModeType(ActionModeType.MOVE_CANVAS);
                 }
             }
@@ -94,13 +90,13 @@ public class GraphOnTouchListener implements View.OnTouchListener {
         if (stylusMode) {
             if (event.getToolType(0) == MotionEvent.TOOL_TYPE_FINGER) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
-                    currentState.setCurrentModeType(oldStylusActionMode);
-                    oldStylusActionMode = null;
+                    currentState.setCurrentModeType(data.oldStylusActionMode);
+                    data.oldStylusActionMode = null;
                 }
             }
         }
 
-        graphView.highlighted = highlighted;
+        graphView.highlighted = data.highlighted;
         graphView.postInvalidate();
         return result;
     }
@@ -109,14 +105,14 @@ public class GraphOnTouchListener implements View.OnTouchListener {
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 stateStack.backup();
-                highlighted = graph.addVertex();
-                highlighted.setPoint(absolutePoint);
+                data.highlighted = data.graph.addVertex();
+                data.highlighted.setPoint(data.absolutePoint);
                 break;
             case MotionEvent.ACTION_MOVE:
-                highlighted.setPoint(absolutePoint);
+                data.highlighted.setPoint(data.absolutePoint);
                 break;
             case MotionEvent.ACTION_UP:
-                highlighted = null;
+                data.highlighted = null;
                 break;
             default:
                 break;
@@ -124,89 +120,85 @@ public class GraphOnTouchListener implements View.OnTouchListener {
         return true;
     }
 
-    private Vertex edgeFirst = null;
-    private Vertex edgeFirstSnap = null;
-    private Vertex edgeSecond = null;
-    private Vertex edgeSecondSnap = null;
     private boolean actionNewEdge(View v, MotionEvent e) {
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 stateStack.backup();
-                Vertex nearest = DrawManager.getNearestVertex(graph, rectangle, relativePoint, 0.1, Collections.emptySet());
-                edgeFirst = graph.addVertex();
+                Vertex nearest = DrawManager.getNearestVertex(data.graph, data.rectangle, data.relativePoint, 0.1, Collections.emptySet());
+                data.edgeFirst = data.graph.addVertex();
                 if (nearest != null) {
-                    edgeFirst.setPoint(nearest.getPoint());
-                    edgeFirstSnap = nearest;
-                    edgeSecondSnap = nearest;
+                    data.edgeFirst.setPoint(nearest.getPoint());
+                    data.edgeFirstSnap = nearest;
+                    data.edgeSecondSnap = nearest;
                 } else {
-                    edgeFirst.setPoint(absolutePoint);
-                    edgeFirstSnap = null;
-                    edgeSecondSnap = null;
+                    data.edgeFirst.setPoint(data.absolutePoint);
+                    data.edgeFirstSnap = null;
+                    data.edgeSecondSnap = null;
                 }
-                edgeSecond = graph.addVertex();
-                edgeSecond.setPoint(edgeFirst.getPoint());
-                graph.addEdge(edgeFirst, edgeSecond);
+                data.edgeSecond = data.graph.addVertex();
+                data.edgeSecond.setPoint(data.edgeFirst.getPoint());
+                data.graph.addEdge(data.edgeFirst, data.edgeSecond);
                 return true;
             case MotionEvent.ACTION_MOVE:
                 Set<Vertex> excluded = new HashSet<>();
-                excluded.add(edgeFirst);
-                excluded.add(edgeSecond);
-                Vertex nearestViable = DrawManager.getNearestVertex(graph, rectangle, relativePoint, 0.1, excluded);
+                excluded.add(data.edgeFirst);
+                excluded.add(data.edgeSecond);
+                Vertex nearestViable = DrawManager.getNearestVertex(data.graph, data.rectangle, data.relativePoint, 0.1, excluded);
 
                 if (nearestViable != null) {
-                    edgeSecond.setPoint(nearestViable.getPoint());
-                    edgeSecondSnap = nearestViable;
+                    data.edgeSecond.setPoint(nearestViable.getPoint());
+                    data.edgeSecondSnap = nearestViable;
                 } else {
-                    edgeSecond.setPoint(absolutePoint);
-                    edgeSecondSnap = null;
+                    data.edgeSecond.setPoint(data.absolutePoint);
+                    data.edgeSecondSnap = null;
                 }
                 return true;
             case MotionEvent.ACTION_UP:
-                if (edgeFirst == DrawManager.getNearestVertex(graph, rectangle, relativePoint, 0.05, new HashSet<>(Collections.singleton(edgeSecond)))) {
-                    graph.removeVertex(edgeFirst);
-                    graph.removeVertex(edgeSecond);
+                if (data.edgeFirst == DrawManager.getNearestVertex(data.graph, data.rectangle, data.relativePoint, 0.05, new HashSet<>(Collections.singleton(data.edgeSecond)))) {
+                    data.graph.removeVertex(data.edgeFirst);
+                    data.graph.removeVertex(data.edgeSecond);
                 } else {
                     // did first ver-tex snap?
-                    if (edgeFirstSnap != null) {
-                        graph.removeVertex(edgeFirst);
-                        edgeFirst = edgeFirstSnap;
-                        graph.addEdge(edgeFirst, edgeSecond);
+                    if (data.edgeFirstSnap != null) {
+                        data.graph.removeVertex(data.edgeFirst);
+                        data.edgeFirst = data.edgeFirstSnap;
+                        data.graph.addEdge(data.edgeFirst, data.edgeSecond);
                     }
                     // did second vertex snap?
-                    if (edgeSecondSnap != null) {
-                        graph.removeVertex(edgeSecond);
-                        edgeSecond = edgeSecondSnap;
-                        graph.addEdge(edgeFirst, edgeSecond);
+                    if (data.edgeSecondSnap != null) {
+                        data.graph.removeVertex(data.edgeSecond);
+                        data.edgeSecond = data.edgeSecondSnap;
+                        data.graph.addEdge(data.edgeFirst, data.edgeSecond);
                     }
                 }
-                edgeFirst = edgeFirstSnap = edgeSecond = edgeSecondSnap = null;
+                data.edgeFirst = data.edgeFirstSnap = data.edgeSecond = data.edgeSecondSnap = null;
                 return false;
         }
         return false;
     }
 
     private boolean actionMoveObject(View v, MotionEvent e) {
-        Vertex nearest = DrawManager.getNearestVertex(graph, rectangle, relativePoint, 0.1, Collections.emptySet());
+        Vertex nearest = DrawManager.getNearestVertex(data.graph, data.rectangle, data.relativePoint, 0.1, Collections.emptySet());
 
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 stateStack.backup();
-                if (highlighted == null && nearest != null)       // select a vertex
-                    highlighted = nearest;
-                else if (highlighted == nearest && highlighted != null) // move current vertex slightly
-                    highlighted.setPoint(DrawManager.getAbsolute(rectangle, relativePoint));
+                if (data.highlighted == null && nearest != null)       // select a vertex
+                    data.highlighted = nearest;
+                else if (data.highlighted == nearest && data.highlighted != null) // move current vertex slightly
+                    data.highlighted.setPoint(DrawManager.getAbsolute(data.rectangle, data.relativePoint));
                 else if (nearest != null)     // select different vertex
-                    highlighted = nearest;
-                else if (highlighted != null)       // move selected vertex
-                    highlighted.setPoint(DrawManager.getAbsolute(rectangle, relativePoint));
+                    data.highlighted = nearest;
+                else if (data.highlighted != null)       // move selected vertex
+                    data.highlighted.setPoint(DrawManager.getAbsolute(data.rectangle, data.relativePoint));
                 break;
             case MotionEvent.ACTION_MOVE:
-                if (highlighted != null) {
-                    highlighted.setPoint(DrawManager.getAbsolute(rectangle, relativePoint));
+                if (data.highlighted != null) {
+                    data.highlighted.setPoint(DrawManager.getAbsolute(data.rectangle, data.relativePoint));
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                highlighted = null;
+                data.highlighted = null;
                 break;
         }
         return true;
@@ -218,103 +210,66 @@ public class GraphOnTouchListener implements View.OnTouchListener {
         }
 
         Vertex nearestVertex;
-        while (null != (nearestVertex = DrawManager.getNearestVertex(graph, rectangle, relativePoint, 0.03, Collections.emptySet()))) {
-            graph.removeVertex(nearestVertex);
+        while (null != (nearestVertex = DrawManager.getNearestVertex(data.graph, data.rectangle, data.relativePoint, 0.03, Collections.emptySet()))) {
+            data.graph.removeVertex(nearestVertex);
         }
         Edge nearestEdge;
-        while (null != (nearestEdge = DrawManager.getNearestEdge(graph, rectangle, relativePoint, 0.03))) {
-            graph.removeEdge(nearestEdge);
+        while (null != (nearestEdge = DrawManager.getNearestEdge(data.graph, data.rectangle, data.relativePoint, 0.03))) {
+            data.graph.removeEdge(nearestEdge);
         }
 
         return true;
     }
 
-    private float prevX = 0f;
-    private float prevY = 0f;
-    private float dx = 0f;
-    private float dy = 0f;
+
     private boolean actionMoveCanvas(View v, MotionEvent e) {
         System.out.println("MOVE");
         switch (e.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
-//                stateStack.backup();   //only graph changes are backed up
-                prevX = e.getX();
-                prevY = e.getY();
-                dx = 0;
-                dy = 0;
+                data.prevX = e.getX();
+                data.prevY = e.getY();
+                data.dx = 0;
+                data.dy = 0;
                 int indexA = (e.getAction() >> MotionEvent.ACTION_POINTER_INDEX_SHIFT);
-                firstPointerId = e.getPointerId(indexA);
-                prevAbsolute = DrawManager.getAbsolute(stateStack.getCurrentState().getRectangle(),
+                data.firstPointerId = e.getPointerId(indexA);
+                data.prevAbsolute = DrawManager.getAbsolute(stateStack.getCurrentState().getRectangle(),
                         graphView.getRelative(new Point(e.getX(indexA), e.getY(indexA))));
                 break;
             case MotionEvent.ACTION_MOVE:
-                dx = e.getX() - prevX;
-                dy = e.getY() - prevY;
-                prevX = e.getX();
-                prevY = e.getY();
-//                prevAbsolute = absolutePoint;
+                data.dx = e.getX() - data.prevX;
+                data.dy = e.getY() - data.prevY;
+                data.prevX = e.getX();
+                data.prevY = e.getY();
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
                 // initialize zoom variables
-                initial = stateStack.getCurrentState().getRectangle().deepCopy();
+                data.initial = stateStack.getCurrentState().getRectangle().deepCopy();
                 int indexB = (e.getAction() >> MotionEvent.ACTION_POINTER_INDEX_SHIFT);
-                secondPointerId = e.getPointerId(indexB);
-                secondAbsoluteStart = DrawManager.getAbsolute(stateStack.getCurrentState().getRectangle(),
+                data.secondPointerId = e.getPointerId(indexB);
+                data.secondAbsoluteStart = DrawManager.getAbsolute(stateStack.getCurrentState().getRectangle(),
                         graphView.getRelative(new Point(e.getX(indexB), e.getY(indexB))));
-                firstAbsoluteStart = prevAbsolute;
-//                firstRelativeEnd = firstAbsoluteStart;
-//                secondRelativeEnd = secondAbsoluteStart;
+                data.firstAbsoluteStart = data.prevAbsolute;
                 stateStack.getCurrentState().setCurrentModeType(ActionModeType.ZOOM_CANVAS);
                 break;
             case MotionEvent.ACTION_UP:
                 break;
         }
-        DrawManager.translate(rectangle, dx/v.getWidth(), dy/v.getWidth());
+        DrawManager.translate(data.rectangle, data.dx/v.getWidth(), data.dy/v.getWidth());
         return true;
     }
 
-    private Point prevAbsolute = null;
-    private Rectangle initial;
-    private int firstPointerId;
-    private int secondPointerId;
-    private Point firstAbsoluteStart;
-    private Point secondAbsoluteStart;
-    private Point firstRelativeEnd;
-    private Point secondRelativeEnd;
     private boolean actionZoomCanvas(View v, MotionEvent e) {
-        int id = e.getPointerId(e.getActionIndex());
-        System.out.println("ZOOM");
-        System.out.println("A" + firstPointerId);
-        System.out.println("B" + secondPointerId);
-        System.out.println(id);
         switch (e.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_MOVE:
-                int indexA = e.findPointerIndex(firstPointerId);
-                int indexB = e.findPointerIndex(secondPointerId);
+                int indexA = e.findPointerIndex(data.firstPointerId);
+                int indexB = e.findPointerIndex(data.secondPointerId);
 
                 if (indexA == -1 || indexB == -1) break;
 
-                firstRelativeEnd = graphView.getRelative(new Point(e.getX(indexA), e.getY(indexA)));
-                secondRelativeEnd = graphView.getRelative(new Point(e.getX(indexB), e.getY(indexB)));
+                Point firstRelativeEnd = graphView.getRelative(new Point(e.getX(indexA), e.getY(indexA)));
+                Point secondRelativeEnd = graphView.getRelative(new Point(e.getX(indexB), e.getY(indexB)));
 
-//                if (firstRelativeEnd == null || secondRelativeEnd == null) break;
-
-//                StringBuilder s = new StringBuilder();
-                Rectangle newRectangle = DrawManager.getZoomedRectangle(initial, firstAbsoluteStart, secondAbsoluteStart, firstRelativeEnd, secondRelativeEnd);
-//                s.append("ELO\n");
-//                s.append(firstAbsoluteStart.toString() + "\n\n");
-//                s.append(secondAbsoluteStart.toString() + "\n\n");
-//                s.append(firstRelativeEnd.toString() + "\n\n");
-//                s.append(secondRelativeEnd.toString() + "\n\n");
-//                s.append("old\n");
-//                s.append(frame.getRectangle().getLeftTop() + "\n\n");
-//                s.append(frame.getRectangle().getRightBot() + "\n\n");
-//                s.append(frame.getScale() + "\n\n");
-//                s.append("new\n");
-//                s.append(newFrame.getRectangle().getLeftTop() + "\n\n");
-//                s.append(newFrame.getRectangle().getRightBot() + "\n\n");
-//                s.append(newFrame.getScale() + "\n\n");
-//                System.out.println(new String(s));
+                Rectangle newRectangle = DrawManager.getZoomedRectangle(data.initial, data.firstAbsoluteStart, data.secondAbsoluteStart, firstRelativeEnd, secondRelativeEnd);
                 stateStack.getCurrentState().setRectangle(newRectangle);
 
             case MotionEvent.ACTION_POINTER_DOWN:
@@ -324,7 +279,6 @@ public class GraphOnTouchListener implements View.OnTouchListener {
                 stateStack.getCurrentState().setCurrentModeType(ActionModeType.MOVE_CANVAS);
                 break;
         }
-
 
         return true;
     }
