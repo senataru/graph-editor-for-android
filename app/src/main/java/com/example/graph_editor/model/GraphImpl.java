@@ -10,16 +10,14 @@ import java.util.List;
 public class GraphImpl implements Graph {
     GraphType type;
     List<Vertex> vertices = new ArrayList<>();
-    VertexFactory vertexFactory;
 
     public GraphImpl(GraphType type) {
         this.type = type;
-        vertexFactory = new VertexFactory();
     }
 
     @Override
     public Vertex addVertex() {
-        Vertex v = vertexFactory.produce();
+        Vertex v = new VertexImpl();
         vertices.add(v);
         v.setIndex(vertices.size()-1);
         return v;
