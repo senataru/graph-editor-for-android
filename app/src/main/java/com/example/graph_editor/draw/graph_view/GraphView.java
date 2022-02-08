@@ -20,7 +20,6 @@ import androidx.annotation.Nullable;
 import com.example.graph_editor.draw.Settings;
 import com.example.graph_editor.draw.action_mode_type.ActionModeType;
 import com.example.graph_editor.draw.action_mode_type.ActionModeTypeObserver;
-import com.example.graph_editor.model.mathematics.Frame;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Edge;
 import com.example.graph_editor.model.Graph;
@@ -99,8 +98,7 @@ public class GraphView extends View implements ActionModeTypeObserver {
         State currentState = stateStack.getCurrentState();
         Rectangle rec = new Rectangle(new Point(0, 0), new Point(1.0, 1.0 * getHeight() / getWidth()));
         Rectangle optimalRec = DrawManager.getOptimalRectangle(currentState.getGraph(),0.1, rec);
-        Frame frame = new Frame(optimalRec, rec.getWidth()*optimalRec.getWidth());
-        currentState.setFrame(frame);
+        currentState.setRectangle(optimalRec);
         if (interactive) {
             ScaleGestureDetector scaleDetector = new ScaleGestureDetector(getContext(), new GraphOnScaleListener(stateStack));
             onTouchListener = new GraphOnTouchListener(getContext(), this, stateStack, scaleDetector);
@@ -119,18 +117,18 @@ public class GraphView extends View implements ActionModeTypeObserver {
 
         fixedWidth = Settings.getFixedWidth(getContext());
         State state = stateStack.getCurrentState();
-        Frame frame = state.getFrame();
+        Rectangle rectangle = state.getRectangle();
         Graph graph = state.getGraph();
 
-        vertexRadius = getDrawWidth(frame.getScale(), baseVertexRadius);
-        edgePaint.setStrokeWidth((float)getDrawWidth(frame.getScale(), baseEdgeWidth));
+        vertexRadius = getDrawWidth(rectangle.getScale(), baseVertexRadius);
+        edgePaint.setStrokeWidth((float)getDrawWidth(rectangle.getScale(), baseEdgeWidth));
 
         for (Edge e : graph.getEdges())
-            drawEdge(canvas, e, DrawManager.getRelative(frame.getRectangle(), e.getSource().getPoint()),
-                    DrawManager.getRelative(frame.getRectangle(), e.getTarget().getPoint()), graph.getType());
+            drawEdge(canvas, e, DrawManager.getRelative(rectangle, e.getSource().getPoint()),
+                    DrawManager.getRelative(rectangle, e.getTarget().getPoint()), graph.getType());
 
         for (Vertex v : graph.getVertices())
-            drawVertex(canvas, v, DrawManager.getRelative(frame.getRectangle(), v.getPoint()), v == highlighted);
+            drawVertex(canvas, v, DrawManager.getRelative(rectangle, v.getPoint()), v == highlighted);
     }
 
     private void drawVertex(Canvas canvas, Vertex vertex, Point point, boolean highlighted) {
@@ -162,7 +160,7 @@ public class GraphView extends View implements ActionModeTypeObserver {
     }
 
     private void drawArrow(Paint paint, Canvas canvas, float x1, float y1, float x2, float y2) {
-        float radius = (float)getDrawWidth(stateStack.getCurrentState().getFrame().getScale(), 50);
+        float radius = (float)getDrawWidth(stateStack.getCurrentState().getRectangle().getScale(), 50);
         float angle = 45;
 
         float angleRad= (float) (PI*angle/180.0f);

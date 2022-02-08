@@ -18,7 +18,6 @@ import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.InputSanitizer;
 import com.example.graph_editor.model.graph_generators.GraphGenerator;
 import com.example.graph_editor.model.graph_generators.Parameter;
-import com.example.graph_editor.model.mathematics.Frame;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.model.state.StateStack;
@@ -91,11 +90,11 @@ public class GeneratePopup {
 
             stateStack.backup();
             Graph g = generator.generate(parametersInteger);
-            Rectangle oldRec = stateStack.getCurrentState().getFrame().getRectangle();
+            Rectangle oldRec = stateStack.getCurrentState().getRectangle();
             Rectangle optimalRec = DrawManager.getOptimalRectangle(g, 0.1, oldRec);
             State currentState = stateStack.getCurrentState();
             currentState.setGraph(g);
-            currentState.setFrame(new Frame(optimalRec, optimalRec.getWidth()));
+            currentState.setRectangle(optimalRec);
             stateStack.invalidateView();
 
             dialog.dismiss();

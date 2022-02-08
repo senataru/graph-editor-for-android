@@ -7,12 +7,12 @@ import android.view.View;
 
 import com.example.graph_editor.draw.Settings;
 import com.example.graph_editor.draw.action_mode_type.ActionModeType;
-import com.example.graph_editor.model.mathematics.Frame;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Edge;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.Vertex;
 import com.example.graph_editor.model.mathematics.Point;
+import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.model.state.StateStack;
 
@@ -30,7 +30,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     // global variables for easier management
 
     private Graph graph;
-    private Frame frame;
+    private Rectangle rectangle;
     private Point relativePoint;
     private Point absolutePoint;
     private Vertex highlighted;
@@ -48,11 +48,11 @@ public class GraphOnTouchListener implements View.OnTouchListener {
         v.performClick();
 
         State currentState = stateStack.getCurrentState();
-        frame = currentState.getFrame();
+        rectangle = currentState.getRectangle();
         graph = currentState.getGraph();
 
         relativePoint = graphView.getRelative(new Point(event.getX(), event.getY()));
-        absolutePoint = DrawManager.getAbsolute(frame.getRectangle(), relativePoint);
+        absolutePoint = DrawManager.getAbsolute(rectangle, relativePoint);
         highlighted = graphView.highlighted;
         boolean stylusMode = Settings.getStylus(context);
 
@@ -132,7 +132,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 stateStack.backup();
-                Vertex nearest = DrawManager.getNearestVertex(graph, frame.getRectangle(), relativePoint, 0.1, Collections.emptySet());
+                Vertex nearest = DrawManager.getNearestVertex(graph, rectangle, relativePoint, 0.1, Collections.emptySet());
                 edgeFirst = graph.addVertex();
                 if (nearest != null) {
                     edgeFirst.setPoint(nearest.getPoint());
@@ -151,7 +151,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
                 Set<Vertex> excluded = new HashSet<>();
                 excluded.add(edgeFirst);
                 excluded.add(edgeSecond);
-                Vertex nearestViable = DrawManager.getNearestVertex(graph, frame.getRectangle(), relativePoint, 0.1, excluded);
+                Vertex nearestViable = DrawManager.getNearestVertex(graph, rectangle, relativePoint, 0.1, excluded);
 
                 if (nearestViable != null) {
                     edgeSecond.setPoint(nearestViable.getPoint());
@@ -162,7 +162,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
                 }
                 return true;
             case MotionEvent.ACTION_UP:
-                if (edgeFirst == DrawManager.getNearestVertex(graph, frame.getRectangle(), relativePoint, 0.05, new HashSet<>(Collections.singleton(edgeSecond)))) {
+                if (edgeFirst == DrawManager.getNearestVertex(graph, rectangle, relativePoint, 0.05, new HashSet<>(Collections.singleton(edgeSecond)))) {
                     graph.removeVertex(edgeFirst);
                     graph.removeVertex(edgeSecond);
                 } else {
@@ -186,7 +186,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     }
 
     private boolean actionMoveObject(View v, MotionEvent e) {
-        Vertex nearest = DrawManager.getNearestVertex(graph, frame.getRectangle(), relativePoint, 0.1, Collections.emptySet());
+        Vertex nearest = DrawManager.getNearestVertex(graph, rectangle, relativePoint, 0.1, Collections.emptySet());
 
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -194,15 +194,15 @@ public class GraphOnTouchListener implements View.OnTouchListener {
                 if (highlighted == null && nearest != null)       // select a vertex
                     highlighted = nearest;
                 else if (highlighted == nearest && highlighted != null) // move current vertex slightly
-                    highlighted.setPoint(DrawManager.getAbsolute(frame.getRectangle(), relativePoint));
+                    highlighted.setPoint(DrawManager.getAbsolute(rectangle, relativePoint));
                 else if (nearest != null)     // select different vertex
                     highlighted = nearest;
                 else if (highlighted != null)       // move selected vertex
-                    highlighted.setPoint(DrawManager.getAbsolute(frame.getRectangle(), relativePoint));
+                    highlighted.setPoint(DrawManager.getAbsolute(rectangle, relativePoint));
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (highlighted != null) {
-                    highlighted.setPoint(DrawManager.getAbsolute(frame.getRectangle(), relativePoint));
+                    highlighted.setPoint(DrawManager.getAbsolute(rectangle, relativePoint));
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -218,11 +218,11 @@ public class GraphOnTouchListener implements View.OnTouchListener {
         }
 
         Vertex nearestVertex;
-        while (null != (nearestVertex = DrawManager.getNearestVertex(graph, frame.getRectangle(), relativePoint, 0.03, Collections.emptySet()))) {
+        while (null != (nearestVertex = DrawManager.getNearestVertex(graph, rectangle, relativePoint, 0.03, Collections.emptySet()))) {
             graph.removeVertex(nearestVertex);
         }
         Edge nearestEdge;
-        while (null != (nearestEdge = DrawManager.getNearestEdge(graph, frame.getRectangle(), relativePoint, 0.03))) {
+        while (null != (nearestEdge = DrawManager.getNearestEdge(graph, rectangle, relativePoint, 0.03))) {
             graph.removeEdge(nearestEdge);
         }
 
@@ -244,7 +244,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
                 dy = 0;
                 int indexA = (e.getAction() >> MotionEvent.ACTION_POINTER_INDEX_SHIFT);
                 firstPointerId = e.getPointerId(indexA);
-                prevAbsolute = DrawManager.getAbsolute(stateStack.getCurrentState().getFrame().getRectangle(),
+                prevAbsolute = DrawManager.getAbsolute(stateStack.getCurrentState().getRectangle(),
                         graphView.getRelative(new Point(e.getX(indexA), e.getY(indexA))));
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -256,10 +256,10 @@ public class GraphOnTouchListener implements View.OnTouchListener {
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
                 // initialize zoom variables
-                initial = stateStack.getCurrentState().getFrame().deepCopy();
+                initial = stateStack.getCurrentState().getRectangle().deepCopy();
                 int indexB = (e.getAction() >> MotionEvent.ACTION_POINTER_INDEX_SHIFT);
                 secondPointerId = e.getPointerId(indexB);
-                secondAbsoluteStart = DrawManager.getAbsolute(stateStack.getCurrentState().getFrame().getRectangle(),
+                secondAbsoluteStart = DrawManager.getAbsolute(stateStack.getCurrentState().getRectangle(),
                         graphView.getRelative(new Point(e.getX(indexB), e.getY(indexB))));
                 firstAbsoluteStart = prevAbsolute;
 //                firstRelativeEnd = firstAbsoluteStart;
@@ -269,12 +269,12 @@ public class GraphOnTouchListener implements View.OnTouchListener {
             case MotionEvent.ACTION_UP:
                 break;
         }
-        frame.translate(dx/v.getWidth(), dy/v.getWidth());
+        DrawManager.translate(rectangle, dx/v.getWidth(), dy/v.getWidth());
         return true;
     }
 
     private Point prevAbsolute = null;
-    private Frame initial;
+    private Rectangle initial;
     private int firstPointerId;
     private int secondPointerId;
     private Point firstAbsoluteStart;
@@ -300,7 +300,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
 //                if (firstRelativeEnd == null || secondRelativeEnd == null) break;
 
 //                StringBuilder s = new StringBuilder();
-                Frame newFrame = DrawManager.getZoomedRectangle(initial, firstAbsoluteStart, secondAbsoluteStart, firstRelativeEnd, secondRelativeEnd);
+                Rectangle newRectangle = DrawManager.getZoomedRectangle(initial, firstAbsoluteStart, secondAbsoluteStart, firstRelativeEnd, secondRelativeEnd);
 //                s.append("ELO\n");
 //                s.append(firstAbsoluteStart.toString() + "\n\n");
 //                s.append(secondAbsoluteStart.toString() + "\n\n");
@@ -315,7 +315,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
 //                s.append(newFrame.getRectangle().getRightBot() + "\n\n");
 //                s.append(newFrame.getScale() + "\n\n");
 //                System.out.println(new String(s));
-                stateStack.getCurrentState().setFrame(newFrame);
+                stateStack.getCurrentState().setRectangle(newRectangle);
 
             case MotionEvent.ACTION_POINTER_DOWN:
             case MotionEvent.ACTION_POINTER_UP:

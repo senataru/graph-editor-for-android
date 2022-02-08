@@ -42,6 +42,7 @@ public class Rectangle {
 
     public double getHeight() { return rightBot.getY() - leftTop.getY(); }
     public double getWidth() { return rightBot.getX() - leftTop.getX(); }
+    public double getScale() { return getWidth(); }
 
     public Point getCentre() { return new Point((rightBot.getX() + leftTop.getX())/2, (rightBot.getY() + leftTop.getY())/2); }
 

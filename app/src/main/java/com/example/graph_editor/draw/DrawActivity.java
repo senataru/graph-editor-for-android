@@ -40,7 +40,6 @@ import com.example.graph_editor.model.graph_generators.GraphGeneratorCycle;
 import com.example.graph_editor.model.graph_generators.GraphGeneratorFullBinaryTree;
 import com.example.graph_editor.model.graph_generators.GraphGeneratorGrid;
 import com.example.graph_editor.model.graph_generators.GraphGeneratorKingGrid;
-import com.example.graph_editor.model.mathematics.Frame;
 import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
@@ -115,7 +114,7 @@ public class DrawActivity extends AppCompatActivity {
                     graphView.update(stateStack.getCurrentState().getActionModeType());
                 },
                 // the rectangle is temporary and will be replaced as soon as possible (when the height will be known)
-                new State(graph, new Frame(new Rectangle(new Point(0, 0), new Point(1, 1)), 1), ActionModeType.MOVE_CANVAS),
+                new State(graph, new Rectangle(new Point(0, 0), new Point(1, 1)), ActionModeType.MOVE_CANVAS),
                 stack,
                 pointer
         );
@@ -195,11 +194,11 @@ public class DrawActivity extends AppCompatActivity {
                 return;
             }
             stateStack.backup();
-            Rectangle oldRec = stateStack.getCurrentState().getFrame().getRectangle();
+            Rectangle oldRec = stateStack.getCurrentState().getRectangle();
             Rectangle optimalRec = DrawManager.getOptimalRectangle(g, 0.1, oldRec);
             State currentState = stateStack.getCurrentState();
             currentState.setGraph(g);
-            currentState.setFrame(new Frame(optimalRec, optimalRec.getWidth()));
+            currentState.setRectangle(new Rectangle(optimalRec, optimalRec.getWidth()));
             stateStack.invalidateView();
 
             Toast.makeText(this, "Import complete", Toast.LENGTH_SHORT).show();
@@ -251,16 +250,14 @@ public class DrawActivity extends AppCompatActivity {
                 stateStack.backup();
                 State state = stateStack.getCurrentState();
                 DrawManager.normalizeGraph(state.getGraph());
-                Frame frame = state.getFrame();
-                Rectangle newRectangle = DrawManager.getOptimalRectangle(state.getGraph(), 0.1, frame.getRectangle());
-                state.setFrame(new Frame(newRectangle, 1.2));
+                Rectangle newRectangle = DrawManager.getOptimalRectangle(state.getGraph(), 0.1, state.getRectangle());
+                state.setRectangle(new Rectangle(newRectangle, 1.2));
                 graphView.postInvalidate();
                 return true;
             case R.id.options_btn_recenter:
                 State state1 = stateStack.getCurrentState();
-                Frame frame1 = state1.getFrame();
-                Rectangle newRectangle1 = DrawManager.getOptimalRectangle(state1.getGraph(), 0.1, frame1.getRectangle());
-                state1.setFrame(new Frame(newRectangle1, newRectangle1.getWidth()));
+                Rectangle newRectangle1 = DrawManager.getOptimalRectangle(state1.getGraph(), 0.1, state1.getRectangle());
+                state1.setRectangle(new Rectangle(newRectangle1, newRectangle1.getWidth()));
                 graphView.postInvalidate();
                 return true;
             case R.id.options_btn_settings:

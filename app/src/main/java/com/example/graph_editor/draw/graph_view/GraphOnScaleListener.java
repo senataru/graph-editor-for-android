@@ -3,6 +3,8 @@ package com.example.graph_editor.draw.graph_view;
 import android.view.ScaleGestureDetector;
 
 import com.example.graph_editor.draw.action_mode_type.ActionModeType;
+import com.example.graph_editor.model.DrawManager;
+import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.model.state.StateStack;
 
 public class GraphOnScaleListener implements ScaleGestureDetector.OnScaleGestureListener {
@@ -16,7 +18,8 @@ public class GraphOnScaleListener implements ScaleGestureDetector.OnScaleGesture
     public boolean onScale(ScaleGestureDetector detector) {
         float scaleFactor = detector.getScaleFactor();
 
-        stateStack.getCurrentState().getFrame().rescale(1/scaleFactor);
+        State state = stateStack.getCurrentState();
+        DrawManager.rescale(state.getRectangle(), 1/scaleFactor);
         return true;
     }
 

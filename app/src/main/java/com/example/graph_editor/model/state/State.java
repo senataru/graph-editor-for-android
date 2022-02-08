@@ -1,33 +1,33 @@
 package com.example.graph_editor.model.state;
 
-import com.example.graph_editor.model.mathematics.Frame;
 import com.example.graph_editor.draw.action_mode_type.ActionModeType;
 import com.example.graph_editor.draw.action_mode_type.ActionModeTypeObserver;
 import com.example.graph_editor.model.Graph;
+import com.example.graph_editor.model.mathematics.Rectangle;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class State {
     private Graph graph;
-    private Frame frame;
+    private Rectangle rectangle;
     private ActionModeType actionModeType;
     private boolean currentlyModified; //more accurately - isCurrentlyTouched, if true ignore button presses
     private final List<ActionModeTypeObserver> observers = new ArrayList<>();
 
-    public State(Graph graph, Frame frame, ActionModeType actionModeType) {
+    public State(Graph graph, Rectangle rectangle, ActionModeType actionModeType) {
         this.graph = graph;
-        this.frame = frame;
+        this.rectangle = rectangle;
         this.actionModeType = actionModeType;
     }
 
     public Graph getGraph() { return graph; }
-    public Frame getFrame() { return frame; }
+    public Rectangle getRectangle() { return rectangle; }
     public ActionModeType getActionModeType() { return actionModeType; }
     public boolean isCurrentlyModified() { return currentlyModified; }
 
     public void setGraph(Graph graph) { this.graph = graph; }
-    public void setFrame(Frame frame) { this.frame = frame; }
+    public void setRectangle(Rectangle rectangle) { this.rectangle = rectangle; }
     public void setCurrentModeType(ActionModeType modeType) {
         actionModeType = modeType;
         tellObservers();

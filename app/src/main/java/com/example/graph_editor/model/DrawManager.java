@@ -1,6 +1,5 @@
 package com.example.graph_editor.model;
 
-import com.example.graph_editor.model.mathematics.Frame;
 import com.example.graph_editor.model.mathematics.Geometry;
 import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.mathematics.Rectangle;
@@ -126,17 +125,29 @@ public class DrawManager {
 
         return new Rectangle(resultLeftTop, resultRightBot);
     }
+    public static void rescale(Rectangle rectangle, double scale) {
+        double newScale = scale*rectangle.getScale();
+        Rectangle temp = new Rectangle(rectangle, newScale/rectangle.getScale());
+        rectangle.setLeftTop(temp.getLeftTop());
+        rectangle.setRightBot(temp.getRightBot());
+    }
 
-    // all points are absolutes
-    public static Frame getZoomedRectangle(Frame original, Point startA, Point startB, Point endARelative, Point endBRelative) {
-        Frame result = original.deepCopy();
-        Point endA = getAbsolute(result.getRectangle(), endARelative);
-        Point endB = getAbsolute(result.getRectangle(), endBRelative);
+    public static void translate(Rectangle rectangle, double dxNew, double dyNew) {
+
+        Rectangle temp = new Rectangle(rectangle, dxNew*rectangle.getScale(), dyNew*rectangle.getScale());
+        rectangle.setLeftTop(temp.getLeftTop());
+        rectangle.setRightBot(temp.getRightBot());
+    }
+
+    public static Rectangle getZoomedRectangle(Rectangle original, Point startA, Point startB, Point endARelative, Point endBRelative) {
+        Rectangle result = original.deepCopy();
+        Point endA = getAbsolute(result, endARelative);
+        Point endB = getAbsolute(result, endBRelative);
         double x = Geometry.distance(startA, startB), y = Geometry.distance(endA, endB);
-        result.rescale(x/y);
+        rescale(result, x/y);
         Point startCenter = Geometry.centerPoint(startA, startB),
                 endCenter = Geometry.centerPoint(endA, endB);
-        result.translate((-startCenter.getX()+endCenter.getX())/result.getScale(), (-startCenter.getY()+endCenter.getY())/result.getScale());
+        translate(result, (endCenter.getX()-startCenter.getX())/result.getScale(), (endCenter.getY()-startCenter.getY())/result.getScale());
 
         return result;
     }
