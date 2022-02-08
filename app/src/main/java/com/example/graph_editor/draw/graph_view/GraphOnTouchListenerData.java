@@ -6,13 +6,14 @@ import com.example.graph_editor.model.Vertex;
 import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.mathematics.Rectangle;
 
-public class OnTouchListenerData {
+public class GraphOnTouchListenerData {
     // globals
     public Graph graph;
     public Rectangle rectangle;
-    public Point relativePoint;
-    public Point absolutePoint;
-    public ActionModeType oldStylusActionMode;
+    public Point currentRelativePoint;
+    public Point currentAbsolutePoint;
+
+    public ActionModeType stylusActionMode;
 
     // new vertex
     public Vertex newVertex;
@@ -27,16 +28,18 @@ public class OnTouchListenerData {
     public Vertex edgeSecondSnap = null;
 
     // move canvas
-    public float prevX = 0f;
-    public float prevY = 0f;
-    public float dx = 0f;
-    public float dy = 0f;
+    public float movePreviousX = 0f;
+    public float movePreviousY = 0f;
+    public float moveDeltaX = 0f;
+    public float moveDeltaY = 0f;
 
     // zoom canvas
-    public Point prevAbsolute;
-    public Rectangle initial;
-    public int firstPointerId;
-    public int secondPointerId;
-    public Point firstAbsoluteStart;
-    public Point secondAbsoluteStart;
+    public Point previousAbsolutePoint = null;
+    public int firstPointerId = -1;
+    public int secondPointerId = -1;
+
+    public Rectangle zoomInitialRectangle = null;
+    public Point zoomFirstAbsoluteStart = null;
+    public Point zoomSecondAbsoluteStart = null;
+    public boolean zoomIsDeactivated = false;
 }
