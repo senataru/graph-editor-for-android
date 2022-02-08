@@ -38,6 +38,8 @@ import com.example.graph_editor.model.graph_generators.GraphGeneratorBipartiteCl
 import com.example.graph_editor.model.graph_generators.GraphGeneratorClique;
 import com.example.graph_editor.model.graph_generators.GraphGeneratorCycle;
 import com.example.graph_editor.model.graph_generators.GraphGeneratorFullBinaryTree;
+import com.example.graph_editor.model.graph_generators.GraphGeneratorGrid;
+import com.example.graph_editor.model.graph_generators.GraphGeneratorKingGrid;
 import com.example.graph_editor.model.mathematics.Frame;
 import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.mathematics.Rectangle;
@@ -296,6 +298,12 @@ public class DrawActivity extends AppCompatActivity {
                 return true;
             case R.id.generate_btn_full_binary_tree:
                 new GeneratePopup(this, stateStack, new GraphGeneratorFullBinaryTree()).show();
+                return true;
+            case R.id.generate_btn_grid:
+                new GeneratePopup(this, stateStack, new GraphGeneratorGrid()).show();
+                return true;
+            case R.id.generate_btn_king_grid:
+                new GeneratePopup(this, stateStack, new GraphGeneratorKingGrid()).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

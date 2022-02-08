@@ -50,4 +50,6 @@
     <string name="export_graph">Export graph</string>
     <string name="creators">Creators</string>
     <string name="creators_content">Aleksander Katan - creator \nRoch Wójtowicz - creator \nBartołomiej Bosek - project patron \n</string>
+    <string name="grid">Grid</string>
+    <string name="king_grid">King grid</string>
 </resources>

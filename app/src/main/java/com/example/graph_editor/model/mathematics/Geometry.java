@@ -68,7 +68,7 @@ public class Geometry {
         int layer = log2int(index+1);
         int ind = index - (1 << layer) + 1;
 
-        double diffY = 1.0/(layers-1);
+//        double diffY = 1.0/(layers-1);
         double diffX = 1.0/(1 << layer);
 
         double x = diffX/2 + diffX * ind;
@@ -77,9 +77,18 @@ public class Geometry {
         return new Point(x, y);
     }
 
+    public static Point getGridPoint(int x, int y, int totalX, int totalY) {
+        double diffY = 1.0/(totalY-1);
+        double diffX = 1.0/(totalX-1);
+
+        return new Point(x*diffX, y*diffY);
+    }
+
     public static int log2int(int a) {
         if (a<1) return -1;
         if (a==1) return 0;
         return 1+log2int(a/2);
     }
+
+
 }
