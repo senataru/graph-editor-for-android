@@ -24,9 +24,10 @@ import com.example.graph_editor.draw.action_mode_type.ActionModeType;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.DiscardPopup;
 import com.example.graph_editor.draw.popups.GeneratePopup;
+import com.example.graph_editor.draw.popups.ImportFromTxtPopup;
 import com.example.graph_editor.draw.popups.SavePopup;
 import com.example.graph_editor.draw.popups.SettingsPopup;
-import com.example.graph_editor.draw.popups.ShareIntent;
+import com.example.graph_editor.draw.popups.ShareAsTxtIntent;
 import com.example.graph_editor.graph_storage.GraphScanner;
 import com.example.graph_editor.graph_storage.GraphWriter;
 import com.example.graph_editor.graph_storage.InvalidGraphStringException;
@@ -266,22 +267,25 @@ public class DrawActivity extends AppCompatActivity {
             case R.id.options_btn_save_as:
                 new SavePopup(this, ()->{}).show(stateStack.getCurrentState().getGraph());
                 return true;
-            case R.id.options_btn_share:
-                new ShareIntent(this, stateStack).show();
+            case R.id.options_btn_export_txt:
+                new ShareAsTxtIntent(this, stateStack).show();
                 return true;
-            case R.id.options_btn_import:
-                Intent importIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                importIntent.setType("text/plain");
+            case R.id.options_btn_import_txt:
+                new ImportFromTxtPopup(this, stateStack).show();
+                return true;
+            case R.id.options_btn_export_file:
+                Intent exportAsFileIntent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                exportAsFileIntent.setType("text/plain");
+                exportAsFileIntent.addCategory(Intent.CATEGORY_OPENABLE);
+                exportAsFileIntent = Intent.createChooser(exportAsFileIntent, "Choose where to save the graph");
+                exportActivityResultLauncher.launch(exportAsFileIntent);
+                return true;
+            case R.id.options_btn_import_file:
+                Intent importFromFileIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                importFromFileIntent.setType("text/plain");
 
-                importIntent = Intent.createChooser(importIntent, "Choose file containing a graph");
-                importActivityResultLauncher.launch(importIntent);
-                return true;
-            case R.id.options_btn_export:
-                Intent exportIntent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-                exportIntent.setType("text/plain");
-                exportIntent.addCategory(Intent.CATEGORY_OPENABLE);
-                exportIntent = Intent.createChooser(exportIntent, "Choose where to save the graph");
-                exportActivityResultLauncher.launch(exportIntent);
+                importFromFileIntent = Intent.createChooser(importFromFileIntent, "Choose file containing a graph");
+                importActivityResultLauncher.launch(importFromFileIntent);
                 return true;
             //generate graph
             case R.id.generate_btn_cycle:

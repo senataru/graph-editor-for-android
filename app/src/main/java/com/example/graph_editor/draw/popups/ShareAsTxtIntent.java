@@ -6,11 +6,11 @@ import android.content.Intent;
 import com.example.graph_editor.graph_storage.GraphWriter;
 import com.example.graph_editor.model.state.StateStack;
 
-public class ShareIntent {
+public class ShareAsTxtIntent {
     private final Context context;
     private final StateStack stateStack;
 
-    public ShareIntent(Context context, StateStack stateStack) {
+    public ShareAsTxtIntent(Context context, StateStack stateStack) {
         this.context = context;
         this.stateStack = stateStack;
     }

@@ -27,18 +27,24 @@
         app:showAsAction="never" >
     </item>
 
-    <item android:id="@+id/options_btn_share"
-        android:title="@string/share_graph"
+
+    <item android:id="@+id/options_btn_import_txt"
+        android:title="@string/import_graph_from_text"
         app:showAsAction="never" >
     </item>
 
-    <item android:id="@+id/options_btn_import"
-        android:title="@string/import_graph"
+    <item android:id="@+id/options_btn_export_txt"
+        android:title="@string/export_graph_as_text"
         app:showAsAction="never" >
     </item>
 
-    <item android:id="@+id/options_btn_export"
-        android:title="@string/export_graph"
+    <item android:id="@+id/options_btn_import_file"
+        android:title="@string/import_graph_from_file"
+        app:showAsAction="never" >
+    </item>
+
+    <item android:id="@+id/options_btn_export_file"
+        android:title="@string/export_graph_as_file"
         app:showAsAction="never" >
     </item>
 

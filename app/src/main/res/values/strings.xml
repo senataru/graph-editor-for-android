@@ -52,4 +52,10 @@
     <string name="creators_content">Aleksander Katan - creator \nRoch Wójtowicz - creator \nBartołomiej Bosek - project patron \n</string>
     <string name="grid">Grid</string>
     <string name="king_grid">King grid</string>
+    <string name="export_graph_as_file">Export graph as file</string>
+    <string name="import_graph_as_file">Import graph as file</string>
+    <string name="import_graph_from_text">Import graph from text</string>
+    <string name="share_graph_as_text">Share graph as text</string>
+    <string name="export_graph_as_text">Export graph as text</string>
+    <string name="import_graph_from_file">Import graph from file</string>
 </resources>

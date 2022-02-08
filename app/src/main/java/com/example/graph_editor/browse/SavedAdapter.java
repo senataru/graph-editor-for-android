@@ -15,7 +15,7 @@ import com.example.graph_editor.R;
 import com.example.graph_editor.database.Save;
 import com.example.graph_editor.database.SaveDao;
 import com.example.graph_editor.database.SavesDatabase;
-import com.example.graph_editor.draw.popups.ShareIntent;
+import com.example.graph_editor.draw.popups.ShareAsTxtIntent;
 import com.example.graph_editor.draw.action_mode_type.ActionModeType;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.graph_storage.GraphScanner;
@@ -74,7 +74,7 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
                     SavesDatabase.getDbInstance(context).saveDao().delete(s);
                 }).show()
         );
-        holder.shareButton.setOnClickListener(v -> new ShareIntent(context, holder.dataGraph.getStateStack()).show());
+        holder.shareButton.setOnClickListener(v -> new ShareAsTxtIntent(context, holder.dataGraph.getStateStack()).show());
     }
 
     @Override
