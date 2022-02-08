@@ -49,7 +49,7 @@
     <string name="cancel">Cancel</string>
     <string name="export_graph">Export graph</string>
     <string name="creators">Creators</string>
-    <string name="creators_content">Aleksander Katan - creator \nRoch Wójtowicz - creator \nBartołomiej Bosek - project patron \n</string>
+    <string name="creators_content">Aleksander Katan - developer \nRoch Wójtowicz - developer \nBartołomiej Bosek - project patron \n</string>
     <string name="grid">Grid</string>
     <string name="king_grid">King grid</string>
     <string name="export_graph_as_file">Export graph as file</string>
@@ -58,4 +58,12 @@
     <string name="share_graph_as_text">Share graph as text</string>
     <string name="export_graph_as_text">Export graph as text</string>
     <string name="import_graph_from_file">Import graph from file</string>
+    <string name="aleksander_katan_developer">Aleksander Katan - developer</string>
+    <string name="roch_w_jtowicz_developer">Roch Wójtowicz - developer</string>
+    <string name="bart_omiej_bosek_project_patron">Bartłomiej Bosek - Project Patron</string>
+    <string name="directed">Directed</string>
+    <string name="undirected">Undirected</string>
+    <string name="choose_graph_type">Choose graph type</string>
+    <string name="my_graphs">My graphs</string>
+    <string name="new_graph">New graph</string>
 </resources>

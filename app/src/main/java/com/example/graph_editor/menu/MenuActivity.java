@@ -8,8 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 
 import com.example.graph_editor.R;
@@ -53,7 +51,7 @@ public class MenuActivity extends AppCompatActivity {
 
     private void displayGraphTypePopup() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        final View enterNamePopup = getLayoutInflater().inflate(R.layout.popup_graph_type, null);
+        final View enterNamePopup = getLayoutInflater().inflate(R.layout.graph_type_popup, null);
 
         dialogBuilder.setView(enterNamePopup);
         AlertDialog dialog = dialogBuilder.create();
