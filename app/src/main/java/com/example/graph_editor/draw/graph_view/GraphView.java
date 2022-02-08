@@ -37,12 +37,9 @@ public class GraphView extends View implements ActionModeTypeObserver {
     private Paint vertexPaint;
     private double vertexRadius = baseVertexRadius;
     private Paint edgePaint;
-    private Paint highlightPaint;
     private boolean fixedWidth;
 
     private StateStack stateStack;
-    private GraphOnTouchListener onTouchListener;
-    public Vertex highlighted = null;
 
     private boolean interactive = false;
     private boolean isLazyInitialised = false;
@@ -72,10 +69,6 @@ public class GraphView extends View implements ActionModeTypeObserver {
         vertexPaint.setColor(Color.BLUE);
         vertexPaint.setStyle(Paint.Style.FILL);
         vertexPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
-        highlightPaint = new Paint();
-        highlightPaint.setColor(Color.DKGRAY);
-        highlightPaint.setStyle(Paint.Style.FILL);
-        highlightPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
         edgePaint = new Paint();
         edgePaint.setColor(Color.GRAY);
         edgePaint.setStyle(Paint.Style.FILL);
@@ -100,8 +93,7 @@ public class GraphView extends View implements ActionModeTypeObserver {
         Rectangle optimalRec = DrawManager.getOptimalRectangle(currentState.getGraph(),0.1, rec);
         currentState.setRectangle(optimalRec);
         if (interactive) {
-            ScaleGestureDetector scaleDetector = new ScaleGestureDetector(getContext(), new GraphOnScaleListener(stateStack));
-            onTouchListener = new GraphOnTouchListener(getContext(), this, stateStack, scaleDetector);
+            GraphOnTouchListener onTouchListener = new GraphOnTouchListener(getContext(), this, stateStack);
             this.setOnTouchListener(onTouchListener);
         }
         isLazyInitialised = true;
@@ -128,19 +120,14 @@ public class GraphView extends View implements ActionModeTypeObserver {
                     DrawManager.getRelative(rectangle, e.getTarget().getPoint()), graph.getType());
 
         for (Vertex v : graph.getVertices())
-            drawVertex(canvas, v, DrawManager.getRelative(rectangle, v.getPoint()), v == highlighted);
+            drawVertex(canvas, v, DrawManager.getRelative(rectangle, v.getPoint()));
     }
 
-    private void drawVertex(Canvas canvas, Vertex vertex, Point point, boolean highlighted) {
+    private void drawVertex(Canvas canvas, Vertex vertex, Point point) {
         float x = (float)point.getX()*getWidth();
         float y = (float)point.getY()*getHeight();
 
-        if (highlighted) {
-            canvas.drawCircle(x, y, (float)vertexRadius*2, highlightPaint);
-        }
-
         canvas.drawCircle(x, y, (float)vertexRadius, vertexPaint);
-//        canvas.drawText(vertex.);
     }
 
     private void drawEdge(Canvas canvas, Edge edge, Point start, Point end, GraphType type) {
@@ -185,7 +172,6 @@ public class GraphView extends View implements ActionModeTypeObserver {
 
     @Override
     public void update(ActionModeType newType) {
-        highlighted = null;
         postInvalidate();
     }
 

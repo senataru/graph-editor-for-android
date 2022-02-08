@@ -12,9 +12,13 @@ public class OnTouchListenerData {
     public Rectangle rectangle;
     public Point relativePoint;
     public Point absolutePoint;
-    public Vertex highlighted;
     public ActionModeType oldStylusActionMode;
 
+    // new vertex
+    public Vertex newVertex;
+
+    // move object
+    public Vertex movedVertex;
 
     // new edge
     public Vertex edgeFirst = null;

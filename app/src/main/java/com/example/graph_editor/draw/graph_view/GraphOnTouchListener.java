@@ -25,16 +25,13 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     private final Context context;
     private final GraphView graphView;
     private final StateStack stateStack;
-    private final ScaleGestureDetector scaleDetector;
-
 
     OnTouchListenerData data;
 
-    public GraphOnTouchListener(Context context, GraphView graphView, StateStack stateStack, ScaleGestureDetector scaleDetector) {
+    public GraphOnTouchListener(Context context, GraphView graphView, StateStack stateStack) {
         this.context = context;
         this.graphView = graphView;
         this.stateStack = stateStack;
-        this.scaleDetector = scaleDetector;
 
         this.data = new OnTouchListenerData();
     }
@@ -49,7 +46,6 @@ public class GraphOnTouchListener implements View.OnTouchListener {
 
         data.relativePoint = graphView.getRelative(new Point(event.getX(), event.getY()));
         data.absolutePoint = DrawManager.getAbsolute(data.rectangle, data.relativePoint);
-        data.highlighted = graphView.highlighted;
         boolean stylusMode = Settings.getStylus(context);
 
         if (stylusMode) {
@@ -85,7 +81,6 @@ public class GraphOnTouchListener implements View.OnTouchListener {
                 result = false;
                 break;
         }
-//        scaleDetector.onTouchEvent(event);
 
         if (stylusMode) {
             if (event.getToolType(0) == MotionEvent.TOOL_TYPE_FINGER) {
@@ -96,7 +91,6 @@ public class GraphOnTouchListener implements View.OnTouchListener {
             }
         }
 
-        graphView.highlighted = data.highlighted;
         graphView.postInvalidate();
         return result;
     }
@@ -105,14 +99,14 @@ public class GraphOnTouchListener implements View.OnTouchListener {
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 stateStack.backup();
-                data.highlighted = data.graph.addVertex();
-                data.highlighted.setPoint(data.absolutePoint);
+                data.newVertex = data.graph.addVertex();
+                data.newVertex.setPoint(data.absolutePoint);
                 break;
             case MotionEvent.ACTION_MOVE:
-                data.highlighted.setPoint(data.absolutePoint);
+                data.newVertex.setPoint(data.absolutePoint);
                 break;
             case MotionEvent.ACTION_UP:
-                data.highlighted = null;
+                data.newVertex = null;
                 break;
             default:
                 break;
@@ -183,22 +177,15 @@ public class GraphOnTouchListener implements View.OnTouchListener {
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 stateStack.backup();
-                if (data.highlighted == null && nearest != null)       // select a vertex
-                    data.highlighted = nearest;
-                else if (data.highlighted == nearest && data.highlighted != null) // move current vertex slightly
-                    data.highlighted.setPoint(DrawManager.getAbsolute(data.rectangle, data.relativePoint));
-                else if (nearest != null)     // select different vertex
-                    data.highlighted = nearest;
-                else if (data.highlighted != null)       // move selected vertex
-                    data.highlighted.setPoint(DrawManager.getAbsolute(data.rectangle, data.relativePoint));
-                break;
+                if (data.movedVertex == null && nearest != null)       // select a vertex
+                    data.movedVertex = nearest;
             case MotionEvent.ACTION_MOVE:
-                if (data.highlighted != null) {
-                    data.highlighted.setPoint(DrawManager.getAbsolute(data.rectangle, data.relativePoint));
+                if (data.movedVertex != null) {
+                    data.movedVertex.setPoint(DrawManager.getAbsolute(data.rectangle, data.relativePoint));
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                data.highlighted = null;
+                data.movedVertex = null;
                 break;
         }
         return true;
