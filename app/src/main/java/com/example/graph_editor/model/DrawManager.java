@@ -140,15 +140,14 @@ public class DrawManager {
     }
 
     public static Rectangle getZoomedRectangle(Rectangle original, Point startA, Point startB, Point endARelative, Point endBRelative) {
-        Rectangle result = original.deepCopy();
-        Point endA = getAbsolute(result, endARelative);
-        Point endB = getAbsolute(result, endBRelative);
-        double x = Geometry.distance(startA, startB), y = Geometry.distance(endA, endB);
-        rescale(result, x/y);
-        Point startCenter = Geometry.centerPoint(startA, startB),
-                endCenter = Geometry.centerPoint(endA, endB);
-        translate(result, (endCenter.getX()-startCenter.getX())/result.getScale(), (endCenter.getY()-startCenter.getY())/result.getScale());
+        Point endA = getAbsolute(original, endARelative), endB = getAbsolute(original, endBRelative);
+        double scale = Geometry.distance(startA, startB)/Geometry.distance(endA, endB);
+        Point endCenter = Geometry.centerPoint(startA, startB), startCenter = Geometry.centerPoint(endA, endB);
 
-        return result;
+        double toLeft = startCenter.getX() - original.getLeft();
+        double toTop = startCenter.getY() - original.getTop();
+
+        Point newLeftTop = new Point(endCenter.getX()-toLeft*scale, endCenter.getY()-toTop*scale);
+        return new Rectangle(newLeftTop, original.getWidth()*scale, original.getHeight()*scale);
     }
 }

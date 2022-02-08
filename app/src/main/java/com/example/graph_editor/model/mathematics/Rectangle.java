@@ -11,6 +11,11 @@ public class Rectangle {
         this.rightBot = rightBot;
     }
 
+    public Rectangle(Point leftTop, double width, double height) {
+        this.leftTop = leftTop;
+        this.rightBot = new Point(leftTop.getX()+width, leftTop.getY()+height);
+    }
+
     public Rectangle(Rectangle original, double scale) {
         double width = original.getWidth() * scale;
         double height = original.getHeight() * scale;
@@ -28,8 +33,6 @@ public class Rectangle {
         leftTop = new Point(leftTop.getX() - dx, leftTop.getY() - dy);
         rightBot = new Point(rightBot.getX() - dx, rightBot.getY() - dy);
     }
-
-
 
     public Point getLeftTop() { return leftTop; }
     public Point getRightBot() { return rightBot; }
