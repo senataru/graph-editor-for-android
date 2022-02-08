@@ -11,19 +11,13 @@ import java.util.List;
 
 public class VertexImpl implements Vertex {
     int index = -1;
-    String name;
     List<Edge> edges = new ArrayList<>();
     Point absolutePoint;
     EdgeFactory edgeFactory;
 
-    public VertexImpl(String name) {
-        this.name = name;
+    public VertexImpl() {
         edgeFactory = new EdgeFactory(this);
         this.absolutePoint = new Point(0, 0);
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     @Override

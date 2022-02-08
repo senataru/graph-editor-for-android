@@ -1,11 +1,9 @@
 package com.example.graph_editor.draw;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,34 +21,19 @@ import com.example.graph_editor.database.SavesDatabase;
 import com.example.graph_editor.draw.action_mode_type.ActionModeType;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.DiscardPopup;
-import com.example.graph_editor.draw.popups.GeneratePopup;
-import com.example.graph_editor.draw.popups.ImportFromTxtPopup;
 import com.example.graph_editor.draw.popups.SavePopup;
-import com.example.graph_editor.draw.popups.SettingsPopup;
-import com.example.graph_editor.draw.popups.ShareAsTxtIntent;
 import com.example.graph_editor.graph_storage.GraphScanner;
 import com.example.graph_editor.graph_storage.GraphWriter;
 import com.example.graph_editor.graph_storage.InvalidGraphStringException;
-import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.GraphFactory;
 import com.example.graph_editor.model.GraphType;
-import com.example.graph_editor.model.graph_generators.GraphGeneratorBipartiteClique;
-import com.example.graph_editor.model.graph_generators.GraphGeneratorClique;
-import com.example.graph_editor.model.graph_generators.GraphGeneratorCycle;
-import com.example.graph_editor.model.graph_generators.GraphGeneratorFullBinaryTree;
-import com.example.graph_editor.model.graph_generators.GraphGeneratorGrid;
-import com.example.graph_editor.model.graph_generators.GraphGeneratorKingGrid;
 import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.model.state.StateStack;
 import com.example.graph_editor.model.state.StateStackImpl;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.util.List;
 
 public class DrawActivity extends AppCompatActivity {
@@ -169,146 +152,19 @@ public class DrawActivity extends AppCompatActivity {
 
     ActivityResultLauncher<Intent> importActivityResultLauncher = registerForActivityResult(
         new ActivityResultContracts.StartActivityForResult(),
-        (ActivityResult result) -> {
-            if( result.getResultCode() != Activity.RESULT_OK || result.getData() == null)
-                return;
-            Uri uri = result.getData().getData();
-            Graph g;
-            try {
-                String content;
-                try {
-                    InputStream in = getContentResolver().openInputStream(uri);
-                    BufferedReader r = new BufferedReader(new InputStreamReader(in));
-                    StringBuilder total = new StringBuilder();
-                    for (String line; (line = r.readLine()) != null; ) {
-                        total.append(line).append('\n');
-                    }
-                    content = total.toString();
-                    System.out.println(content);
-                }catch (Exception e) {
-                    Toast.makeText(this, "Invalid text", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                g = GraphScanner.fromExact(content);
-            } catch (InvalidGraphStringException e) {
-                Toast.makeText(this, "Invalid graph", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            stateStack.backup();
-            Rectangle oldRec = stateStack.getCurrentState().getRectangle();
-            Rectangle optimalRec = DrawManager.getOptimalRectangle(g, 0.1, oldRec);
-            State currentState = stateStack.getCurrentState();
-            currentState.setGraph(g);
-            currentState.setRectangle(new Rectangle(optimalRec, optimalRec.getWidth()));
-            stateStack.invalidateView();
-
-            Toast.makeText(this, "Import complete", Toast.LENGTH_SHORT).show();
-        }
-    );
+        (ActivityResult result) -> ImportExportLaunchers.exportCommand(result, this, stateStack));
 
     ActivityResultLauncher<Intent> exportActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if( result.getResultCode() != Activity.RESULT_OK || result.getData() == null)
-                    return;
-                Uri uri = result.getData().getData();
-                try {
-                    OutputStream outputStream = getContentResolver().openOutputStream(uri);
-                    outputStream.write(GraphWriter.toExact(stateStack.getCurrentState().getGraph()).getBytes());
-                    outputStream.close();
-                } catch (Exception e) {
-                    Toast.makeText(this, "Invalid text", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                Toast.makeText(this, "Export complete", Toast.LENGTH_SHORT).show();
-            }
-    );
+            result -> ImportExportLaunchers.importCommand(result, this, stateStack));
 
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (stateStack.getCurrentState().isCurrentlyModified()) return false;
-
-        switch (item.getItemId()) {
-            case R.id.options_btn_save:
-                makeSave(()->{});
-                return true;
-            case R.id.options_btn_redo:
-                stateStack.redo();
-                graphView.postInvalidate();
-                return true;
-            case R.id.options_btn_undo:
-                stateStack.undo();
-                graphView.postInvalidate();
-                return true;
-            //more actions
-            case R.id.options_btn_clear:
-                stateStack.backup();
-                stateStack.getCurrentState().getGraph().getVertices().clear();
-                graphView.postInvalidate();
-                return true;
-            case R.id.options_btn_normalize:
-                stateStack.backup();
-                State state = stateStack.getCurrentState();
-                DrawManager.normalizeGraph(state.getGraph());
-                Rectangle newRectangle = DrawManager.getOptimalRectangle(state.getGraph(), 0.1, state.getRectangle());
-                state.setRectangle(new Rectangle(newRectangle, 1.2));
-                graphView.postInvalidate();
-                return true;
-            case R.id.options_btn_recenter:
-                State state1 = stateStack.getCurrentState();
-                Rectangle newRectangle1 = DrawManager.getOptimalRectangle(state1.getGraph(), 0.1, state1.getRectangle());
-                state1.setRectangle(new Rectangle(newRectangle1, newRectangle1.getWidth()));
-                graphView.postInvalidate();
-                return true;
-            case R.id.options_btn_settings:
-                new SettingsPopup(this, ()->graphView.postInvalidate()).show();
-                return true;
-            case R.id.options_btn_save_as:
-                new SavePopup(this, ()->{}).show(stateStack.getCurrentState().getGraph());
-                return true;
-            case R.id.options_btn_export_txt:
-                new ShareAsTxtIntent(this, stateStack).show();
-                return true;
-            case R.id.options_btn_import_txt:
-                new ImportFromTxtPopup(this, stateStack).show();
-                return true;
-            case R.id.options_btn_export_file:
-                Intent exportAsFileIntent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-                exportAsFileIntent.setType("text/plain");
-                exportAsFileIntent.addCategory(Intent.CATEGORY_OPENABLE);
-                exportAsFileIntent = Intent.createChooser(exportAsFileIntent, "Choose where to save the graph");
-                exportActivityResultLauncher.launch(exportAsFileIntent);
-                return true;
-            case R.id.options_btn_import_file:
-                Intent importFromFileIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                importFromFileIntent.setType("text/plain");
-
-                importFromFileIntent = Intent.createChooser(importFromFileIntent, "Choose file containing a graph");
-                importActivityResultLauncher.launch(importFromFileIntent);
-                return true;
-            //generate graph
-            case R.id.generate_btn_cycle:
-                new GeneratePopup(this, stateStack, new GraphGeneratorCycle()).show();
-                return true;
-            case R.id.generate_btn_clique:
-                new GeneratePopup(this, stateStack, new GraphGeneratorClique()).show();
-                return true;
-            case R.id.generate_btn_bipartite_clique:
-                new GeneratePopup(this, stateStack, new GraphGeneratorBipartiteClique()).show();
-                return true;
-            case R.id.generate_btn_full_binary_tree:
-                new GeneratePopup(this, stateStack, new GraphGeneratorFullBinaryTree()).show();
-                return true;
-            case R.id.generate_btn_grid:
-                new GeneratePopup(this, stateStack, new GraphGeneratorGrid()).show();
-                return true;
-            case R.id.generate_btn_king_grid:
-                new GeneratePopup(this, stateStack, new GraphGeneratorKingGrid()).show();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        if(!OptionsHandler.handle(item, this, stateStack, graphView, ()->makeSave(()->{}), importActivityResultLauncher, exportActivityResultLauncher))
+            return super.onOptionsItemSelected(item);
+        return true;
     }
 
     @Override
