@@ -28,7 +28,7 @@ import com.example.graph_editor.model.state.StateStack;
 
 public class OptionsHandler {
     @SuppressLint("NonConstantResourceId")
-    public static boolean handle(@NonNull MenuItem item, Context context, StateStack stateStack,
+    public static boolean handle(@NonNull MenuItem item, DrawActivity context, StateStack stateStack,
                                  GraphView graphView, Runnable makeSave,
                                  ActivityResultLauncher<Intent> importActivityResultLauncher,
                                  ActivityResultLauncher<Intent> exportActivityResultLauncher) {
@@ -68,7 +68,7 @@ public class OptionsHandler {
                 new SettingsPopup(context, graphView::postInvalidate).show();
                 return true;
             case R.id.options_btn_save_as:
-                new SavePopup(context, ()->{}).show(stateStack.getCurrentState().getGraph());
+                new SavePopup().show(stateStack.getCurrentState().getGraph(), context, ()->{});
                 return true;
             case R.id.options_btn_export_txt:
                 new ShareAsTxtIntent(context, stateStack).show();

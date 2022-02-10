@@ -40,7 +40,7 @@ public class DrawActivity extends AppCompatActivity {
     public static final String TAG = "DrawActivity";
     private GraphView graphView;
     private StateStack stateStack;
-    private int currentGraphId = -1;
+    private long currentGraphId = -1;
     private String graphString;
 
     @Override
@@ -49,7 +49,7 @@ public class DrawActivity extends AppCompatActivity {
         setContentView(R.layout.activity_draw);
 
         SharedPreferences sharedPref = this.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
-        currentGraphId = sharedPref.getInt("currentGraphId", -1);
+        currentGraphId = sharedPref.getLong("currentGraphId", -1);
         int choiceOrd = sharedPref.getInt("GraphType", 0);
         graphString = sharedPref.getString("currentGraph", null);
 
@@ -139,12 +139,18 @@ public class DrawActivity extends AppCompatActivity {
         return true;
     }
 
+    public void updateGraph(long id, String string) {
+        currentGraphId = id;
+        graphString = string;
+    }
+
     public void makeSave(Runnable afterTask) {
         if(currentGraphId == -1) {
-            new SavePopup(this, afterTask).show(stateStack.getCurrentState().getGraph());
+            new SavePopup().show(stateStack.getCurrentState().getGraph(), this, afterTask);
         } else {
+            graphString = GraphWriter.toExact(stateStack.getCurrentState().getGraph());
             SavesDatabase database = SavesDatabase.getDbInstance(getApplicationContext());
-            database.saveDao().updateGraph(currentGraphId, GraphWriter.toExact(stateStack.getCurrentState().getGraph()), System.currentTimeMillis());
+            database.saveDao().updateGraph(currentGraphId, graphString, System.currentTimeMillis());
             Toast.makeText(this, "Graph saved", Toast.LENGTH_LONG).show();
             afterTask.run();
         }
@@ -162,7 +168,8 @@ public class DrawActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (stateStack.getCurrentState().isCurrentlyModified()) return false;
-        if(!OptionsHandler.handle(item, this, stateStack, graphView, ()->makeSave(()->{}), importActivityResultLauncher, exportActivityResultLauncher))
+        if(!OptionsHandler.handle(item, this, stateStack, graphView,
+                ()->makeSave(()->{}), importActivityResultLauncher, exportActivityResultLauncher))
             return super.onOptionsItemSelected(item);
         return true;
     }

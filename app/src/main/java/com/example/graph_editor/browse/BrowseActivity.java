@@ -39,11 +39,11 @@ public class BrowseActivity extends AppCompatActivity {
         if (adapter.data.size() > 0) noSavedGraphs.setAlpha(0f);
     }
 
-    public void changeActivity(String graphString, int id) {
+    public void changeActivity(String graphString, long id) {
         SharedPreferences sharedPref = this.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("currentGraph", graphString);
-        editor.putInt("currentGraphId", id);
+        editor.putLong("currentGraphId", id);
         editor.apply();
 
         Intent intent = new Intent(this, DrawActivity.class);

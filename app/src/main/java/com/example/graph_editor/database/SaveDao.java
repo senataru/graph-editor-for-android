@@ -14,10 +14,10 @@ public interface SaveDao {
     List<Save> getAllSaves();
 
     @Query("UPDATE save SET graph = :graph, date = :date WHERE uid = :id")
-    void updateGraph(int id, String graph, long date);
+    void updateGraph(long id, String graph, long date);
 
     @Insert
-    void insertSaves(Save... saves);
+    long[] insertSaves(Save... saves);
 
     @Query("DELETE FROM save")
     void deleteAll();

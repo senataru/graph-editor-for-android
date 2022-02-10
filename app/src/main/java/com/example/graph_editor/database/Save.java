@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey;
 @Entity
 public class Save {
     @PrimaryKey(autoGenerate = true)
-    public int uid;
+    public long uid;
     @ColumnInfo(name = "Name")
     public String name;
     @ColumnInfo(name = "Graph")

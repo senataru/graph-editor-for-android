@@ -10,19 +10,16 @@ import android.widget.Toast;
 import com.example.graph_editor.R;
 import com.example.graph_editor.database.Save;
 import com.example.graph_editor.database.SavesDatabase;
+import com.example.graph_editor.draw.DrawActivity;
 import com.example.graph_editor.graph_storage.GraphWriter;
 import com.example.graph_editor.model.Graph;
 
 public class SavePopup {
-    Context context;
     AlertDialog dialog;
-    Runnable afterTask;
 
-    public SavePopup(Context context, Runnable afterTask) {
-        this.context = context;
-        this.afterTask = afterTask;
-    }
-    public void show(Graph graph) {
+    public SavePopup() {}
+    public void show(Graph graph, DrawActivity context, Runnable afterTask) {
+
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = (LayoutInflater)context.getSystemService( Context.LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.save_popup, null);
@@ -34,7 +31,9 @@ public class SavePopup {
                 Toast.makeText(popupView.getContext(), "Please enter graph name", Toast.LENGTH_LONG).show();
                 return;
             }
-            database.saveDao().insertSaves(new Save(name, GraphWriter.toExact(graph), System.currentTimeMillis()));
+            String newGraphString = GraphWriter.toExact(graph);
+            Save save = new Save(name, newGraphString, System.currentTimeMillis());
+            context.updateGraph(database.saveDao().insertSaves(save)[0], newGraphString);
             Toast.makeText(context.getApplicationContext(), "Graph saved", Toast.LENGTH_LONG).show();
             dialog.dismiss();
             afterTask.run();

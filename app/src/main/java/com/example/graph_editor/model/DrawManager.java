@@ -125,29 +125,22 @@ public class DrawManager {
 
         return new Rectangle(resultLeftTop, resultRightBot);
     }
-    public static void rescale(Rectangle rectangle, double scale) {
-        double newScale = scale*rectangle.getScale();
-        Rectangle temp = new Rectangle(rectangle, newScale/rectangle.getScale());
-        rectangle.setLeftTop(temp.getLeftTop());
-        rectangle.setRightBot(temp.getRightBot());
-    }
 
     public static void translate(Rectangle rectangle, double dxNew, double dyNew) {
-
         Rectangle temp = new Rectangle(rectangle, dxNew*rectangle.getScale(), dyNew*rectangle.getScale());
         rectangle.setLeftTop(temp.getLeftTop());
         rectangle.setRightBot(temp.getRightBot());
     }
-
+    static int x = 0;
     public static Rectangle getZoomedRectangle(Rectangle original, Point startA, Point startB, Point endARelative, Point endBRelative) {
         Point endA = getAbsolute(original, endARelative), endB = getAbsolute(original, endBRelative);
         double scale = Geometry.distance(startA, startB)/Geometry.distance(endA, endB);
-        Point endCenter = Geometry.centerPoint(startA, startB), startCenter = Geometry.centerPoint(endA, endB);
+        Point startCenter = Geometry.centerPoint(startA, startB), endCenter = Geometry.centerPoint(endA, endB);
 
-        double toLeft = startCenter.getX() - original.getLeft();
-        double toTop = startCenter.getY() - original.getTop();
+        double toLeft = endCenter.getX() - original.getLeft();
+        double toTop = endCenter.getY() - original.getTop();
 
-        Point newLeftTop = new Point(endCenter.getX()-toLeft*scale, endCenter.getY()-toTop*scale);
+        Point newLeftTop = new Point(startCenter.getX()-toLeft*scale, startCenter.getY()-toTop*scale);
         return new Rectangle(newLeftTop, original.getWidth()*scale, original.getHeight()*scale);
     }
 }
