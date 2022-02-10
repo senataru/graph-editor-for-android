@@ -1,24 +1,15 @@
 package com.example.graph_editor.draw.popups;
 
-import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
-
 import android.app.AlertDialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Checkable;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.Switch;
-import android.widget.Toast;
 
 import androidx.appcompat.widget.SwitchCompat;
 
 import com.example.graph_editor.R;
 import com.example.graph_editor.draw.Settings;
-import com.example.graph_editor.draw.graph_view.GraphView;
 
 public class SettingsPopup {
     private final Context context;
@@ -41,11 +32,13 @@ public class SettingsPopup {
         );
         ((Checkable)btnStylus).setChecked(Settings.getStylus(context));
 
-        SwitchCompat btnButtons = popupView.findViewById(R.id.toggle_buttons);
-        btnButtons.setOnCheckedChangeListener((b, checked) ->
-                Settings.setButtons(context, checked)
-        );
-        ((Checkable)btnButtons).setChecked(Settings.getButtons(context));
+//        SwitchCompat btnDarkTheme = popupView.findViewById(R.id.toggle_buttons);
+//        btnDarkTheme.setOnCheckedChangeListener((b, checked) -> {
+//                    Settings.setDarkTheme(context, checked);
+//                    Settings.updateCurrentTheme(context, checked);
+//                }
+//        );
+//        ((Checkable)btnDarkTheme).setChecked(Settings.getDarkTheme(context));
 
         SwitchCompat btnFixedWidth = popupView.findViewById(R.id.toggle_fixed_width);
         btnFixedWidth.setOnCheckedChangeListener((buttonView, checked) -> {

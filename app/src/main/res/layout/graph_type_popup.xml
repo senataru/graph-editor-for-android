@@ -22,7 +22,7 @@
     <Button
         android:id="@+id/btnUndirected"
         style="@style/menu_button"
-        android:layout_width="wrap_content"
+        android:layout_width="200sp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="@string/undirected"
@@ -36,7 +36,7 @@
     <Button
         android:id="@+id/btnDirected"
         style="@style/menu_button"
-        android:layout_width="wrap_content"
+        android:layout_width="200sp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="32dp"

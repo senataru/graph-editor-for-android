@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.Toast;
 
-import java.time.Duration;
+import androidx.appcompat.app.AppCompatDelegate;
 
 public class Settings {
 
@@ -14,13 +14,13 @@ public class Settings {
         editor.putBoolean("settingsStylus", checked);
         editor.apply();
     }
-    public static void setButtons(Context context, boolean checked) {
-        SharedPreferences sharedPref = context.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putBoolean("settingsButtons", checked);
-        editor.apply();
-        Toast.makeText(context, "Buttons on top not implemented yet", Toast.LENGTH_SHORT).show();
-    }
+//    public static void setDarkTheme(Context context, boolean checked) {
+//        SharedPreferences sharedPref = context.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = sharedPref.edit();
+//        editor.putBoolean("settingsDarkTheme", checked);
+//        editor.apply();
+//    }
+
     public static void setFixedWidth(Context context, boolean checked) {
         SharedPreferences sharedPref = context.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -33,10 +33,10 @@ public class Settings {
         SharedPreferences sharedPref = context.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
         return sharedPref.getBoolean("settingsStylus", false);
     }
-    public static boolean getButtons(Context context) {
-        SharedPreferences sharedPref = context.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
-        return sharedPref.getBoolean("settingsButtons", false);
-    }
+//    public static boolean getDarkTheme(Context context) {
+//        SharedPreferences sharedPref = context.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
+//        return sharedPref.getBoolean("settingsDarkTheme", false);
+//    }
     public static boolean getFixedWidth(Context context) {
         SharedPreferences sharedPref = context.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
         return sharedPref.getBoolean("settingsFixedWidth", false);

@@ -1,13 +1,10 @@
 package com.example.graph_editor.model.graph_generators;
 
-import android.util.Pair;
-
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.GraphImpl;
 import com.example.graph_editor.model.GraphType;
 import com.example.graph_editor.model.Vertex;
 import com.example.graph_editor.model.mathematics.Geometry;
-import com.example.graph_editor.model.mathematics.Point;
 
 import java.util.ArrayList;
 import java.util.List;

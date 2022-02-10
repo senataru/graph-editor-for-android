@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:text="@string/browse"
+        android:text="@string/my_graphs"
         style="@style/title"
         android:textSize="45sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -25,7 +25,7 @@
         android:layout_height="match_parent"
         android:layout_marginHorizontal="30dp"
         android:layout_marginBottom="50dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="120dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

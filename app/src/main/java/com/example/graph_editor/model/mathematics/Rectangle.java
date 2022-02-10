@@ -1,7 +1,5 @@
 package com.example.graph_editor.model.mathematics;
 
-import com.example.graph_editor.R;
-
 public class Rectangle {
     private Point leftTop;
     private Point rightBot;

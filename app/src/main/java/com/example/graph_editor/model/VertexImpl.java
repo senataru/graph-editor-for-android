@@ -1,9 +1,5 @@
 package com.example.graph_editor.model;
 
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
-
 import com.example.graph_editor.model.mathematics.Point;
 
 import java.util.ArrayList;

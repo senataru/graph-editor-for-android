@@ -4,20 +4,17 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 
 import com.example.graph_editor.R;
-import com.example.graph_editor.database.SavesDatabase;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.GeneratePopup;
 import com.example.graph_editor.draw.popups.ImportFromTxtPopup;
 import com.example.graph_editor.draw.popups.SavePopup;
 import com.example.graph_editor.draw.popups.SettingsPopup;
 import com.example.graph_editor.draw.popups.ShareAsTxtIntent;
-import com.example.graph_editor.graph_storage.GraphWriter;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.graph_generators.GraphGeneratorBipartiteClique;
 import com.example.graph_editor.model.graph_generators.GraphGeneratorClique;

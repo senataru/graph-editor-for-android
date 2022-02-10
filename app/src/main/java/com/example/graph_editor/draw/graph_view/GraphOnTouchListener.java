@@ -49,6 +49,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             data.firstPointerId = event.getPointerId(event.getActionIndex());
+            currentState.setCurrentlyModified(true);
         }
 
 
@@ -93,6 +94,10 @@ public class GraphOnTouchListener implements View.OnTouchListener {
                     data.stylusActionMode = null;
                 }
             }
+        }
+
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            currentState.setCurrentlyModified(false);
         }
 
         data.previousAbsolutePoint = data.currentAbsolutePoint;

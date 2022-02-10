@@ -12,7 +12,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
-import android.view.ScaleGestureDetector;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -24,11 +23,11 @@ import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Edge;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.GraphType;
-import com.example.graph_editor.model.state.State;
-import com.example.graph_editor.model.state.StateStack;
 import com.example.graph_editor.model.Vertex;
 import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.mathematics.Rectangle;
+import com.example.graph_editor.model.state.State;
+import com.example.graph_editor.model.state.StateStack;
 
 public class GraphView extends View implements ActionModeTypeObserver {
     private final int baseVertexRadius = 7;

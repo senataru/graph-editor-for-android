@@ -1,7 +1,5 @@
 package com.example.graph_editor.model.graph_generators;
 
-import android.util.Pair;
-
 import com.example.graph_editor.model.Graph;
 
 import java.util.List;

@@ -1,9 +1,6 @@
 package com.example.graph_editor.draw;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.util.Pair;
-import android.widget.Button;
 import android.widget.ImageButton;
 
 import androidx.core.content.ContextCompat;
@@ -13,9 +10,7 @@ import com.example.graph_editor.draw.action_mode_type.ActionModeType;
 import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.model.state.StateStack;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class NavigationButtonCollection {

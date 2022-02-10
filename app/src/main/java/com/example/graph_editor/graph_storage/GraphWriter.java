@@ -4,7 +4,6 @@ import com.example.graph_editor.model.Edge;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.Vertex;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class GraphWriter {
