@@ -18,7 +18,7 @@ import com.example.graph_editor.database.SavesDatabase;
 import com.example.graph_editor.draw.action_mode_type.ActionModeType;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.ShareAsTxtIntent;
-import com.example.graph_editor.graph_storage.GraphScanner;
+import com.example.graph_editor.model.graph_storage.GraphScanner;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.mathematics.Rectangle;

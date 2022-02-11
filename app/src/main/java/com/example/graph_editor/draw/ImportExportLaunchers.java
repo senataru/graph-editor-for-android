@@ -7,9 +7,9 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 
-import com.example.graph_editor.graph_storage.GraphScanner;
-import com.example.graph_editor.graph_storage.GraphWriter;
-import com.example.graph_editor.graph_storage.InvalidGraphStringException;
+import com.example.graph_editor.model.graph_storage.GraphScanner;
+import com.example.graph_editor.model.graph_storage.GraphWriter;
+import com.example.graph_editor.model.graph_storage.InvalidGraphStringException;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.mathematics.Rectangle;

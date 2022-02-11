@@ -3,7 +3,7 @@ package com.example.graph_editor.draw.popups;
 import android.content.Context;
 import android.content.Intent;
 
-import com.example.graph_editor.graph_storage.GraphWriter;
+import com.example.graph_editor.model.graph_storage.GraphWriter;
 import com.example.graph_editor.model.state.StateStack;
 
 public class ShareAsTxtIntent {

@@ -50,15 +50,14 @@ public class Geometry {
 
     public static Point getPointBipartite(int index, int left, int right) {
         int spaces = Math.max(right, left) - 1;
-        double dist = 1.0/spaces;
-
-        double leftStart = left>right ? 1 : 1-(right-left)/2.0*dist;
-        double rightStart = right>left ? 1 : 1-(left-right)/2.0*dist;
+        double dist = spaces == 0 ? 1.0 : 1.0/spaces;
 
         Point result;
         if (index >= left) {
+            double rightStart = right>left ? 1 : 1-(left-right)/2.0*dist;
             result = new Point(1, rightStart - dist*(index-left));
         } else {
+            double leftStart = left>right ? 1 : 1-(right-left)/2.0*dist;
             result = new Point (0, leftStart - dist*index);
         }
         return result;

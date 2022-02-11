@@ -12,8 +12,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.graph_editor.R;
-import com.example.graph_editor.graph_storage.GraphScanner;
-import com.example.graph_editor.graph_storage.InvalidGraphStringException;
+import com.example.graph_editor.model.graph_storage.GraphScanner;
+import com.example.graph_editor.model.graph_storage.InvalidGraphStringException;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.mathematics.Rectangle;

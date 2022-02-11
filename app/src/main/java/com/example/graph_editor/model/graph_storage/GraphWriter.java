@@ -1,4 +1,4 @@
-package com.example.graph_editor.graph_storage;
+package com.example.graph_editor.model.graph_storage;
 
 import com.example.graph_editor.model.Edge;
 import com.example.graph_editor.model.Graph;
@@ -47,9 +47,9 @@ public class GraphWriter {
         for (Vertex v : vertices) {
             s.append(v.getIndex());
             s.append(" ");
-            s.append(v.getPoint().getX());
+            s.append((float)v.getPoint().getX());
             s.append(" ");
-            s.append(v.getPoint().getY());
+            s.append((float)v.getPoint().getY());
             s.append("\n");
         }
 

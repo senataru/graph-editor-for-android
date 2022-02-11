@@ -1,4 +1,4 @@
-package com.example.graph_editor.graph_storage;
+package com.example.graph_editor.model.graph_storage;
 
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.GraphFactory;

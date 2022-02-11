@@ -1,8 +1,8 @@
 package com.example.graph_editor.model;
 
-import com.example.graph_editor.graph_storage.GraphScanner;
-import com.example.graph_editor.graph_storage.GraphWriter;
-import com.example.graph_editor.graph_storage.InvalidGraphStringException;
+import com.example.graph_editor.model.graph_storage.GraphScanner;
+import com.example.graph_editor.model.graph_storage.GraphWriter;
+import com.example.graph_editor.model.graph_storage.InvalidGraphStringException;
 
 import java.util.ArrayList;
 import java.util.List;
