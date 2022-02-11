@@ -61,7 +61,7 @@ public class OptionsHandler {
             case R.id.options_btn_recenter:
                 State state1 = stateStack.getCurrentState();
                 Rectangle newRectangle1 = DrawManager.getOptimalRectangle(state1.getGraph(), 0.1, state1.getRectangle());
-                state1.setRectangle(new Rectangle(newRectangle1, newRectangle1.getWidth()));
+                state1.setRectangle(newRectangle1);
                 graphView.postInvalidate();
                 return true;
             case R.id.options_btn_settings:

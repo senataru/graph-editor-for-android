@@ -66,7 +66,7 @@ public class ImportExportLaunchers {
         Rectangle optimalRec = DrawManager.getOptimalRectangle(g, 0.1, oldRec);
         State currentState = stateStack.getCurrentState();
         currentState.setGraph(g);
-        currentState.setRectangle(new Rectangle(optimalRec, optimalRec.getWidth()));
+        currentState.setRectangle(optimalRec);
         stateStack.invalidateView();
 
         Toast.makeText(context, "Import complete", Toast.LENGTH_SHORT).show();
