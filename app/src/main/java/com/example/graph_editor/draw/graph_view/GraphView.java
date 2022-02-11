@@ -146,7 +146,7 @@ public class GraphView extends View implements ActionModeTypeObserver {
 
     private void drawArrow(Paint paint, Canvas canvas, float x1, float y1, float x2, float y2) {
         float radius = (float)getDrawWidth(stateStack.getCurrentState().getRectangle().getScale(), 50);
-        float angle = 45;
+        float angle = 30;
 
         float angleRad= (float) (PI*angle/180.0f);
         float lineAngleRad= (float) (atan2(y2-y1,x2-x1));
