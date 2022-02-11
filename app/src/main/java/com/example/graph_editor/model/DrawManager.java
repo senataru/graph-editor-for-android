@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 
 public class DrawManager {
-
     public static Point getRelative(Rectangle rectangle, Point point) {
         double x = (point.getX() - rectangle.getLeft())/rectangle.getWidth();
         double y = (point.getY() - rectangle.getTop())/rectangle.getHeight();

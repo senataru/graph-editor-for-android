@@ -23,7 +23,6 @@ public class BrowseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_browse);
 
         saved = findViewById(R.id.saved);
-
     }
 
     @Override

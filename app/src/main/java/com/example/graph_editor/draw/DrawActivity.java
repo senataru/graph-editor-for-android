@@ -65,10 +65,7 @@ public class DrawActivity extends AppCompatActivity {
         List<Graph> stack = null;
         int pointer = 0;
         ActionModeType modeType = ActionModeType.MOVE_CANVAS;
-        if (savedInstanceState != null &&
-                savedInstanceState.containsKey("GraphStack") &&
-                savedInstanceState.containsKey("Pointer") &&
-                savedInstanceState.containsKey("ActionType")) { // re-initialize
+        if (savedInstanceState != null) { // re-initialize
             try {
                 stack = GraphScanner.fromExactList(savedInstanceState.getString("GraphStack"));
             } catch (InvalidGraphStringException e) {
@@ -78,6 +75,7 @@ public class DrawActivity extends AppCompatActivity {
             pointer = savedInstanceState.getInt("Pointer");
             graph = stack.get(pointer);
             modeType = ActionModeType.valueOf(savedInstanceState.getString("ActionType"));
+            currentGraphId = savedInstanceState.getLong("currentGraphId", -1);
         } else { // either from browse or new graph
             if (graphString != null) {  // from browse
                 try {
@@ -130,6 +128,7 @@ public class DrawActivity extends AppCompatActivity {
         outState.putString("GraphStack", s);
         outState.putInt("Pointer", stateStack.getPointer());
         outState.putString("ActionType", stateStack.getCurrentState().getActionModeType().toString());
+        outState.putLong("currentGraphId", currentGraphId);
     }
 
     @Override

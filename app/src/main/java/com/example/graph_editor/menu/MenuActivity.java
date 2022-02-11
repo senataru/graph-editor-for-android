@@ -77,6 +77,7 @@ public class MenuActivity extends AppCompatActivity {
     private void changeToDrawActivity(GraphType type) {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt("GraphType", type.ordinal());
+        editor.putLong("currentGraphId", -1);
         editor.apply();
 
         Intent intent = new Intent(this, DrawActivity.class);

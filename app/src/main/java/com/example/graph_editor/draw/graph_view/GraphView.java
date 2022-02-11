@@ -75,7 +75,7 @@ public class GraphView extends View implements ActionModeTypeObserver {
         edgePaint.setFlags(Paint.ANTI_ALIAS_FLAG);
     }
 
-    // !! this alone is not enough, all due to height height being lazily calculated
+    // !! this alone is not enough, all due to height being lazily calculated
     public void initialize(StateStack stack, boolean interactive) {
         this.interactive = interactive;
         this.stateStack = stack;
@@ -86,7 +86,6 @@ public class GraphView extends View implements ActionModeTypeObserver {
 
     @SuppressLint("ClickableViewAccessibility")
     private void lazyInitialize() {
-        // right now current state has null frame
         State currentState = stateStack.getCurrentState();
         Rectangle rec = new Rectangle(new Point(0, 0), new Point(1.0, 1.0 * getHeight() / getWidth()));
         Rectangle optimalRec = DrawManager.getOptimalRectangle(currentState.getGraph(),0.1, rec);
@@ -102,7 +101,7 @@ public class GraphView extends View implements ActionModeTypeObserver {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if (!isLazyInitialised) {   //has to be done here instead of init or initializeGraph since height is lazily calculated
+        if (!isLazyInitialised) {   //has to be done here instead of in init or initializeGraph since height is lazily calculated
             lazyInitialize();
         }
 
