@@ -21,28 +21,22 @@ public class GraphWriter {
         for (Edge e : edges) {
             int index1 = e.getSource().getIndex();
             int index2 = e.getTarget().getIndex();
-            s.append(Math.min(index1, index2)).append(" ").append(Math.max(index1, index2)).append("\n");
-//            s.append(index1).append(" ").append(index2).append("\n");
+//            s.append(Math.min(index1, index2)).append(" ").append(Math.max(index1, index2)).append("\n");
+            s.append(index1).append(" ").append(index2).append("\n");
         }
 
         return new String(s);
     }
 
     public static String toExact (Graph g) {
+        String ve = toVE(g);
+        String[] veSplit = ve.split("\n");
+
         StringBuilder s = new StringBuilder();
+        s.append(g.getType().toString()).append("\n");
+        s.append(veSplit[0]).append("\n");
 
         List<Vertex> vertices = g.getVertices();
-        List<Edge> edges = g.getEdges();
-
-
-
-        s.append(g.getType().toString());
-        s.append("\n");
-
-        s.append(vertices.size());
-        s.append(" ");
-        s.append(edges.size());
-        s.append("\n");
 
         for (Vertex v : vertices) {
             s.append(v.getIndex());
@@ -53,10 +47,8 @@ public class GraphWriter {
             s.append("\n");
         }
 
-        for (Edge e : edges) {
-            int index1 = e.getSource().getIndex();
-            int index2 = e.getTarget().getIndex();
-            s.append(Math.min(index1, index2)).append(" ").append(Math.max(index1, index2)).append("\n");
+        for (int i = 1; i< veSplit.length; i++) {
+            s.append(veSplit[i]).append("\n");
         }
 
         return new String(s);

@@ -25,7 +25,7 @@ public class GraphWriterTest {
 
         String graphString = GraphWriter.toVE(graph);
 
-        assertEquals("3 2\n0 1\n1 2\n", graphString);
+        assertEquals("3 2\n0 1\n2 1\n", graphString);
     }
 
     @Test

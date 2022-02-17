@@ -17,11 +17,11 @@ public class ShareAsTxtIntent {
 
     public void show() {
         Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.setAction(Intent.ACTION_SEND);  // for some reason this action won't display custom titles
         sendIntent.putExtra(Intent.EXTRA_TEXT, GraphWriter.toExact(stateStack.getCurrentState().getGraph()));
         sendIntent.setType("text/plain");
 
-        Intent shareIntent = Intent.createChooser(sendIntent, null);
+        Intent shareIntent = Intent.createChooser(sendIntent, "Export your graph");
         context.startActivity(shareIntent);
     }
 }
