@@ -3,6 +3,7 @@ package com.example.graph_editor.draw.graph_view;
 import android.content.Context;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.graph_editor.draw.Settings;
 import com.example.graph_editor.draw.action_mode_type.ActionModeType;
@@ -44,6 +45,9 @@ public class GraphOnTouchListener implements View.OnTouchListener {
         data.currentRelativePoint = graphView.getRelative(new Point(event.getX(), event.getY()));
         data.currentAbsolutePoint = DrawManager.getAbsolute(data.rectangle, data.currentRelativePoint);
 
+//        if (event.getAction() == MotionEvent.ACTION_POINTER_DOWN) {
+//            Toast.makeText(context, "Multitouch detected", Toast.LENGTH_SHORT).show();
+//        }
 
         boolean stylusMode = Settings.getStylus(context);
 
@@ -163,7 +167,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
                     data.graph.removeVertex(data.edgeFirst);
                     data.graph.removeVertex(data.edgeSecond);
                 } else {
-                    // did first ver-tex snap?
+                    // did first vertex snap?
                     if (data.edgeFirstSnap != null) {
                         data.graph.removeVertex(data.edgeFirst);
                         data.edgeFirst = data.edgeFirstSnap;

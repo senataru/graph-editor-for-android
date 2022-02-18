@@ -29,12 +29,12 @@
 
 
     <item android:id="@+id/options_btn_import_txt"
-        android:title="@string/import_graph_from_text"
+        android:title="@string/read_graph_from_text"
         app:showAsAction="never" >
     </item>
 
     <item android:id="@+id/options_btn_export_txt"
-        android:title="@string/export_graph_as_text"
+        android:title="@string/share_graph_as_text"
         app:showAsAction="never" >
     </item>
 
@@ -53,10 +53,10 @@
         app:showAsAction="never" >
     </item>
 
-    <item android:id="@+id/options_btn_normalize"
-        android:title="@string/normalize_graph"
-        app:showAsAction="never" >
-    </item>
+<!--    <item android:id="@+id/options_btn_normalize"-->
+<!--        android:title="@string/normalize_graph"-->
+<!--        app:showAsAction="never" >-->
+<!--    </item>-->
 
     <item android:id="@+id/options_btn_recenter"
         android:title="@string/recenter_graph"

@@ -50,14 +50,14 @@ public class OptionsHandler {
                 stateStack.getCurrentState().getGraph().getVertices().clear();
                 graphView.postInvalidate();
                 return true;
-            case R.id.options_btn_normalize:
-                stateStack.backup();
-                State state = stateStack.getCurrentState();
-                DrawManager.normalizeGraph(state.getGraph());
-                Rectangle newRectangle = DrawManager.getOptimalRectangle(state.getGraph(), 0.1, state.getRectangle());
-                state.setRectangle(new Rectangle(newRectangle, 1.2));
-                graphView.postInvalidate();
-                return true;
+//            case R.id.options_btn_normalize:
+//                stateStack.backup();
+//                State state = stateStack.getCurrentState();
+//                DrawManager.normalizeGraph(state.getGraph());
+//                Rectangle newRectangle = DrawManager.getOptimalRectangle(state.getGraph(), 0.1, state.getRectangle());
+//                state.setRectangle(new Rectangle(newRectangle, 1.2));
+//                graphView.postInvalidate();
+//                return true;
             case R.id.options_btn_recenter:
                 State state1 = stateStack.getCurrentState();
                 Rectangle newRectangle1 = DrawManager.getOptimalRectangle(state1.getGraph(), 0.1, state1.getRectangle());
