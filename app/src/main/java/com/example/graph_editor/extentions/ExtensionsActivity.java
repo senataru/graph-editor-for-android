@@ -7,8 +7,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.graph_editor.R;
 import com.example.graph_editor.extentions.model.Extension;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class ExtensionsActivity extends AppCompatActivity {
