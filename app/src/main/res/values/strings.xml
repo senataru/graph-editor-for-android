@@ -65,6 +65,7 @@
     <string name="choose_graph_type">Choose graph type</string>
     <string name="my_graphs">My graphs</string>
     <string name="new_graph">New graph</string>
+    <string name="extensions">Extensions</string>
     <string name="back">Back</string>
     <string name="saved_graphs">Saved graphs</string>
     <string name="dark_theme">Dark theme</string>

@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import com.example.graph_editor.R;
 import com.example.graph_editor.browse.BrowseActivity;
 import com.example.graph_editor.draw.DrawActivity;
+import com.example.graph_editor.extentions.ExtensionsActivity;
 import com.example.graph_editor.model.GraphType;
 
 public class MenuActivity extends AppCompatActivity {
@@ -42,6 +43,9 @@ public class MenuActivity extends AppCompatActivity {
 
         Button btnCreate = findViewById(R.id.btnCreate);
         btnCreate.setOnClickListener(v -> displayGraphTypePopup());
+
+        Button btnExtensions = findViewById(R.id.btnExtensions);
+        btnExtensions.setOnClickListener(v -> startActivity(new Intent(this, ExtensionsActivity.class)));
 
         Button btnCreators = findViewById(R.id.btnCreators);
         btnCreators.setOnClickListener(v -> {

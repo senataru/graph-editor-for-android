@@ -88,7 +88,7 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
         notifyDataSetChanged();
     }
 
-    static class Holder extends RecyclerView.ViewHolder {
+    public static class Holder extends RecyclerView.ViewHolder {
         TextView txtName;
         GraphView dataGraph;
         ImageButton editButton;
