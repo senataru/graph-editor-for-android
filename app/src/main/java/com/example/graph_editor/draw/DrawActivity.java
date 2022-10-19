@@ -1,13 +1,23 @@
 package com.example.graph_editor.draw;
 
+import static android.view.MenuItem.SHOW_AS_ACTION_ALWAYS;
+import static android.view.MenuItem.SHOW_AS_ACTION_NEVER;
+
+import static com.example.graph_editor.draw.MenuOptions.coreOptions;
+import static com.example.graph_editor.draw.MenuOptions.extensionsOptions;
+import static com.example.graph_editor.draw.MenuOptions.mainCoreOptions;
+import static com.example.graph_editor.draw.MenuOptions.neverSubList;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -22,6 +32,9 @@ import com.example.graph_editor.draw.action_mode_type.ActionModeType;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.DiscardPopup;
 import com.example.graph_editor.draw.popups.SavePopup;
+import com.example.graph_editor.extentions.model.Extension;
+import com.example.graph_editor.extentions.model.ExtensionsProvider;
+import com.example.graph_editor.extentions.model.GraphMenuManagerImpl;
 import com.example.graph_editor.model.graph_storage.GraphScanner;
 import com.example.graph_editor.model.graph_storage.GraphWriter;
 import com.example.graph_editor.model.graph_storage.InvalidGraphStringException;
@@ -34,6 +47,9 @@ import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.model.state.StateStack;
 import com.example.graph_editor.model.state.StateStackImpl;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public class DrawActivity extends AppCompatActivity {
@@ -131,10 +147,20 @@ public class DrawActivity extends AppCompatActivity {
         outState.putLong("currentGraphId", currentGraphId);
     }
 
+    private static int first_extensions_id = 100;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.graph_options_menu, menu);
+
+        //TODO change
+        int id = first_extensions_id;
+        Collection<Pair<String, Runnable>> options = GraphMenuManagerImpl.getRegisteredOptions();
+        extensionsOptions = new HashMap<>();
+        for (Pair<String, Runnable> it : options) {
+            extensionsOptions.put(id, it);
+            menu.add(0, id++, 0, it.first);
+        }
         return true;
     }
 

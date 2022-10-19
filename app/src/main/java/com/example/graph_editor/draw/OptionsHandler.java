@@ -1,9 +1,13 @@
 package com.example.graph_editor.draw;
 
+import static com.example.graph_editor.draw.MenuOptions.coreOptions;
+import static com.example.graph_editor.draw.MenuOptions.extensionsOptions;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
@@ -26,12 +30,21 @@ import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.model.state.StateStack;
 
+import java.util.Objects;
+
 public class OptionsHandler {
     @SuppressLint("NonConstantResourceId")
     public static boolean handle(@NonNull MenuItem item, DrawActivity context, StateStack stateStack,
                                  GraphView graphView, Runnable makeSave,
                                  ActivityResultLauncher<Intent> importActivityResultLauncher,
                                  ActivityResultLauncher<Intent> exportActivityResultLauncher) {
+        //TODO change
+        if (extensionsOptions.containsKey(item.getItemId())) {
+            Objects.requireNonNull(extensionsOptions.get(item.getItemId())).second.run();
+            return true;
+        }
+//        System.out.println("DEBUG");
+//        System.out.println(coreOptions.get(item.getItemId() - 1).first);
         switch (item.getItemId()) {
             case R.id.options_btn_save:
                 makeSave.run();

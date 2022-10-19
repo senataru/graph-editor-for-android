@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.graph_editor.R;
 import com.example.graph_editor.extentions.model.Extension;
+import com.example.graph_editor.extentions.model.ExtensionsProvider;
 
 import java.util.List;
 
@@ -21,11 +22,9 @@ public class ExtensionsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        installedExtensions.setAdapter(new ExtensionsRecyclerViewAdapter(this, hardcoded));
+        installedExtensions.setAdapter(new ExtensionsRecyclerViewAdapter(
+                this,
+                ExtensionsProvider.provideExtensions())
+        );
     }
-
-    private static final List<Extension> hardcoded = List.of(
-            new Extension("UIPlugin", "file1.js", true),
-            new Extension("PushRelabelPlugin", "file2.js", false)
-    );
 }

@@ -2,20 +2,21 @@ package com.example.graph_editor.extentions.model;
 
 public class Extension {
     private final String name;
-    private final String scriptFileName;
-    private boolean enabled;
+    private final JSInvoker invoker;
+    private boolean enabled = false;
 
-    public Extension(String name, String scriptFileName, boolean enabled) {
+    public Extension(String name, JSInvoker invoker) {
         this.name = name;
-        this.scriptFileName = scriptFileName;
-        this.enabled = enabled;
+        this.invoker = invoker;
     }
 
     public boolean isEnabled() {
         return enabled;
     }
     public void setEnabled(boolean value) {
+        if (enabled == value) return;
         enabled = value;
+        invoker.callJSFunction(enabled ? "activate" : "deactivate");
     }
     public String getName() { return name; }
 }
