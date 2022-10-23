@@ -5,10 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.graph_editor.R;
-import com.example.graph_editor.extentions.model.Extension;
-import com.example.graph_editor.extentions.model.ExtensionsProvider;
-
-import java.util.List;
 
 public class ExtensionsActivity extends AppCompatActivity {
     RecyclerView installedExtensions;

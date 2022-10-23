@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.graph_editor.extentions.model.Extension;
+import com.example.graph_editor.model.extensions.Extension;
 import com.example.graph_editor.R;
 
 import java.util.List;

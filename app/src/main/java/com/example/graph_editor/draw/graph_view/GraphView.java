@@ -19,11 +19,13 @@ import androidx.annotation.Nullable;
 import com.example.graph_editor.draw.Settings;
 import com.example.graph_editor.draw.action_mode_type.ActionModeType;
 import com.example.graph_editor.draw.action_mode_type.ActionModeTypeObserver;
+import com.example.graph_editor.draw.graph_view.extensions.DebugCanvas;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Edge;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.GraphType;
 import com.example.graph_editor.model.Vertex;
+import com.example.graph_editor.model.extensions.CanvasManager;
 import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
@@ -42,6 +44,7 @@ public class GraphView extends View implements ActionModeTypeObserver {
 
     private boolean interactive = false;
     private boolean isLazyInitialised = false;
+    private CanvasManager canvasManager;
 
     public GraphView(Context context) {
         super(context);
@@ -76,7 +79,8 @@ public class GraphView extends View implements ActionModeTypeObserver {
     }
 
     // !! this alone is not enough, all due to height being lazily calculated
-    public void initialize(StateStack stack, boolean interactive) {
+    public void initialize(CanvasManager canvasManager, StateStack stack, boolean interactive) {
+        this.canvasManager = canvasManager;
         this.interactive = interactive;
         this.stateStack = stack;
         isLazyInitialised = false;
@@ -113,22 +117,40 @@ public class GraphView extends View implements ActionModeTypeObserver {
         vertexRadius = getDrawWidth(rectangle.getScale(), baseVertexRadius);
         edgePaint.setStrokeWidth((float)getDrawWidth(rectangle.getScale(), baseEdgeWidth));
 
-        for (Edge e : graph.getEdges())
-            drawEdge(canvas, e, DrawManager.getRelative(rectangle, e.getSource().getPoint()),
-                    DrawManager.getRelative(rectangle, e.getTarget().getPoint()), graph.getType());
+        CanvasManager.EdgeDrawer edgeDrawer =
+                canvasManager.getEdgeDrawer().orElse((p1, p2, r, canvas1) ->
+                        drawEdge(
+                                canvas1,
+                                DrawManager.getRelative(rectangle, p1),
+                                DrawManager.getRelative(rectangle, p2),
+                                graph.getType()
+                        )
+                );
+        graph.getEdges().forEach(e -> {
+            edgeDrawer.drawEdge(
+                    e.getSource().getPoint(),
+                    e.getTarget().getPoint(),
+                    rectangle,
+                    canvas
+            );
+        });
 
-        for (Vertex v : graph.getVertices())
-            drawVertex(canvas, v, DrawManager.getRelative(rectangle, v.getPoint()));
+        CanvasManager.VertexDrawer vertexDrawer =
+                canvasManager.getVertexDrawer().orElse((p, r, canvas1) ->
+                        drawVertex(canvas1, DrawManager.getRelative(rectangle, p)));
+        graph.getVertices().forEach(v -> vertexDrawer.drawVertex(v.getPoint(), rectangle, canvas));
+
+        canvasManager.getExtendedDrawers().forEach(drawer -> drawer.drawElements(rectangle, canvas));
     }
 
-    private void drawVertex(Canvas canvas, Vertex vertex, Point point) {
+    private void drawVertex(Canvas canvas, Point point) {
         float x = (float)point.getX()*getWidth();
         float y = (float)point.getY()*getHeight();
 
         canvas.drawCircle(x, y, (float)vertexRadius, vertexPaint);
     }
 
-    private void drawEdge(Canvas canvas, Edge edge, Point start, Point end, GraphType type) {
+    private void drawEdge(Canvas canvas, Point start, Point end, GraphType type) {
         float x1 = (float) start.getX() * getWidth();
         float y1 = (float) start.getY() * getHeight();
         float x2 = (float) end.getX() * getWidth();

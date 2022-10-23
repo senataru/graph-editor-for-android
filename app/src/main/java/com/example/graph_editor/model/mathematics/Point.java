@@ -33,4 +33,9 @@ public class Point {
         s.append(y);
         return new String(s);
     }
+
+    public void log(float x, float y) {
+        System.out.println(x);
+        System.out.println(y);
+    }
 }

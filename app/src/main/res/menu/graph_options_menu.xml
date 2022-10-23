@@ -23,7 +23,6 @@
     </item>
 
     <item android:id="@+id/options_btn_save_as"
-        android:orderInCategory="123"
         android:title="@string/save_as"
         app:showAsAction="never" >
     </item>
