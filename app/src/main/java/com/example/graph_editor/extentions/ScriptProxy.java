@@ -1,19 +1,9 @@
 package com.example.graph_editor.extentions;
 
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.ImageButton;
-
-import androidx.annotation.NonNull;
-
-import com.example.graph_editor.draw.action_mode_type.GraphAction;
-import com.example.graph_editor.draw.graph_view.GraphOnTouchListenerData;
-import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.model.extensions.CanvasManager;
 import com.example.graph_editor.model.extensions.GraphActionManager;
 import com.example.graph_editor.model.extensions.GraphMenuManager;
 import com.example.graph_editor.model.extensions.ExtensionInvoker;
-import com.example.graph_editor.model.state.StateStack;
 
 public class ScriptProxy implements ExtensionInvoker.ExtensionProxy {
     private final ExtensionInvoker invoker;
@@ -69,14 +59,14 @@ public class ScriptProxy implements ExtensionInvoker.ExtensionProxy {
 
     @Override
     public int registerGraphAction(String imageButtonPath, String functionCalled) {
-        return graphActionManager.registerOption(imageButtonPath, (v, event, stateStack, data, view) -> {
-            invoker.callFunction(functionCalled, v, event, stateStack, data, view);
+        return graphActionManager.registerAction(imageButtonPath, (v, event, stateStack, data, view) -> {
+            invoker.callFunction(functionCalled, v, event, stateStack, data);
             return true; //TODO ok?
         });
     }
 
     @Override
     public void deregisterGraphAction(int id) {
-        graphMenuManager.deregisterOption(id);
+        graphActionManager.deregisterAction(id);
     }
 }

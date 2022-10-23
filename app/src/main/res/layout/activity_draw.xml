@@ -15,75 +15,75 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:id="@+id/linearLayout"
+        <HorizontalScrollView
+            android:id="@+id/actionsScrollView"
+            android:background="#000000"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0">
+            android:layout_height="80dp">
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0">
 
-            <ImageButton
-                android:id="@+id/btnVertex"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/lt_grey"
-                android:contentDescription="@string/Vertex"
-                android:padding="20dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/add_vertex" />
+                <ImageButton
+                    android:id="@+id/btnVertex"
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/lt_grey"
+                    android:contentDescription="@string/Vertex"
+                    android:padding="20dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/add_vertex" />
 
-            <ImageButton
-                android:id="@+id/btnEdge"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/lt_grey"
-                android:contentDescription="@string/Edge"
-                android:padding="20dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/add_edge" />
+                <ImageButton
+                    android:id="@+id/btnEdge"
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/lt_grey"
+                    android:contentDescription="@string/Edge"
+                    android:padding="20dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/add_edge" />
 
-            <ImageButton
-                android:id="@+id/btnMoveObject"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/lt_grey"
-                android:contentDescription="@string/move_object"
-                android:padding="20dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/move_object" />
+                <ImageButton
+                    android:id="@+id/btnMoveObject"
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/lt_grey"
+                    android:contentDescription="@string/move_object"
+                    android:padding="20dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/move_object" />
 
-            <ImageButton
-                android:id="@+id/btnMoveCanvas"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/lt_grey"
-                android:contentDescription="@string/move_canvas"
-                android:padding="20dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/move_canvas" />
+                <ImageButton
+                    android:id="@+id/btnMoveCanvas"
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/lt_grey"
+                    android:contentDescription="@string/move_canvas"
+                    android:padding="20dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/move_canvas" />
 
-            <ImageButton
-                android:id="@+id/btnRemoveObject"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/lt_grey"
-                android:contentDescription="@string/move_canvas"
-                android:padding="20dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/remove_object" />
+                <ImageButton
+                    android:id="@+id/btnRemoveObject"
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/lt_grey"
+                    android:contentDescription="@string/move_canvas"
+                    android:padding="20dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/remove_object" />
 
-        </LinearLayout>
-
+            </LinearLayout>
+        </HorizontalScrollView>
         <com.example.graph_editor.draw.graph_view.GraphView
             android:id="@+id/viewGraph"
             android:layout_width="match_parent"

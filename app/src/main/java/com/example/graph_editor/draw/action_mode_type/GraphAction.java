@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public interface GraphAction {
+    //TODO remove view parameter, because v == view
     boolean perform(View v, @NonNull MotionEvent event, StateStack stateStack, GraphOnTouchListenerData data, GraphView view);
 
 //    String name();

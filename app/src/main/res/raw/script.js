@@ -1,10 +1,12 @@
 var option_id = 0;
+var action_id = 0;
 var Paint = android.graphics.Paint;
 var Debug = com.example.graph_editor.draw.graph_view.extensions.DebugCanvas
 function activate(coreProxy /* com.example.graph_editor.extentions.ScriptProxy*/) {
     option_id = coreProxy.registerGraphMenuOption("Extension's option", "foo");
     coreProxy.customizeVertexDrawingBehaviour("drawVertex");
     coreProxy.customizeEdgeDrawingBehaviour("drawEdge");
+    action_id = coreProxy.registerGraphAction("app_icon.png", "bar");
 }
 
 function addGraphElement(elementType/* string*/, graph) {
@@ -65,10 +67,14 @@ function drawEdge(p1, p2, rectangle, canvas) {
 //        drawArrow(edgePaint, canvas, x1, y1, x2, y2);
 //    }
 }
-
-function foo(context) {
+function bar(view, event, stateStack, data) {
     var Toast = Packages.android.widget.Toast;
-    Toast.makeText(context, "You tapped Extension's option!", Toast.LENGTH_LONG).show();
+    Toast.makeText(view.getContext(), "You are using new graph action", Toast.LENGTH_SHORT).show();
+}
+
+function foo(android_context) {
+    var Toast = Packages.android.widget.Toast;
+    Toast.makeText(android_context, "You tapped Extension's option!", Toast.LENGTH_LONG).show();
 }
 
 // This method is called when your extension is deactivated
@@ -76,4 +82,5 @@ function deactivate(coreProxy/* com.example.graph_editor.extentions.ScriptProxy*
     coreProxy.deregisterGraphMenuOption(option_id);
     coreProxy.restoreDefaultVertexDrawingBehaviour();
     coreProxy.restoreDefaultEdgeDrawingBehaviour();
+    coreProxy.deregisterGraphAction(action_id);
 }

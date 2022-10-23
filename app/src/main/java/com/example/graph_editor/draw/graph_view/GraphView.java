@@ -130,7 +130,8 @@ public class GraphView extends View implements GraphActionObserver {
                     e.getSource().getPoint(),
                     e.getTarget().getPoint(),
                     rectangle,
-                    DebugCanvas.INSTANCE.own(canvas)
+//                    DebugCanvas.INSTANCE.own(canvas)
+                    canvas
             );
         });
 

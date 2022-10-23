@@ -19,13 +19,13 @@ public class GraphActionManagerImpl implements GraphActionManager {
         return registeredActions.values();
     }
     @Override
-    public int registerOption(String imageButtonPath, GraphAction onActionSelection) {
+    public int registerAction(String imageButtonPath, GraphAction onActionSelection) {
         registeredActions.put(id, Pair.create(imageButtonPath, onActionSelection));
         return id++;
     }
 
     @Override
-    public void deregisterOption(int id) {
+    public void deregisterAction(int id) {
         registeredActions.remove(id);
     }
 }

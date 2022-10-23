@@ -6,12 +6,15 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -122,9 +125,14 @@ public class DrawActivity extends AppCompatActivity {
         buttonCollection.add(findViewById(R.id.btnMoveCanvas), new GraphAction.MoveCanvas());
         buttonCollection.add(findViewById(R.id.btnRemoveObject), new GraphAction.RemoveObject());
 
-        int id = extensions_start;
         for (Pair<String, GraphAction> it : GraphActionManagerImpl.getRegisteredActions()) {
-            buttonCollection.add(new ImageButton(this, ), it.second);
+            LinearLayout ll = findViewById(R.id.linearLayout);
+            ImageButton imageButton = (ImageButton) getLayoutInflater().inflate(R.layout.action_button, ll, false);
+            ll.addView(imageButton);
+            System.out.println(getFilesDir().getAbsolutePath());
+            //TODO when server implemented, change to use app filesystem and it.first
+            imageButton.setImageResource(R.drawable.app_icon);
+            buttonCollection.add(imageButton, it.second);
         }
         buttonCollection.setCurrent(modeType);
         stateStack.getCurrentState().setGraphAction(modeType);
