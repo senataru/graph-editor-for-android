@@ -118,6 +118,7 @@ public class DrawActivity extends AppCompatActivity {
         buttonCollection.add(findViewById(R.id.btnMoveCanvas), ActionModeType.MOVE_CANVAS);
         buttonCollection.add(findViewById(R.id.btnRemoveObject), ActionModeType.REMOVE_OBJECT);
 
+
         buttonCollection.setCurrent(modeType);
         stateStack.getCurrentState().setCurrentModeType(modeType);
     }
@@ -150,7 +151,7 @@ public class DrawActivity extends AppCompatActivity {
         Collection<Pair<String, GraphMenuManager.OnSelection>> options = GraphMenuManagerImpl.getRegisteredOptions();
         extensionsOptions = new HashMap<>();
         for (Pair<String, GraphMenuManager.OnSelection> it : options) {
-            extensionsOptions.put(id, it);
+            extensionsOptions.put(id, it.second);
             menu.add(0, id++, 0, it.first);
         }
         return true;

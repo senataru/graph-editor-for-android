@@ -7,7 +7,7 @@ import com.example.graph_editor.model.extensions.GraphMenuManager;
 import java.util.Map;
 
 public class MenuOptions {
-    public static Map<Integer, Pair<String, GraphMenuManager.OnSelection>> extensionsOptions;
+    public static Map<Integer, GraphMenuManager.OnSelection> extensionsOptions;
 //    public static final List<Integer> alwaysList = List.of(R.string.undo, R.string.redo, R.string.save);
 //    public static final List<Integer> neverList = List.of(
 //            R.string.save_as,

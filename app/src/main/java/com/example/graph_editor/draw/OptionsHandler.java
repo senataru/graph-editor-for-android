@@ -39,7 +39,7 @@ public class OptionsHandler {
                                  ActivityResultLauncher<Intent> exportActivityResultLauncher) {
         //TODO change
         if (extensionsOptions.containsKey(item.getItemId())) {
-            Objects.requireNonNull(extensionsOptions.get(item.getItemId())).second.accept(graphView.getContext());
+            Objects.requireNonNull(extensionsOptions.get(item.getItemId())).accept(graphView.getContext());
             return true;
         }
         switch (item.getItemId()) {
