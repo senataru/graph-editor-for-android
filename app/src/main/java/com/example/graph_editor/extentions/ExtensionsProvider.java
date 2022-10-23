@@ -31,7 +31,8 @@ public class ExtensionsProvider {
                     new ScriptProxy(
                             invoker,
                             new GraphMenuManagerImpl(),
-                            new CanvasManagerImpl()
+                            new CanvasManagerImpl(),
+                            new GraphActionManagerImpl()
                     )
             )
     );

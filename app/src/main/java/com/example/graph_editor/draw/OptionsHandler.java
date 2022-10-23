@@ -1,6 +1,6 @@
 package com.example.graph_editor.draw;
 
-import static com.example.graph_editor.draw.MenuOptions.extensionsOptions;
+import static com.example.graph_editor.draw.ExtensionsMenuOptions.extensionsOptions;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -28,8 +28,6 @@ import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.model.state.StateStack;
 
 import java.util.Objects;
-import java.util.concurrent.Callable;
-import java.util.function.Supplier;
 
 public class OptionsHandler {
     @SuppressLint("NonConstantResourceId")

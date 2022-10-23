@@ -8,6 +8,8 @@ public interface ExtensionInvoker {
         void restoreDefaultVertexDrawingBehaviour();
         void customizeEdgeDrawingBehaviour(String edgeDrawer);
         void restoreDefaultEdgeDrawingBehaviour();
+        int registerGraphAction(String imageButtonPath, String functionCalled);
+        void deregisterGraphAction(int id);
     }
     void callFunction(String functionName, Object... args);
 }

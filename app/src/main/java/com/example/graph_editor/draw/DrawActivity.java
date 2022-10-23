@@ -1,6 +1,6 @@
 package com.example.graph_editor.draw;
 
-import static com.example.graph_editor.draw.MenuOptions.extensionsOptions;
+import static com.example.graph_editor.draw.ExtensionsMenuOptions.extensionsOptions;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -11,6 +11,7 @@ import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -26,6 +27,7 @@ import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.DiscardPopup;
 import com.example.graph_editor.draw.popups.SavePopup;
 import com.example.graph_editor.extentions.CanvasManagerImpl;
+import com.example.graph_editor.extentions.GraphActionManagerImpl;
 import com.example.graph_editor.extentions.GraphMenuManagerImpl;
 import com.example.graph_editor.model.extensions.GraphMenuManager;
 import com.example.graph_editor.model.graph_storage.GraphScanner;
@@ -46,10 +48,12 @@ import java.util.List;
 
 public class DrawActivity extends AppCompatActivity {
     public static final String TAG = "DrawActivity";
+    private final static int extensions_start = 1;
     private GraphView graphView;
     private StateStack stateStack;
     private long currentGraphId = -1;
     private String graphString;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +122,10 @@ public class DrawActivity extends AppCompatActivity {
         buttonCollection.add(findViewById(R.id.btnMoveCanvas), new GraphAction.MoveCanvas());
         buttonCollection.add(findViewById(R.id.btnRemoveObject), new GraphAction.RemoveObject());
 
-
+        int id = extensions_start;
+        for (Pair<String, GraphAction> it : GraphActionManagerImpl.getRegisteredActions()) {
+            buttonCollection.add(new ImageButton(this, ), it.second);
+        }
         buttonCollection.setCurrent(modeType);
         stateStack.getCurrentState().setGraphAction(modeType);
     }
@@ -139,8 +146,6 @@ public class DrawActivity extends AppCompatActivity {
 //        outState.putString("ActionType", stateStack.getCurrentState().getGraphAction().name());
         outState.putLong("currentGraphId", currentGraphId);
     }
-
-    private final static int extensions_start = 100;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();

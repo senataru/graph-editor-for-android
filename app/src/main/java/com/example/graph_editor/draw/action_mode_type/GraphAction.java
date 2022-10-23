@@ -21,7 +21,7 @@ import java.util.Set;
 public interface GraphAction {
     boolean perform(View v, @NonNull MotionEvent event, StateStack stateStack, GraphOnTouchListenerData data, GraphView view);
 
-    String name();
+//    String name();
 
     class NewVertex implements GraphAction {
         @Override
@@ -44,10 +44,10 @@ public interface GraphAction {
             return true;
         }
 
-        @Override
-        public String name() {
-            return "New Vertex";
-        }
+//        @Override
+//        public String name() {
+//            return "New Vertex";
+//        }
     }
     class NewEdge implements GraphAction {
         @Override
@@ -108,10 +108,10 @@ public interface GraphAction {
             return false;
         }
 
-        @Override
-        public String name() {
-            return "New Edge";
-        }
+//        @Override
+//        public String name() {
+//            return "New Edge";
+//        }
     }
     class MoveObject implements GraphAction {
         @Override
@@ -134,10 +134,10 @@ public interface GraphAction {
             return true;
         }
 
-        @Override
-        public String name() {
-            return "Move Object";
-        }
+//        @Override
+//        public String name() {
+//            return "Move Object";
+//        }
     }
     class RemoveObject implements GraphAction {
         @Override
@@ -158,10 +158,10 @@ public interface GraphAction {
             return true;
         }
 
-        @Override
-        public String name() {
-            return "Remove Object";
-        }
+//        @Override
+//        public String name() {
+//            return "Remove Object";
+//        }
     }
     class MoveCanvas implements GraphAction {
         @Override
@@ -197,10 +197,10 @@ public interface GraphAction {
             return true;
         }
 
-        @Override
-        public String name() {
-            return "Move Canvas";
-        }
+//        @Override
+//        public String name() {
+//            return "Move Canvas";
+//        }
     }
     class ZoomCanvas implements GraphAction {
         @Override
@@ -231,9 +231,9 @@ public interface GraphAction {
             return true;
         }
 
-        @Override
-        public String name() {
-            return "Zoom Canvas";
-        }
+//        @Override
+//        public String name() {
+//            return "Zoom Canvas";
+//        }
     }
 }

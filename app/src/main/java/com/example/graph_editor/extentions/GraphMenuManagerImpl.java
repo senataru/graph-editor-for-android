@@ -14,7 +14,7 @@ public class GraphMenuManagerImpl implements GraphMenuManager {
     public static Collection<Pair<String, OnSelection>> getRegisteredOptions() {
         return registeredOptions.values();
     }
-    //TODO change?
+
     private static int id = 0;
 
     @Override
