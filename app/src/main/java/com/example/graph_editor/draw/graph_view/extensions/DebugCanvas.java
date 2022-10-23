@@ -28,6 +28,16 @@ public class DebugCanvas extends Canvas {
         System.out.println(paint.getFlags());
         canvas.drawCircle(cx, cy, radius, paint);
     }
+    @Override
+    public void drawLine(float startX, float startY, float stopX, float stopY, Paint paint) {
+        System.out.println(startX + " " + startY + " " + stopX + " " + stopY);
+        System.out.println(paint.getColor());
+        System.out.println(paint.getAlpha());
+        System.out.println(paint.getStyle());
+        System.out.println(paint.getFlags());
+        System.out.println(paint.getStrokeWidth());
+        canvas.drawLine(startX, startY, stopX, stopY, paint);
+    }
 
     public static void printD(double e) {
         System.out.println(e);

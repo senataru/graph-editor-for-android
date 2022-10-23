@@ -116,6 +116,7 @@ public class GraphView extends View implements ActionModeTypeObserver {
 
         vertexRadius = getDrawWidth(rectangle.getScale(), baseVertexRadius);
         edgePaint.setStrokeWidth((float)getDrawWidth(rectangle.getScale(), baseEdgeWidth));
+//        System.out.println((float)getDrawWidth(rectangle.getScale(), baseEdgeWidth) + "<- should be");
 
         CanvasManager.EdgeDrawer edgeDrawer =
                 canvasManager.getEdgeDrawer().orElse((p1, p2, r, canvas1) ->
@@ -131,7 +132,7 @@ public class GraphView extends View implements ActionModeTypeObserver {
                     e.getSource().getPoint(),
                     e.getTarget().getPoint(),
                     rectangle,
-                    canvas
+                    DebugCanvas.INSTANCE.own(canvas)
             );
         });
 
