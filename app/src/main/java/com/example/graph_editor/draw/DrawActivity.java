@@ -21,7 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.graph_editor.R;
 import com.example.graph_editor.database.SavesDatabase;
-import com.example.graph_editor.draw.action_mode_type.ActionModeType;
+import com.example.graph_editor.draw.action_mode_type.GraphAction;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.DiscardPopup;
 import com.example.graph_editor.draw.popups.SavePopup;
@@ -72,7 +72,7 @@ public class DrawActivity extends AppCompatActivity {
         Graph graph = null;
         List<Graph> stack = null;
         int pointer = 0;
-        ActionModeType modeType = ActionModeType.MOVE_CANVAS;
+        GraphAction modeType = new GraphAction.MoveCanvas();
         if (savedInstanceState != null) { // re-initialize
             try {
                 stack = GraphScanner.fromExactList(savedInstanceState.getString("GraphStack"));
@@ -82,7 +82,7 @@ public class DrawActivity extends AppCompatActivity {
             }
             pointer = savedInstanceState.getInt("Pointer");
             graph = stack.get(pointer);
-            modeType = ActionModeType.valueOf(savedInstanceState.getString("ActionType"));
+//            modeType = ActionModeType.valueOf(savedInstanceState.getString("ActionType"));
             currentGraphId = savedInstanceState.getLong("currentGraphId", -1);
         } else { // either from browse or new graph
             if (graphString != null) {  // from browse
@@ -101,10 +101,10 @@ public class DrawActivity extends AppCompatActivity {
         stateStack = new StateStackImpl(
                 () -> {
                     invalidateOptionsMenu();
-                    graphView.update(stateStack.getCurrentState().getActionModeType());
+                    graphView.update(stateStack.getCurrentState().getGraphAction());
                 },
                 // the rectangle is temporary and will be replaced as soon as possible (when the height will be known)
-                new State(graph, new Rectangle(new Point(0, 0), new Point(1, 1)), ActionModeType.MOVE_CANVAS),
+                new State(graph, new Rectangle(new Point(0, 0), new Point(1, 1)), new GraphAction.MoveCanvas()),
                 stack,
                 pointer
         );
@@ -112,15 +112,15 @@ public class DrawActivity extends AppCompatActivity {
         stateStack.getCurrentState().addObserver(graphView);
 
         NavigationButtonCollection buttonCollection = new NavigationButtonCollection(this, stateStack);
-        buttonCollection.add(findViewById(R.id.btnVertex), ActionModeType.NEW_VERTEX);
-        buttonCollection.add(findViewById(R.id.btnEdge), ActionModeType.NEW_EDGE);
-        buttonCollection.add(findViewById(R.id.btnMoveObject), ActionModeType.MOVE_OBJECT);
-        buttonCollection.add(findViewById(R.id.btnMoveCanvas), ActionModeType.MOVE_CANVAS);
-        buttonCollection.add(findViewById(R.id.btnRemoveObject), ActionModeType.REMOVE_OBJECT);
+        buttonCollection.add(findViewById(R.id.btnVertex), new GraphAction.NewVertex());
+        buttonCollection.add(findViewById(R.id.btnEdge), new GraphAction.NewEdge());
+        buttonCollection.add(findViewById(R.id.btnMoveObject), new GraphAction.MoveObject());
+        buttonCollection.add(findViewById(R.id.btnMoveCanvas), new GraphAction.MoveCanvas());
+        buttonCollection.add(findViewById(R.id.btnRemoveObject), new GraphAction.RemoveObject());
 
 
         buttonCollection.setCurrent(modeType);
-        stateStack.getCurrentState().setCurrentModeType(modeType);
+        stateStack.getCurrentState().setGraphAction(modeType);
     }
 
     @Override
@@ -136,7 +136,7 @@ public class DrawActivity extends AppCompatActivity {
         String s = GraphWriter.toExactList(stateStack.getGraphStack());
         outState.putString("GraphStack", s);
         outState.putInt("Pointer", stateStack.getPointer());
-        outState.putString("ActionType", stateStack.getCurrentState().getActionModeType().toString());
+//        outState.putString("ActionType", stateStack.getCurrentState().getGraphAction().name());
         outState.putLong("currentGraphId", currentGraphId);
     }
 

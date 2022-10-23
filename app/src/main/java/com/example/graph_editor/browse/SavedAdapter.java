@@ -15,7 +15,7 @@ import com.example.graph_editor.R;
 import com.example.graph_editor.database.Save;
 import com.example.graph_editor.database.SaveDao;
 import com.example.graph_editor.database.SavesDatabase;
-import com.example.graph_editor.draw.action_mode_type.ActionModeType;
+import com.example.graph_editor.draw.action_mode_type.GraphAction;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.ShareAsTxtIntent;
 import com.example.graph_editor.extentions.CanvasManagerImpl;
@@ -54,7 +54,7 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
             Graph graph = GraphScanner.fromExact(graphString);
             StateStack stack = new StateStackImpl(
                 () -> {},
-                new State(graph, new Rectangle(new Point(0, 0), new Point(1, 1)), ActionModeType.MOVE_CANVAS)
+                new State(graph, new Rectangle(new Point(0, 0), new Point(1, 1)), new GraphAction.MoveCanvas())
             );
             holder.dataGraph.initialize(new CanvasManagerImpl(), stack, false);
         } catch (Exception e) {

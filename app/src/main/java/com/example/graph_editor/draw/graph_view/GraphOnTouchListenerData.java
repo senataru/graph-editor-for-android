@@ -1,6 +1,6 @@
 package com.example.graph_editor.draw.graph_view;
 
-import com.example.graph_editor.draw.action_mode_type.ActionModeType;
+import com.example.graph_editor.draw.action_mode_type.GraphAction;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.Vertex;
 import com.example.graph_editor.model.mathematics.Point;
@@ -13,7 +13,7 @@ public class GraphOnTouchListenerData {
     public Point currentRelativePoint;
     public Point currentAbsolutePoint;
 
-    public ActionModeType stylusActionMode;
+    public GraphAction stylusActionMode;
 
     // new vertex
     public Vertex newVertex;

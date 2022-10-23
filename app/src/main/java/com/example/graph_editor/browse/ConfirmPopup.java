@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.graph_editor.R;
-import com.example.graph_editor.draw.action_mode_type.ActionModeType;
+import com.example.graph_editor.draw.action_mode_type.GraphAction;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.extentions.CanvasManagerImpl;
 import com.example.graph_editor.model.Graph;
@@ -41,7 +41,7 @@ public class ConfirmPopup {
 
         StateStack stack = new StateStackImpl(
                 () -> {},
-                new State(graph, new Rectangle(new Point(0, 0), new Point(1, 1)), ActionModeType.MOVE_CANVAS)
+                new State(graph, new Rectangle(new Point(0, 0), new Point(1, 1)), new GraphAction.MoveCanvas())
         );
         graphView.initialize(new CanvasManagerImpl(), stack, false);
 

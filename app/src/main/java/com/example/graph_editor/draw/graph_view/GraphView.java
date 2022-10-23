@@ -17,21 +17,19 @@ import android.view.View;
 import androidx.annotation.Nullable;
 
 import com.example.graph_editor.draw.Settings;
-import com.example.graph_editor.draw.action_mode_type.ActionModeType;
-import com.example.graph_editor.draw.action_mode_type.ActionModeTypeObserver;
+import com.example.graph_editor.draw.action_mode_type.GraphActionObserver;
+import com.example.graph_editor.draw.action_mode_type.GraphAction;
 import com.example.graph_editor.draw.graph_view.extensions.DebugCanvas;
 import com.example.graph_editor.model.DrawManager;
-import com.example.graph_editor.model.Edge;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.GraphType;
-import com.example.graph_editor.model.Vertex;
 import com.example.graph_editor.model.extensions.CanvasManager;
 import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.model.state.StateStack;
 
-public class GraphView extends View implements ActionModeTypeObserver {
+public class GraphView extends View implements GraphActionObserver {
     private final int baseVertexRadius = 7;
     private final int baseEdgeWidth = 5;
 
@@ -192,7 +190,7 @@ public class GraphView extends View implements ActionModeTypeObserver {
     }
 
     @Override
-    public void update(ActionModeType newType) {
+    public void update(GraphAction graphAction) {
         postInvalidate();
     }
 

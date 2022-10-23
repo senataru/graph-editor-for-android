@@ -1,7 +1,7 @@
 package com.example.graph_editor.model.state;
 
-import com.example.graph_editor.draw.action_mode_type.ActionModeType;
-import com.example.graph_editor.draw.action_mode_type.ActionModeTypeObserver;
+import com.example.graph_editor.draw.action_mode_type.GraphActionObserver;
+import com.example.graph_editor.draw.action_mode_type.GraphAction;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.mathematics.Rectangle;
 
@@ -11,40 +11,40 @@ import java.util.List;
 public class State {
     private Graph graph;
     private Rectangle rectangle;
-    private ActionModeType actionModeType;
+    private GraphAction graphAction;
     private boolean currentlyModified; //more accurately - isCurrentlyTouched, if true ignore button presses
-    private final List<ActionModeTypeObserver> observers = new ArrayList<>();
+    private final List<GraphActionObserver> observers = new ArrayList<>();
 
-    public State(Graph graph, Rectangle rectangle, ActionModeType actionModeType) {
+    public State(Graph graph, Rectangle rectangle, GraphAction graphAction) {
         this.graph = graph;
         this.rectangle = rectangle;
-        this.actionModeType = actionModeType;
+        this.graphAction = graphAction;
     }
 
     public Graph getGraph() { return graph; }
     public Rectangle getRectangle() { return rectangle; }
-    public ActionModeType getActionModeType() { return actionModeType; }
+    public GraphAction getGraphAction() { return graphAction; }
     public boolean isCurrentlyModified() { return currentlyModified; }
 
     public void setGraph(Graph graph) { this.graph = graph; }
     public void setRectangle(Rectangle rectangle) { this.rectangle = rectangle; }
-    public void setCurrentModeType(ActionModeType modeType) {
-        actionModeType = modeType;
+    public void setGraphAction(GraphAction graphAction) {
+        this.graphAction = graphAction;
         tellObservers();
     }
     public void setCurrentlyModified(boolean value) { this.currentlyModified = value; }
 
-    public synchronized void addObserver(ActionModeTypeObserver observer) {
+    public synchronized void addObserver(GraphActionObserver observer) {
         observers.add(observer);
     }
 
-    public synchronized void removeObserver(ActionModeTypeObserver observer) {
+    public synchronized void removeObserver(GraphActionObserver observer) {
         observers.remove(observer);
     }
 
     private synchronized void tellObservers() {
-        for (ActionModeTypeObserver o : observers) {
-            o.update(actionModeType);
+        for (GraphActionObserver o : observers) {
+            o.update(graphAction);
         }
     }
 }
