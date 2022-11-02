@@ -9,7 +9,7 @@ import android.widget.Button;
 import com.example.graph_editor.R;
 import com.example.graph_editor.draw.action_mode_type.GraphAction;
 import com.example.graph_editor.draw.graph_view.GraphView;
-import com.example.graph_editor.extentions.CanvasManagerImpl;
+import com.example.graph_editor.extensions.CanvasManagerImpl;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.mathematics.Rectangle;

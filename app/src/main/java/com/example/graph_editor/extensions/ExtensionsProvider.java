@@ -1,4 +1,4 @@
-package com.example.graph_editor.extentions;
+package com.example.graph_editor.extensions;
 
 import com.example.graph_editor.model.extensions.Extension;
 import com.example.graph_editor.model.extensions.ExtensionInvoker;
@@ -14,8 +14,8 @@ public class ExtensionsProvider {
     }
 
 
-    private static String file = "res/raw/script.js";
-    private static InputStream in = ExtensionsProvider.class.getClassLoader().getResourceAsStream(file);
+    private static final String file = "res/raw/matching.js";
+    private static final InputStream in = ExtensionsProvider.class.getClassLoader().getResourceAsStream(file);
     private static final ExtensionInvoker invoker = RhinoJSInvoker.createInstance(
             //TODO change
 //                            "file:///android_asset/js/example.ts",

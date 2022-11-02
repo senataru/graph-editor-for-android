@@ -35,9 +35,10 @@ public class OptionsHandler {
                                  GraphView graphView, Runnable makeSave,
                                  ActivityResultLauncher<Intent> importActivityResultLauncher,
                                  ActivityResultLauncher<Intent> exportActivityResultLauncher) {
-        //TODO change
         if (extensionsOptions.containsKey(item.getItemId())) {
-            Objects.requireNonNull(extensionsOptions.get(item.getItemId())).accept(graphView.getContext());
+            Objects
+                    .requireNonNull(extensionsOptions.get(item.getItemId()))
+                    .handle(stateStack.getCurrentState().getGraph(), graphView);
             return true;
         }
         switch (item.getItemId()) {

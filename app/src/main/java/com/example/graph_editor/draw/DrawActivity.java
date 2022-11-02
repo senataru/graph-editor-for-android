@@ -6,7 +6,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.Menu;
@@ -14,7 +13,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -29,9 +27,9 @@ import com.example.graph_editor.draw.action_mode_type.GraphAction;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.DiscardPopup;
 import com.example.graph_editor.draw.popups.SavePopup;
-import com.example.graph_editor.extentions.CanvasManagerImpl;
-import com.example.graph_editor.extentions.GraphActionManagerImpl;
-import com.example.graph_editor.extentions.GraphMenuManagerImpl;
+import com.example.graph_editor.extensions.CanvasManagerImpl;
+import com.example.graph_editor.extensions.GraphActionManagerImpl;
+import com.example.graph_editor.extensions.GraphMenuManagerImpl;
 import com.example.graph_editor.model.extensions.GraphMenuManager;
 import com.example.graph_editor.model.graph_storage.GraphScanner;
 import com.example.graph_editor.model.graph_storage.GraphWriter;
@@ -161,9 +159,9 @@ public class DrawActivity extends AppCompatActivity {
 
         //TODO change
         int id = extensions_start;
-        Collection<Pair<String, GraphMenuManager.OnSelection>> options = GraphMenuManagerImpl.getRegisteredOptions();
+        Collection<Pair<String, GraphMenuManager.MenuOptionHandler>> options = GraphMenuManagerImpl.getRegisteredOptions();
         extensionsOptions = new HashMap<>();
-        for (Pair<String, GraphMenuManager.OnSelection> it : options) {
+        for (Pair<String, GraphMenuManager.MenuOptionHandler> it : options) {
             extensionsOptions.put(id, it.second);
             menu.add(0, id++, 0, it.first);
         }

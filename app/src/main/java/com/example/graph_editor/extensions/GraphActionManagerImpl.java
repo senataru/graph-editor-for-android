@@ -1,10 +1,9 @@
-package com.example.graph_editor.extentions;
+package com.example.graph_editor.extensions;
 
 import android.util.Pair;
 
 import com.example.graph_editor.draw.action_mode_type.GraphAction;
 import com.example.graph_editor.model.extensions.GraphActionManager;
-import com.example.graph_editor.model.extensions.GraphMenuManager;
 
 import java.util.Collection;
 import java.util.HashMap;

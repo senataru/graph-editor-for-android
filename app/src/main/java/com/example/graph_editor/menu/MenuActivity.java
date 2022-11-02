@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import com.example.graph_editor.R;
 import com.example.graph_editor.browse.BrowseActivity;
 import com.example.graph_editor.draw.DrawActivity;
-import com.example.graph_editor.extentions.ExtensionsActivity;
+import com.example.graph_editor.extensions.ExtensionsActivity;
 import com.example.graph_editor.model.GraphType;
 
 public class MenuActivity extends AppCompatActivity {

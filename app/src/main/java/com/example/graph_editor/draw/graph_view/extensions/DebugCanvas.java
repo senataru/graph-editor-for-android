@@ -39,6 +39,9 @@ public class DebugCanvas extends Canvas {
         canvas.drawLine(startX, startY, stopX, stopY, paint);
     }
 
+    public static void print(Object e) {
+        System.out.println(e);
+    }
     public static void printD(double e) {
         System.out.println(e);
     }

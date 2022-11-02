@@ -19,7 +19,6 @@ import androidx.annotation.Nullable;
 import com.example.graph_editor.draw.Settings;
 import com.example.graph_editor.draw.action_mode_type.GraphActionObserver;
 import com.example.graph_editor.draw.action_mode_type.GraphAction;
-import com.example.graph_editor.draw.graph_view.extensions.DebugCanvas;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.GraphType;
@@ -117,7 +116,7 @@ public class GraphView extends View implements GraphActionObserver {
 //        System.out.println((float)getDrawWidth(rectangle.getScale(), baseEdgeWidth) + "<- should be");
 
         CanvasManager.EdgeDrawer edgeDrawer =
-                canvasManager.getEdgeDrawer().orElse((p1, p2, r, canvas1) ->
+                canvasManager.getEdgeDrawer().orElse((id1, id2, p1, p2, r, canvas1) ->
                         drawEdge(
                                 canvas1,
                                 DrawManager.getRelative(rectangle, p1),
@@ -125,20 +124,20 @@ public class GraphView extends View implements GraphActionObserver {
                                 graph.getType()
                         )
                 );
-        graph.getEdges().forEach(e -> {
-            edgeDrawer.drawEdge(
-                    e.getSource().getPoint(),
-                    e.getTarget().getPoint(),
-                    rectangle,
-//                    DebugCanvas.INSTANCE.own(canvas)
-                    canvas
-            );
-        });
+        graph.getEdges().forEach(e -> edgeDrawer.drawEdge(
+                e.getSource().getIndex(),
+                e.getTarget().getIndex(),
+                e.getSource().getPoint(),
+                e.getTarget().getPoint(),
+                rectangle,
+                //DebugCanvas.INSTANCE.own(canvas)
+                canvas)
+        );
 
         CanvasManager.VertexDrawer vertexDrawer =
-                canvasManager.getVertexDrawer().orElse((p, r, canvas1) ->
+                canvasManager.getVertexDrawer().orElse((id, p, r, canvas1) ->
                         drawVertex(canvas1, DrawManager.getRelative(rectangle, p)));
-        graph.getVertices().forEach(v -> vertexDrawer.drawVertex(v.getPoint(), rectangle, canvas));
+        graph.getVertices().forEach(v -> vertexDrawer.drawVertex(v.getIndex(), v.getPoint(), rectangle, canvas));
 
         canvasManager.getExtendedDrawers().forEach(drawer -> drawer.drawElements(rectangle, canvas));
     }

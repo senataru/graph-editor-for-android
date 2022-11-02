@@ -1,4 +1,4 @@
-package com.example.graph_editor.extentions;
+package com.example.graph_editor.extensions;
 
 import com.example.graph_editor.model.extensions.ExtensionInvoker;
 

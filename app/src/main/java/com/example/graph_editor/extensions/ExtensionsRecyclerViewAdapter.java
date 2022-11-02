@@ -1,4 +1,4 @@
-package com.example.graph_editor.extentions;
+package com.example.graph_editor.extensions;
 
 import android.content.Context;
 import android.view.LayoutInflater;

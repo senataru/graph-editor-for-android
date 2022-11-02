@@ -1,4 +1,4 @@
-package com.example.graph_editor.extentions;
+package com.example.graph_editor.extensions;
 
 import com.example.graph_editor.model.extensions.CanvasManager;
 import com.example.graph_editor.model.extensions.GraphActionManager;
@@ -24,7 +24,7 @@ public class ScriptProxy implements ExtensionInvoker.ExtensionProxy {
     public int registerGraphMenuOption(String optionName, String functionCalledOnOptionSelected) {
         return graphMenuManager.registerOption(
                 optionName,
-                arg -> invoker.callFunction(functionCalledOnOptionSelected, arg)
+                (graph, view) -> invoker.callFunction(functionCalledOnOptionSelected, graph, view)
         );
     }
 
@@ -35,8 +35,8 @@ public class ScriptProxy implements ExtensionInvoker.ExtensionProxy {
 
     @Override
     public void customizeVertexDrawingBehaviour(String vertexDrawer) {
-        canvasManager.setVertexDrawer((point, rectangle, canvas) -> {
-            invoker.callFunction(vertexDrawer, point, rectangle, canvas);
+        canvasManager.setVertexDrawer((id, point, rectangle, canvas) -> {
+            invoker.callFunction(vertexDrawer, id, point, rectangle, canvas);
         });
     }
 
@@ -47,8 +47,8 @@ public class ScriptProxy implements ExtensionInvoker.ExtensionProxy {
 
     @Override
     public void customizeEdgeDrawingBehaviour(String edgeDrawer) {
-        canvasManager.setEdgeDrawer((p1, p2, rectangle, canvas) -> {
-            invoker.callFunction(edgeDrawer, p1, p2, rectangle, canvas);
+        canvasManager.setEdgeDrawer((id1, id2, p1, p2, rectangle, canvas) -> {
+            invoker.callFunction(edgeDrawer, id1, id2, p1, p2, rectangle, canvas);
         });
     }
 
