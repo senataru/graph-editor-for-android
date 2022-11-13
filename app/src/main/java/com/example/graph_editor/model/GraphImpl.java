@@ -6,10 +6,13 @@ import com.example.graph_editor.model.graph_storage.InvalidGraphStringException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class GraphImpl implements Graph {
     GraphType type;
     List<Vertex> vertices = new ArrayList<>();
+    Map<String, List<Vertex>> verticesByProperty;
 
     public GraphImpl(GraphType type) {
         this.type = type;
@@ -87,5 +90,38 @@ public class GraphImpl implements Graph {
             e.printStackTrace();
         }
         return result;
+    }
+
+    @Override
+    public void setProperty(Vertex vertex, String name, String value) {
+        Objects.requireNonNull(name, "Property name can not be null");
+        Objects.requireNonNull(value, "Property value can not be null");
+        if (!verticesByProperty.containsKey(name)) {
+            verticesByProperty.put(name, new ArrayList<>());
+        }
+        verticesByProperty.get(name).add(vertex);
+        vertex.setProperty(name, value);
+    }
+
+    @Override
+    public void removeProperty(String name) {
+        List<Vertex> propertyVertices = verticesByProperty.get(name);
+        if (propertyVertices == null) {
+            throw new IllegalArgumentException("No vertices with property " + name + " have been found");
+        }
+        for (Vertex vertex : propertyVertices) {
+            vertex.removeProperty(name);
+        }
+        verticesByProperty.remove(name);
+    }
+
+    @Override
+    public List<Vertex> getVerticesWithProperty(String name) {
+        return verticesByProperty.get(name);
+    }
+
+    @Override
+    public List<String> getVertexPropertyNames() {
+        return new ArrayList<>(verticesByProperty.keySet());
     }
 }

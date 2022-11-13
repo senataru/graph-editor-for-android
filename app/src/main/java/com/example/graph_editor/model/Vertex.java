@@ -13,4 +13,7 @@ public interface Vertex {
     List<Edge> getEdges();
     void setPoint(Point point);
     Point getPoint();
+    String getProperty(String name);
+    void setProperty(String name, String value);
+    void removeProperty(String name);
 }

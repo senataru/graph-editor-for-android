@@ -11,4 +11,8 @@ public interface Graph {
     List<Vertex> getVertices();
     List<Edge> getEdges();
     Graph deepCopy();
+    void setProperty(Vertex vertex, String name, String value);
+    void removeProperty(String name);
+    List<Vertex> getVerticesWithProperty(String name);
+    List<String> getVertexPropertyNames();
 }
