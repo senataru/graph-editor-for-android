@@ -5,6 +5,8 @@ import com.example.graph_editor.model.graph_storage.GraphWriter;
 import com.example.graph_editor.model.graph_storage.InvalidGraphStringException;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -12,7 +14,7 @@ import java.util.Objects;
 public class GraphImpl implements Graph {
     GraphType type;
     List<Vertex> vertices = new ArrayList<>();
-    Map<String, List<Vertex>> verticesByProperty;
+    Map<String, List<Vertex>> verticesByProperty = new HashMap<>();
 
     public GraphImpl(GraphType type) {
         this.type = type;
@@ -117,7 +119,7 @@ public class GraphImpl implements Graph {
 
     @Override
     public List<Vertex> getVerticesWithProperty(String name) {
-        return verticesByProperty.get(name);
+        return verticesByProperty.getOrDefault(name, Collections.emptyList());
     }
 
     @Override

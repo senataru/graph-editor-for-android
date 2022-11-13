@@ -4,7 +4,9 @@ import com.example.graph_editor.model.Edge;
 import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.Vertex;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GraphWriter {
     public static String toVE(Graph g) {
@@ -61,5 +63,35 @@ public class GraphWriter {
             result.append("#");
         }
         return result.substring(0, result.length()-1);
+    }
+
+    public static Map<String, String> getAllPropertyStrings(Graph graph) {
+        Map<String, String> propertyStrings = new HashMap<>();
+        for (String propertyName : graph.getVertexPropertyNames()) {
+            propertyStrings.put(propertyName, getPropertyString(propertyName, graph));
+        }
+        return propertyStrings;
+    }
+
+    public static String getPropertyString(String propertyName, Graph graph) {
+        List<Vertex> vertices = graph.getVerticesWithProperty(propertyName);
+        if (vertices == null) {
+            throw new IllegalArgumentException(
+                    "No vertices with property " + propertyName + " have been found");
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append(propertyName);
+        builder.append("\n");
+        builder.append(vertices.size());
+        builder.append("\n");
+
+        for (Vertex vertex : vertices) {
+            String value = vertex.getProperty(propertyName);
+            builder.append(vertex.getIndex());
+            builder.append(" ");
+            builder.append(value);
+            builder.append("\n");
+        }
+        return builder.toString();
     }
 }

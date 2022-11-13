@@ -1,14 +1,19 @@
 package com.example.graph_editor.model.graph_storage;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import com.example.graph_editor.model.Edge;
 import com.example.graph_editor.model.Graph;
+import com.example.graph_editor.model.GraphFactory;
+import com.example.graph_editor.model.GraphType;
 import com.example.graph_editor.model.Vertex;
 
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GraphScannerTest {
     @Test
@@ -30,5 +35,31 @@ public class GraphScannerTest {
         assertEquals(1, e.get(0).getTarget().getIndex());
         assertEquals(1, e.get(1).getSource().getIndex());
         assertEquals(2, e.get(1).getTarget().getIndex());
+    }
+
+    @Test
+    public void shouldAddVertexProperty() throws InvalidGraphStringException {
+        String propertyName = "propertyName";
+        String propertyString = propertyName + "\n"
+                + "3\n"
+                + "2 c\n"
+                + "0 a\n"
+                + "1 b\n";
+        Graph graph = new GraphFactory(GraphType.UNDIRECTED).produce();
+        graph.addVertex();
+        graph.addVertex();
+        graph.addVertex();
+        graph.addVertex();
+
+        Graph result = GraphScanner.addVertexProperty(graph, propertyString);
+
+        List<Vertex> propertyVertices = result.getVerticesWithProperty(propertyName);
+        List<Vertex> vertices = result.getVertices();
+        assertEquals(propertyVertices.size(), 3);
+        assertEquals(vertices.get(0).getProperty(propertyName), "a");
+        assertEquals(vertices.get(1).getProperty(propertyName), "b");
+        assertEquals(vertices.get(2).getProperty(propertyName), "c");
+        assertTrue(result.getVertexPropertyNames().contains(propertyName));
+        assertEquals(result.getVertexPropertyNames().size(), 1);
     }
 }

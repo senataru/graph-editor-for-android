@@ -63,4 +63,23 @@ public class GraphScanner {
         }
         return result;
     }
+
+    public static Graph addVertexProperty(Graph graph, String s) throws InvalidGraphStringException {
+        String[] text = s.split("\n");
+
+        String propertyName = text[0];
+        int count = Integer.parseInt(text[1]);
+
+        try {
+            for (int i = 2; i < 2 + count; i++) {
+                String[] split = text[i].split(" ");
+                int index = Integer.parseInt(split[0]);
+                String value = split[1];
+                graph.setProperty(graph.getVertices().get(index), propertyName, value);
+            }
+        } catch (RuntimeException e) {
+            throw new InvalidGraphStringException();
+        }
+        return graph;
+    }
 }

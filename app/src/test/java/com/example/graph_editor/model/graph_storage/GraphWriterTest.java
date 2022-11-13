@@ -61,4 +61,26 @@ public class GraphWriterTest {
         assertEquals("UNDIRECTED\n3 2\n0 0.0 0.0\n1 0.0 1.0\n2 1.0 1.0\n0 1\n1 2\n", graphString);
     }
 
+    @Test
+    public void shouldGetPropertyString() {
+        String propertyName = "propertyName";
+        Graph graph = new GraphFactory(GraphType.UNDIRECTED).produce();
+        graph.addVertex();
+        graph.addVertex();
+        graph.addVertex();
+        List<Vertex> vertices = graph.getVertices();
+        graph.setProperty(vertices.get(0), propertyName, "a");
+        graph.setProperty(vertices.get(1), propertyName, "b");
+        graph.setProperty(vertices.get(2), propertyName, "c");
+        graph.setProperty(vertices.get(0), "otherProperty", "d");
+        String expectedPropertyString = propertyName + "\n"
+                + "3\n"
+                + "0 a\n"
+                + "1 b\n"
+                + "2 c\n";
+
+        String propertyString = GraphWriter.getPropertyString(propertyName, graph);
+
+        assertEquals(propertyString, expectedPropertyString);
+    }
 }
