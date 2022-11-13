@@ -8,11 +8,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.graph_editor.R;
+import com.example.graph_editor.database.PropertySave;
 import com.example.graph_editor.database.Save;
 import com.example.graph_editor.database.SavesDatabase;
 import com.example.graph_editor.draw.DrawActivity;
 import com.example.graph_editor.model.graph_storage.GraphWriter;
 import com.example.graph_editor.model.Graph;
+
+import java.util.Map;
 
 public class SavePopup {
     AlertDialog dialog;
@@ -33,7 +36,11 @@ public class SavePopup {
             }
             String newGraphString = GraphWriter.toExact(graph);
             Save save = new Save(name, newGraphString, System.currentTimeMillis());
-            context.updateGraph(database.saveDao().insertSaves(save)[0], newGraphString);
+            long graphSaveId = database.saveDao().insertSaves(save)[0];
+            context.updateGraph(graphSaveId, newGraphString);
+
+            saveProperties(graph, graphSaveId, context, database);
+
             Toast.makeText(context.getApplicationContext(), "Graph saved", Toast.LENGTH_LONG).show();
             dialog.dismiss();
             afterTask.run();
@@ -42,5 +49,16 @@ public class SavePopup {
         builder.setView(popupView);
         dialog = builder.create();
         dialog.show();
+    }
+
+    private void saveProperties(Graph graph, long graphSaveId, DrawActivity context, SavesDatabase database) {
+        Map<String, String> newPropertyStrings = GraphWriter.getAllPropertyStrings(graph);
+
+        for (String propertyName : newPropertyStrings.keySet()) {
+            PropertySave propertySave = new PropertySave(graphSaveId,
+                    propertyName, newPropertyStrings.get(propertyName), System.currentTimeMillis());
+            database.propertySaveDao().insertPropertySave(propertySave);
+        }
+        context.updateGraphProperties(newPropertyStrings);
     }
 }

@@ -46,14 +46,16 @@ import com.example.graph_editor.model.state.StateStackImpl;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class DrawActivity extends AppCompatActivity {
-    public static final String TAG = "DrawActivity";
     private final static int extensions_start = 1;
     private GraphView graphView;
     private StateStack stateStack;
     private long currentGraphId = -1;
     private String graphString;
+    private Map<String, String> graphPropertyStrings = new HashMap<>();
 
 
     @Override
@@ -173,13 +175,31 @@ public class DrawActivity extends AppCompatActivity {
         graphString = string;
     }
 
+    public void updateGraphProperties(Map<String, String> propertyStrings) {
+        for(String propertyName : propertyStrings.keySet()) {
+            updateGraphProperty(propertyName, propertyStrings.get(propertyName));
+        }
+    }
+
+    public void updateGraphProperty(String name, String value) {
+        Objects.requireNonNull(name, "Property name can not be null");
+        Objects.requireNonNull(value, "Property value can not be null");
+        graphPropertyStrings.put(name, value);
+    }
+
     public void makeSave(Runnable afterTask) {
         if(currentGraphId == -1) {
             new SavePopup().show(stateStack.getCurrentState().getGraph(), this, afterTask);
         } else {
-            graphString = GraphWriter.toExact(stateStack.getCurrentState().getGraph());
+            Graph graph = stateStack.getCurrentState().getGraph();
+            graphString = GraphWriter.toExact(graph);
+            graphPropertyStrings = GraphWriter.getAllPropertyStrings(graph);
             SavesDatabase database = SavesDatabase.getDbInstance(getApplicationContext());
             database.saveDao().updateGraph(currentGraphId, graphString, System.currentTimeMillis());
+            for (String propertyString : graphPropertyStrings.values()) {
+                database.propertySaveDao().updateProperty(currentGraphId, propertyString,
+                        System.currentTimeMillis());
+            }
             Toast.makeText(this, "Graph saved", Toast.LENGTH_LONG).show();
             afterTask.run();
         }
