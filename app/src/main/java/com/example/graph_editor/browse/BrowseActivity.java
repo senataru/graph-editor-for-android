@@ -29,13 +29,13 @@ public class BrowseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         SavesDatabase database = SavesDatabase.getDbInstance(getApplicationContext());
-        SavedAdapter adapter = new SavedAdapter(this,
-                database.saveDao().getAllSaves(), this);
+        SavedAdapter adapter = new SavedAdapter(this, database.saveDao().getAllSaves(),
+                database.propertySaveDao().getAllPropertySaves(), this);
         saved.setAdapter(adapter);
         saved.setLayoutManager(new LinearLayoutManager(this));
 
         TextView noSavedGraphs = findViewById(R.id.txt_no_saved_graphs);
-        if (adapter.data.size() > 0) noSavedGraphs.setAlpha(0f);
+        if (adapter.getData().size() > 0) noSavedGraphs.setAlpha(0f);
     }
 
     public void changeActivity(String graphString, long id) {
