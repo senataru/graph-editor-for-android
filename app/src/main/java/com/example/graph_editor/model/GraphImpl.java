@@ -12,9 +12,9 @@ import java.util.Map;
 import java.util.Objects;
 
 public class GraphImpl implements Graph {
-    GraphType type;
-    List<Vertex> vertices = new ArrayList<>();
-    Map<String, List<Vertex>> verticesByProperty = new HashMap<>();
+    private final GraphType type;
+    private final List<Vertex> vertices = new ArrayList<>();
+    private final Map<String, List<Vertex>> verticesByProperty = new HashMap<>();
 
     public GraphImpl(GraphType type) {
         this.type = type;
@@ -88,10 +88,22 @@ public class GraphImpl implements Graph {
         Graph result = null;
         try {
             result = GraphScanner.fromExact(GraphWriter.toExact(this));
+            copyVertexProperties(result);
         } catch (InvalidGraphStringException e) {
             e.printStackTrace();
         }
         return result;
+    }
+
+    private void copyVertexProperties(Graph target) {
+        List<Vertex> targetVertices = target.getVertices();
+        for (Map.Entry<String, List<Vertex>> entry : verticesByProperty.entrySet()) {
+            String propertyName = entry.getKey();
+            for (Vertex vertex : entry.getValue()) {
+                target.setProperty(targetVertices.get(vertex.getIndex()), propertyName,
+                        vertex.getProperty(propertyName));
+            }
+        }
     }
 
     @Override
