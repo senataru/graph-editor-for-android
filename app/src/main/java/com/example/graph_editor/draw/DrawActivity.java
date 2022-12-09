@@ -44,10 +44,12 @@ import com.example.graph_editor.model.state.StateStack;
 import com.example.graph_editor.model.state.StateStackImpl;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 public class DrawActivity extends AppCompatActivity {
     private final static int extensions_start = 1;
@@ -67,6 +69,7 @@ public class DrawActivity extends AppCompatActivity {
         currentGraphId = sharedPref.getLong("currentGraphId", -1);
         int choiceOrd = sharedPref.getInt("GraphType", 0);
         graphString = sharedPref.getString("currentGraph", null);
+        Set<String> propertyStrings = sharedPref.getStringSet("currentGraphProperties", Collections.emptySet());
 
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.remove("currentGraphId");
@@ -95,6 +98,9 @@ public class DrawActivity extends AppCompatActivity {
             if (graphString != null) {  // from browse
                 try {
                     graph = GraphScanner.fromExact(graphString);
+                    for (String propertyString : propertyStrings) {
+                        GraphScanner.addVertexProperty(graph, propertyString);
+                    }
                 } catch (InvalidGraphStringException e) {
                     e.printStackTrace();
                 }

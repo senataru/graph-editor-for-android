@@ -86,7 +86,7 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
                     .filter(save -> save.graphSaveUid == s.uid)
                     .forEach(save -> propertyDao.updateProperty(
                             save.uid, save.property, System.currentTimeMillis()));
-            browseActivity.changeActivity(graphString, data.get(position).uid);
+            browseActivity.changeActivity(graphString, data.get(position).uid, propertySaveStrings);
         });
         holder.deleteButton.setOnClickListener(v ->
                 new ConfirmPopup(context, holder.dataGraph.getStateStack().getCurrentState().getGraph(), () -> {

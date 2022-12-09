@@ -14,6 +14,9 @@ import com.example.graph_editor.R;
 import com.example.graph_editor.database.SavesDatabase;
 import com.example.graph_editor.draw.DrawActivity;
 
+import java.util.HashSet;
+import java.util.List;
+
 public class BrowseActivity extends AppCompatActivity {
     RecyclerView saved;
 
@@ -38,11 +41,12 @@ public class BrowseActivity extends AppCompatActivity {
         if (adapter.getData().size() > 0) noSavedGraphs.setAlpha(0f);
     }
 
-    public void changeActivity(String graphString, long id) {
+    public void changeActivity(String graphString, long graphId, List<String> propertyStrings) {
         SharedPreferences sharedPref = this.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("currentGraph", graphString);
-        editor.putLong("currentGraphId", id);
+        editor.putLong("currentGraphId", graphId);
+        editor.putStringSet("currentGraphProperties", new HashSet<>(propertyStrings));
         editor.apply();
 
         Intent intent = new Intent(this, DrawActivity.class);
