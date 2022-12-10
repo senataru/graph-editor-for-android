@@ -2,6 +2,8 @@ package com.example.graph_editor.model.extensions;
 
 import android.graphics.Canvas;
 
+import com.example.graph_editor.model.Edge;
+import com.example.graph_editor.model.Vertex;
 import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.mathematics.Rectangle;
 
@@ -10,10 +12,10 @@ import java.util.Optional;
 
 public interface CanvasManager {
     interface VertexDrawer {
-        void drawVertex(int id, Point p, Rectangle rectangle, Canvas canvas);
+        void drawVertex(Vertex vertex, Rectangle rectangle, Canvas canvas);
     }
     interface EdgeDrawer {
-        void drawEdge(int id1, int id2, Point p1, Point p2, Rectangle rectangle, Canvas canvas);
+        void drawEdge(Edge edge, Rectangle rectangle, Canvas canvas);
     }
     interface ExtendedElementsDrawer {
          void drawElements(Rectangle rectangle, Canvas canvas);

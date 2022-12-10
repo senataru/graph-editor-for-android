@@ -24,7 +24,7 @@ public class ScriptProxy implements ExtensionInvoker.ExtensionProxy {
     public int registerGraphMenuOption(String optionName, String functionCalledOnOptionSelected) {
         return graphMenuManager.registerOption(
                 optionName,
-                (graph, view) -> invoker.callFunction(functionCalledOnOptionSelected, graph, view)
+                (stateStack, graph, view) -> invoker.callFunction(functionCalledOnOptionSelected, stateStack, graph, view)
         );
     }
 
@@ -35,8 +35,8 @@ public class ScriptProxy implements ExtensionInvoker.ExtensionProxy {
 
     @Override
     public void customizeVertexDrawingBehaviour(String vertexDrawer) {
-        canvasManager.setVertexDrawer((id, point, rectangle, canvas) -> {
-            invoker.callFunction(vertexDrawer, id, point, rectangle, canvas);
+        canvasManager.setVertexDrawer((vertex, rectangle, canvas) -> {
+            invoker.callFunction(vertexDrawer, vertex, rectangle, canvas);
         });
     }
 
@@ -47,8 +47,8 @@ public class ScriptProxy implements ExtensionInvoker.ExtensionProxy {
 
     @Override
     public void customizeEdgeDrawingBehaviour(String edgeDrawer) {
-        canvasManager.setEdgeDrawer((id1, id2, p1, p2, rectangle, canvas) -> {
-            invoker.callFunction(edgeDrawer, id1, id2, p1, p2, rectangle, canvas);
+        canvasManager.setEdgeDrawer((edge, rectangle, canvas) -> {
+            invoker.callFunction(edgeDrawer, edge, rectangle, canvas);
         });
     }
 

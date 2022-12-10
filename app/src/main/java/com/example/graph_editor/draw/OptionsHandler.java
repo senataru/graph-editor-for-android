@@ -38,7 +38,7 @@ public class OptionsHandler {
         if (extensionsOptions.containsKey(item.getItemId())) {
             Objects
                     .requireNonNull(extensionsOptions.get(item.getItemId()))
-                    .handle(stateStack.getCurrentState().getGraph(), graphView);
+                    .handle(stateStack, stateStack.getCurrentState().getGraph(), graphView);
             return true;
         }
         switch (item.getItemId()) {

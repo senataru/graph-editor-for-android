@@ -1,8 +1,11 @@
 var Utils = com.example.graph_editor.draw.Utils
 var Paint = android.graphics.Paint;
 var Toast = Packages.android.widget.Toast;
+var Debug = com.example.graph_editor.draw.graph_view.extensions.DebugCanvas
 
 var option_id = 0;
+var vertexColorPropertyName = "matching::vertexColor";
+var edgeColorPropertyName = "matching::edgeColor"
 
 function activate(proxy /* com.example.graph_editor.extensions.ScriptProxy*/) {
     option_id = proxy.registerGraphMenuOption("Draw Matching", "matchingRequested");
@@ -15,17 +18,6 @@ function deactivate(coreProxy/* com.example.graph_editor.extensions.ScriptProxy*
     coreProxy.restoreDefaultVertexDrawingBehaviour();
     coreProxy.restoreDefaultEdgeDrawingBehaviour();
 }
-
-var verticesMap = {}
-
-//class Vertex {
-//    constructor(adjacentIds) {
-//        this.adjacentIds = adjacentIds
-//        this.color = -1
-//        this.match = null
-//        this.visited = false
-//    }
-//}
 
 function createVertex(ids) {
     return {adjacentIds:ids, color:-1, match:null, visited:false}
@@ -42,6 +34,21 @@ function buildVertices(coreGraph) {
         vertices[coreVertex.getIndex()] = createVertex(adjacentIds)
     }
     return vertices
+}
+
+function saveProperties(verticesMap, coreGraph) {
+    for (coreVertex in Iterator(coreGraph.getVertices())) {
+        var adjacentIds = []
+        for (coreEdge in Iterator(coreVertex.getEdges())) {
+            adjacentIds.push(coreEdge.getTarget().getIndex())
+        }
+        jsVertex = verticesMap[coreVertex.getIndex()];
+        if (jsVertex == null) {
+            coreVertex.removeProperty(vertexColorPropertyName)
+        } else {
+            coreVertex.setProperty(vertexColorPropertyName, jsVertex.color.toString())
+        }
+    }
 }
 
 function visit(vertices, vertex) {
@@ -75,10 +82,6 @@ function bipartite(vertices) {
     return true
 }
 
-function resetColoring() {
-    verticesMap = {}
-}
-
 function alternating_path(vertices, vertex) {
     if (vertex.visited) return false;
     vertex.visited = true;
@@ -110,55 +113,57 @@ function evaluateMatching(vertices) {
     }
 }
 
-function matchingRequested(coreGraph, view) {
-    verticesMap = buildVertices(coreGraph)
+function matchingRequested(stateStack, coreGraph, view) {
+    var verticesMap = buildVertices(coreGraph)
+    stateStack.backup();
     if (bipartite(verticesMap)) {
-        Toast.makeText(view.getContext(), "Computing matching...!", Toast.LENGTH_SHORT).show();
         evaluateMatching(verticesMap);
+        saveProperties(verticesMap, coreGraph);
         Toast.makeText(view.getContext(), "Computed matching!", Toast.LENGTH_SHORT).show();
-        view.invalidate();
     } else {
-        resetColoring();
+        verticesMap = {}
+        saveProperties(verticesMap, coreGraph);
         Toast.makeText(view.getContext(), "Your graph is not bipartite!", Toast.LENGTH_SHORT).show();
     }
+    view.invalidate();
 }
 
-function drawVertex(id, point, rectangle, canvas) {
+function drawVertex(vertex, rectangle, canvas) {
     var aPaint = new Paint;
-    var vertex = verticesMap[id]
-    if (vertex == null) {
+    var color = vertex.getProperty(vertexColorPropertyName);
+    if (color == null) {
         aPaint.setARGB(255, 0, 0, 0);
-    } else if (vertex.color == 0) {
+    } else if (color == "0") {
         aPaint.setARGB(255, 255, 0, 0)
-    } else if (vertex.color == 1) {
+    } else if (color == "1") {
         aPaint.setARGB(255, 0, 255, 0);
-    } else { // should not happen...
+    } else {
+        Debug.print(color)
         aPaint.setARGB(255, 255, 255, 0);
     }
-
     aPaint.setStyle(Paint.Style.FILL);
     aPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
-
-    var cp = Utils.canvasPoint(point, rectangle, canvas)
-
+    var cp = Utils.canvasPoint(vertex.getPoint(), rectangle, canvas)
     canvas.drawCircle(cp.getX(), cp.getY(), 0.005 * canvas.getWidth() / rectangle.getWidth(), aPaint);
 }
 
-function drawEdge(id1, id2, p1, p2, rectangle, canvas) {
+function drawEdge(edge, rectangle, canvas) {
     var edgePaint = new Paint();
-    var source = verticesMap[id1]
+    var source = edge.getSource();
+    var target = edge.getTarget();
 
-    if (source == null || source.match != verticesMap[id2]) {
-        edgePaint.setARGB(255, 127, 127, 127);
-    } else {
-        edgePaint.setARGB(255, 0, 0, 255);
-    }
+    edgePaint.setARGB(255, 127, 127, 127);
+//    if (source == null || source.match != verticesMap[id2]) {
+//        edgePaint.setARGB(255, 127, 127, 127);
+//    } else {
+//        edgePaint.setARGB(255, 0, 0, 255);
+//    }
     edgePaint.setStyle(Paint.Style.STROKE);
     edgePaint.setStrokeWidth(0.005 * canvas.getWidth() / rectangle.getWidth());
     edgePaint.setFlags(Paint.ANTI_ALIAS_FLAG);
 
-    var cp1 = Utils.canvasPoint(p1, rectangle, canvas)
-    var cp2 = Utils.canvasPoint(p2, rectangle, canvas)
+    var cp1 = Utils.canvasPoint(source.getPoint(), rectangle, canvas)
+    var cp2 = Utils.canvasPoint(target.getPoint(), rectangle, canvas)
 
     canvas.drawLine(cp1.getX(), cp1.getY(), cp2.getX(), cp2.getY(), edgePaint);
 }
