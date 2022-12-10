@@ -120,7 +120,7 @@ public class GraphView extends View implements GraphActionObserver {
                         drawEdge(
                                 canvas1,
                                 DrawManager.getRelative(rectangle, edge.getSource().getPoint()),
-                                DrawManager.getRelative(rectangle, edge.getSource().getPoint()),
+                                DrawManager.getRelative(rectangle, edge.getTarget().getPoint()),
                                 graph.getType()
                         )
                 );
