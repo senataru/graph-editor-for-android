@@ -121,7 +121,8 @@ public class GraphImpl implements Graph {
     public void removeProperty(String name) {
         List<Vertex> propertyVertices = verticesByProperty.get(name);
         if (propertyVertices == null) {
-            throw new IllegalArgumentException("No vertices with property " + name + " have been found");
+            return;
+//            throw new IllegalArgumentException("No vertices with property " + name + " have been found");
         }
         for (Vertex vertex : propertyVertices) {
             vertex.removeProperty(name);

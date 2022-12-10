@@ -38,7 +38,7 @@ function buildVertices(coreGraph) {
 
 function saveProperties(verticesMap, coreGraph) {
     if (verticesMap == null) {
-        coreGraph.removeProperty()
+        coreGraph.removeProperty(vertexColorPropertyName)
         return;
     }
     for (coreVertex in Iterator(coreGraph.getVertices())) {
