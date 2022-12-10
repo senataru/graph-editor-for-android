@@ -38,10 +38,6 @@ function buildVertices(coreGraph) {
 
 function saveProperties(verticesMap, coreGraph) {
     for (coreVertex in Iterator(coreGraph.getVertices())) {
-        var adjacentIds = []
-        for (coreEdge in Iterator(coreVertex.getEdges())) {
-            adjacentIds.push(coreEdge.getTarget().getIndex())
-        }
         jsVertex = verticesMap[coreVertex.getIndex()];
         if (jsVertex == null) {
             coreVertex.removeProperty(vertexColorPropertyName)
