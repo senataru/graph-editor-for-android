@@ -1,3 +1,5 @@
+package com.example.graph_editor.client;
+
 import java.io.*;
 import java.net.Socket;
 
