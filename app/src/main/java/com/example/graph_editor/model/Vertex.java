@@ -4,7 +4,7 @@ import com.example.graph_editor.model.mathematics.Point;
 
 import java.util.List;
 
-public interface Vertex {
+public interface Vertex extends PropertyContainer {
     int getIndex();
     void setIndex(int index);
     void addEdge(Vertex target);
@@ -13,7 +13,4 @@ public interface Vertex {
     List<Edge> getEdges();
     void setPoint(Point point);
     Point getPoint();
-    String getProperty(String name);
-    void setProperty(String name, String value);
-    void removeProperty(String name);
 }
