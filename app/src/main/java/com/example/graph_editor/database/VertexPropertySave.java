@@ -5,14 +5,14 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "property_save",
+@Entity(tableName = "vertex_property_save",
         foreignKeys = {
             @ForeignKey(
                     entity = Save.class,
                     parentColumns = "uid",
                     childColumns = "graphSaveUid")
         })
-public class PropertySave {
+public class VertexPropertySave {
     @PrimaryKey(autoGenerate = true)
     public long uid;
     @ColumnInfo(index = true)
@@ -24,7 +24,7 @@ public class PropertySave {
     @ColumnInfo(name = "Date")
     public long date;
 
-    public PropertySave(long graphSaveUid, String name, String property, long date) {
+    public VertexPropertySave(long graphSaveUid, String name, String property, long date) {
         this.name = name;
         this.property = property;
         this.date = date;

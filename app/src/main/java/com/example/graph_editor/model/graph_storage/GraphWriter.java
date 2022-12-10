@@ -23,7 +23,6 @@ public class GraphWriter {
         for (Edge e : edges) {
             int index1 = e.getSource().getIndex();
             int index2 = e.getTarget().getIndex();
-//            s.append(Math.min(index1, index2)).append(" ").append(Math.max(index1, index2)).append("\n");
             s.append(index1).append(" ").append(index2).append("\n");
         }
 
@@ -65,15 +64,15 @@ public class GraphWriter {
         return result.substring(0, result.length()-1);
     }
 
-    public static Map<String, String> getAllPropertyStrings(Graph graph) {
+    public static Map<String, String> getAllVertexPropertyStrings(Graph graph) {
         Map<String, String> propertyStrings = new HashMap<>();
         for (String propertyName : graph.getVertexPropertyNames()) {
-            propertyStrings.put(propertyName, getPropertyString(propertyName, graph));
+            propertyStrings.put(propertyName, getVertexPropertyString(propertyName, graph));
         }
         return propertyStrings;
     }
 
-    public static String getPropertyString(String propertyName, Graph graph) {
+    static String getVertexPropertyString(String propertyName, Graph graph) {
         List<Vertex> vertices = graph.getVerticesWithProperty(propertyName);
         if (vertices == null) {
             throw new IllegalArgumentException(

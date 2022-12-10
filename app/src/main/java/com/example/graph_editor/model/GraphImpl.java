@@ -100,14 +100,14 @@ public class GraphImpl implements Graph {
         for (Map.Entry<String, List<Vertex>> entry : verticesByProperty.entrySet()) {
             String propertyName = entry.getKey();
             for (Vertex vertex : entry.getValue()) {
-                target.setProperty(targetVertices.get(vertex.getIndex()), propertyName,
+                target.setVertexProperty(targetVertices.get(vertex.getIndex()), propertyName,
                         vertex.getProperty(propertyName));
             }
         }
     }
 
     @Override
-    public void setProperty(Vertex vertex, String name, String value) {
+    public void setVertexProperty(Vertex vertex, String name, String value) {
         Objects.requireNonNull(name, "Property name can not be null");
         Objects.requireNonNull(value, "Property value can not be null");
         if (!verticesByProperty.containsKey(name)) {
@@ -118,7 +118,7 @@ public class GraphImpl implements Graph {
     }
 
     @Override
-    public void removeProperty(String name) {
+    public void removeVertexProperty(String name) {
         List<Vertex> propertyVertices = verticesByProperty.get(name);
         if (propertyVertices == null) {
             throw new IllegalArgumentException("No vertices with property " + name + " have been found");

@@ -75,7 +75,7 @@ public class GraphScanner {
                 String[] split = text[i].split(" ");
                 int index = Integer.parseInt(split[0]);
                 String value = split[1];
-                graph.setProperty(graph.getVertices().get(index), propertyName, value);
+                graph.setVertexProperty(graph.getVertices().get(index), propertyName, value);
             }
         } catch (RuntimeException e) {
             throw new InvalidGraphStringException();

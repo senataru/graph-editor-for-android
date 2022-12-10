@@ -1,5 +1,8 @@
 package com.example.graph_editor.menu;
 
+import static com.example.graph_editor.menu.SharedPrefNames.CURRENT_GRAPH_ID;
+import static com.example.graph_editor.menu.SharedPrefNames.GRAPH_TYPE;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -80,8 +83,8 @@ public class MenuActivity extends AppCompatActivity {
 
     private void changeToDrawActivity(GraphType type) {
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt("GraphType", type.ordinal());
-        editor.putLong("currentGraphId", -1);
+        editor.putInt(GRAPH_TYPE, type.ordinal());
+        editor.putLong(CURRENT_GRAPH_ID, -1);
         editor.apply();
 
         Intent intent = new Intent(this, DrawActivity.class);

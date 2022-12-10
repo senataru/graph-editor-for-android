@@ -8,7 +8,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.graph_editor.R;
-import com.example.graph_editor.database.PropertySave;
+import com.example.graph_editor.database.VertexPropertySave;
 import com.example.graph_editor.database.Save;
 import com.example.graph_editor.database.SavesDatabase;
 import com.example.graph_editor.draw.DrawActivity;
@@ -52,13 +52,13 @@ public class SavePopup {
     }
 
     private void saveProperties(Graph graph, long graphSaveId, DrawActivity context, SavesDatabase database) {
-        Map<String, String> newPropertyStrings = GraphWriter.getAllPropertyStrings(graph);
+        Map<String, String> newPropertyStrings = GraphWriter.getAllVertexPropertyStrings(graph);
 
         for (String propertyName : newPropertyStrings.keySet()) {
-            PropertySave propertySave = new PropertySave(graphSaveId,
+            VertexPropertySave vertexPropertySave = new VertexPropertySave(graphSaveId,
                     propertyName, newPropertyStrings.get(propertyName), System.currentTimeMillis());
-            database.propertySaveDao().insertPropertySave(propertySave);
+            database.propertySaveDao().insertPropertySave(vertexPropertySave);
         }
-        context.updateGraphProperties(newPropertyStrings);
+        context.updateGraphVertexProperties(newPropertyStrings);
     }
 }

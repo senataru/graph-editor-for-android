@@ -1,6 +1,10 @@
 package com.example.graph_editor.draw;
 
 import static com.example.graph_editor.draw.ExtensionsMenuOptions.extensionsOptions;
+import static com.example.graph_editor.menu.SharedPrefNames.CURRENT_GRAPH;
+import static com.example.graph_editor.menu.SharedPrefNames.CURRENT_GRAPH_ID;
+import static com.example.graph_editor.menu.SharedPrefNames.GRAPH_TYPE;
+import static com.example.graph_editor.menu.SharedPrefNames.VERTEX_PROPERTIES;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -57,7 +61,7 @@ public class DrawActivity extends AppCompatActivity {
     private StateStack stateStack;
     private long currentGraphId = -1;
     private String graphString;
-    private Map<String, String> graphPropertyStrings = new HashMap<>();
+    private Map<String, String> graphVertexPropertyStrings = new HashMap<>();
 
 
     @Override
@@ -66,15 +70,16 @@ public class DrawActivity extends AppCompatActivity {
         setContentView(R.layout.activity_draw);
 
         SharedPreferences sharedPref = this.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
-        currentGraphId = sharedPref.getLong("currentGraphId", -1);
-        int choiceOrd = sharedPref.getInt("GraphType", 0);
-        graphString = sharedPref.getString("currentGraph", null);
-        Set<String> propertyStrings = sharedPref.getStringSet("currentGraphProperties", Collections.emptySet());
+        currentGraphId = sharedPref.getLong(CURRENT_GRAPH_ID, -1);
+        graphString = sharedPref.getString(CURRENT_GRAPH, null);
+        int choiceOrd = sharedPref.getInt(GRAPH_TYPE, 0);
+        Set<String> vertexPropertyStrings = sharedPref.getStringSet(VERTEX_PROPERTIES, Collections.emptySet());
 
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.remove("currentGraphId");
-        editor.remove("GraphType");
-        editor.remove("currentGraph");
+        editor.remove(CURRENT_GRAPH_ID);
+        editor.remove(CURRENT_GRAPH);
+        editor.remove(GRAPH_TYPE);
+        editor.remove(VERTEX_PROPERTIES);
         editor.apply();
 
         graphView = findViewById(R.id.viewGraph);
@@ -93,12 +98,12 @@ public class DrawActivity extends AppCompatActivity {
             pointer = savedInstanceState.getInt("Pointer");
             graph = stack.get(pointer);
 //            modeType = ActionModeType.valueOf(savedInstanceState.getString("ActionType"));
-            currentGraphId = savedInstanceState.getLong("currentGraphId", -1);
+            currentGraphId = savedInstanceState.getLong(CURRENT_GRAPH_ID, -1);
         } else { // either from browse or new graph
             if (graphString != null) {  // from browse
                 try {
                     graph = GraphScanner.fromExact(graphString);
-                    for (String propertyString : propertyStrings) {
+                    for (String propertyString : vertexPropertyStrings) {
                         GraphScanner.addVertexProperty(graph, propertyString);
                     }
                 } catch (InvalidGraphStringException e) {
@@ -181,16 +186,16 @@ public class DrawActivity extends AppCompatActivity {
         graphString = string;
     }
 
-    public void updateGraphProperties(Map<String, String> propertyStrings) {
+    public void updateGraphVertexProperties(Map<String, String> propertyStrings) {
         for(String propertyName : propertyStrings.keySet()) {
-            updateGraphProperty(propertyName, propertyStrings.get(propertyName));
+            updateGraphVertexProperty(propertyName, propertyStrings.get(propertyName));
         }
     }
 
-    public void updateGraphProperty(String name, String value) {
+    public void updateGraphVertexProperty(String name, String value) {
         Objects.requireNonNull(name, "Property name can not be null");
         Objects.requireNonNull(value, "Property value can not be null");
-        graphPropertyStrings.put(name, value);
+        graphVertexPropertyStrings.put(name, value);
     }
 
     public void makeSave(Runnable afterTask) {
@@ -199,10 +204,10 @@ public class DrawActivity extends AppCompatActivity {
         } else {
             Graph graph = stateStack.getCurrentState().getGraph();
             graphString = GraphWriter.toExact(graph);
-            graphPropertyStrings = GraphWriter.getAllPropertyStrings(graph);
+            graphVertexPropertyStrings = GraphWriter.getAllVertexPropertyStrings(graph);
             SavesDatabase database = SavesDatabase.getDbInstance(getApplicationContext());
             database.saveDao().updateGraph(currentGraphId, graphString, System.currentTimeMillis());
-            for (String propertyString : graphPropertyStrings.values()) {
+            for (String propertyString : graphVertexPropertyStrings.values()) {
                 database.propertySaveDao().updateProperty(currentGraphId, propertyString,
                         System.currentTimeMillis());
             }

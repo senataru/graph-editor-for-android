@@ -62,17 +62,17 @@ public class GraphWriterTest {
     }
 
     @Test
-    public void shouldGetPropertyString() {
+    public void shouldGetVertexPropertyString() {
         String propertyName = "propertyName";
         Graph graph = new GraphFactory(GraphType.UNDIRECTED).produce();
         graph.addVertex();
         graph.addVertex();
         graph.addVertex();
         List<Vertex> vertices = graph.getVertices();
-        graph.setProperty(vertices.get(0), propertyName, "a");
-        graph.setProperty(vertices.get(1), propertyName, "b");
-        graph.setProperty(vertices.get(2), propertyName, "c");
-        graph.setProperty(vertices.get(0), "otherProperty", "d");
+        graph.setVertexProperty(vertices.get(0), propertyName, "a");
+        graph.setVertexProperty(vertices.get(1), propertyName, "b");
+        graph.setVertexProperty(vertices.get(2), propertyName, "c");
+        graph.setVertexProperty(vertices.get(0), "otherProperty", "d");
         String expectedPropertyString = propertyName + "\n"
                 + "3\n"
                 + "0 a\n"
