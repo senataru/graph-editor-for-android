@@ -37,13 +37,13 @@ function buildVertices(coreGraph) {
 }
 
 function saveProperties(verticesMap, coreGraph) {
+    if (verticesMap == null) {
+        coreGraph.removeProperty()
+        return;
+    }
     for (coreVertex in Iterator(coreGraph.getVertices())) {
         jsVertex = verticesMap[coreVertex.getIndex()];
-        if (jsVertex == null) {
-            coreVertex.removeProperty(vertexColorPropertyName)
-        } else {
-            coreVertex.setProperty(vertexColorPropertyName, jsVertex.color.toString())
-        }
+        coreGraph.setProperty(coreVertex, vertexColorPropertyName, jsVertex.color.toString())
     }
 }
 
@@ -117,7 +117,7 @@ function matchingRequested(stateStack, coreGraph, view) {
         saveProperties(verticesMap, coreGraph);
         Toast.makeText(view.getContext(), "Computed matching!", Toast.LENGTH_SHORT).show();
     } else {
-        verticesMap = {}
+        verticesMap = null
         saveProperties(verticesMap, coreGraph);
         Toast.makeText(view.getContext(), "Your graph is not bipartite!", Toast.LENGTH_SHORT).show();
     }
