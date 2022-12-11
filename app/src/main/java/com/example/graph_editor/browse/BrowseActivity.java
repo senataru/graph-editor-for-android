@@ -37,7 +37,8 @@ public class BrowseActivity extends AppCompatActivity {
         super.onResume();
         SavesDatabase database = SavesDatabase.getDbInstance(getApplicationContext());
         SavedAdapter adapter = new SavedAdapter(this, database.saveDao().getAllSaves(),
-                database.propertySaveDao().getAllPropertySaves(), this);
+                database.vertexPropertySaveDao().getAllPropertySaves(),
+                database.edgePropertySaveDao().getAllPropertySaves(), this);
         saved.setAdapter(adapter);
         saved.setLayoutManager(new LinearLayoutManager(this));
 

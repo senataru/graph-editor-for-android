@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.graph_editor.R;
+import com.example.graph_editor.database.EdgePropertySave;
 import com.example.graph_editor.database.VertexPropertySave;
 import com.example.graph_editor.database.Save;
 import com.example.graph_editor.database.SavesDatabase;
@@ -39,7 +40,7 @@ public class SavePopup {
             long graphSaveId = database.saveDao().insertSaves(save)[0];
             context.updateGraph(graphSaveId, newGraphString);
 
-            saveProperties(graph, graphSaveId, context, database);
+            saveAllProperties(graph, graphSaveId, context, database);
 
             Toast.makeText(context.getApplicationContext(), "Graph saved", Toast.LENGTH_LONG).show();
             dialog.dismiss();
@@ -51,14 +52,30 @@ public class SavePopup {
         dialog.show();
     }
 
-    private void saveProperties(Graph graph, long graphSaveId, DrawActivity context, SavesDatabase database) {
+    private void saveAllProperties(Graph graph, long graphSaveId, DrawActivity context, SavesDatabase database) {
+        saveAllVertexProperties(graph, graphSaveId, context, database);
+        saveAllEdgeProperties(graph, graphSaveId, context, database);
+    }
+
+    private void saveAllVertexProperties(Graph graph, long graphSaveId, DrawActivity context, SavesDatabase database) {
         Map<String, String> newPropertyStrings = GraphWriter.getAllVertexPropertyStrings(graph);
 
         for (String propertyName : newPropertyStrings.keySet()) {
             VertexPropertySave vertexPropertySave = new VertexPropertySave(graphSaveId,
                     propertyName, newPropertyStrings.get(propertyName), System.currentTimeMillis());
-            database.propertySaveDao().insertPropertySave(vertexPropertySave);
+            database.vertexPropertySaveDao().insertPropertySave(vertexPropertySave);
         }
         context.updateGraphVertexProperties(newPropertyStrings);
+    }
+
+    private void saveAllEdgeProperties(Graph graph, long graphSaveId, DrawActivity context, SavesDatabase database) {
+        Map<String, String> newPropertyStrings = GraphWriter.getAllEdgePropertyStrings(graph);
+
+        for (String propertyName : newPropertyStrings.keySet()) {
+            EdgePropertySave edgePropertySave = new EdgePropertySave(graphSaveId,
+                    propertyName, newPropertyStrings.get(propertyName), System.currentTimeMillis());
+            database.edgePropertySaveDao().insertPropertySave(edgePropertySave);
+        }
+        context.updateGraphEdgeProperties(newPropertyStrings);
     }
 }
