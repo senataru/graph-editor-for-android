@@ -3,6 +3,7 @@ package com.example.graph_editor.draw;
 import static com.example.graph_editor.draw.ExtensionsMenuOptions.extensionsOptions;
 import static com.example.graph_editor.menu.SharedPrefNames.CURRENT_GRAPH;
 import static com.example.graph_editor.menu.SharedPrefNames.CURRENT_GRAPH_ID;
+import static com.example.graph_editor.menu.SharedPrefNames.EDGE_PROPERTIES;
 import static com.example.graph_editor.menu.SharedPrefNames.GRAPH_TYPE;
 import static com.example.graph_editor.menu.SharedPrefNames.VERTEX_PROPERTIES;
 
@@ -75,12 +76,14 @@ public class DrawActivity extends AppCompatActivity {
         graphString = sharedPref.getString(CURRENT_GRAPH, null);
         int choiceOrd = sharedPref.getInt(GRAPH_TYPE, 0);
         Set<String> vertexPropertyStrings = sharedPref.getStringSet(VERTEX_PROPERTIES, Collections.emptySet());
+        Set<String> edgePropertyStrings = sharedPref.getStringSet(EDGE_PROPERTIES, Collections.emptySet());
 
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.remove(CURRENT_GRAPH_ID);
         editor.remove(CURRENT_GRAPH);
         editor.remove(GRAPH_TYPE);
         editor.remove(VERTEX_PROPERTIES);
+        editor.remove(EDGE_PROPERTIES);
         editor.apply();
 
         graphView = findViewById(R.id.viewGraph);
@@ -104,9 +107,7 @@ public class DrawActivity extends AppCompatActivity {
             if (graphString != null) {  // from browse
                 try {
                     graph = GraphScanner.fromExact(graphString);
-                    for (String propertyString : vertexPropertyStrings) {
-                        GraphScanner.addVertexProperty(graph, propertyString);
-                    }
+                    addAllProperties(graph, vertexPropertyStrings, edgePropertyStrings);
                 } catch (InvalidGraphStringException e) {
                     e.printStackTrace();
                 }
@@ -150,6 +151,15 @@ public class DrawActivity extends AppCompatActivity {
         stateStack.getCurrentState().setGraphAction(modeType);
     }
 
+    private void addAllProperties(Graph graph, Set<String> vertexPropertyStrings,
+                                  Set<String> edgePropertyStrings) throws InvalidGraphStringException {
+        for (String vertexPropertyString : vertexPropertyStrings) {
+            GraphScanner.addVertexProperty(graph, vertexPropertyString);
+        }
+        for (String edgePropertyString : edgePropertyStrings) {
+            GraphScanner.addEdgeProperty(graph, edgePropertyString);
+        }
+    }
     @Override
     public void onDestroy() {
         super.onDestroy();

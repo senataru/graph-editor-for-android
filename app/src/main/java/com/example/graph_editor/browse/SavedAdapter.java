@@ -90,7 +90,8 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
             dao.updateGraph(newSave.uid, newSave.graph, System.currentTimeMillis());
             updateAllProperties(newSave);
 
-            browseActivity.changeActivity(graphString, data.get(position).uid, vertexPropertySaveStrings);
+            browseActivity.changeActivity(graphString, data.get(position).uid,
+                    vertexPropertySaveStrings, edgePropertySaveStrings);
         });
         holder.deleteButton.setOnClickListener(v ->
                 new ConfirmPopup(context, holder.dataGraph.getStateStack().getCurrentState().getGraph(), () -> {
@@ -101,7 +102,8 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
                     SavesDatabase.getDbInstance(context).saveDao().delete(s);
                 }).show()
         );
-        holder.shareButton.setOnClickListener(v -> new ShareAsTxtIntent(context, holder.dataGraph.getStateStack()).show());
+        holder.shareButton.setOnClickListener(
+                v -> new ShareAsTxtIntent(context, holder.dataGraph.getStateStack()).show());
     }
 
     private void addAllProperties(Graph graph, List<String> vertexPropertySaveStrings, List<String> edgePropertySaveStrings)
