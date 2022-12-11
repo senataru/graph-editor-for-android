@@ -84,7 +84,6 @@ public class AvailableExtensionsRecyclerViewAdapter
         b.setBackgroundColor(Color.MAGENTA);
     }
     private void disableButton(Button b) {
-        System.out.println("finee");
         b.setText(R.string.installed);
         b.setEnabled(false);
         b.setBackgroundColor(Color.DKGRAY);

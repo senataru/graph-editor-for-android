@@ -25,7 +25,6 @@ public class Client implements ExtensionsClient {
 
     // TO DO exception should actually be handled
     public void downloadExtension(File root, String name) throws IOException {
-        System.out.println("downloading...");
         socketOutput.writeUTF("get");
         socketOutput.writeUTF(name);
         
@@ -56,7 +55,6 @@ public class Client implements ExtensionsClient {
         for(int i = 0; i < numOfPlugins; i++) {
             result.add(socketInput.readUTF());
         }
-        System.out.println(result);
         return result;
     }
 
