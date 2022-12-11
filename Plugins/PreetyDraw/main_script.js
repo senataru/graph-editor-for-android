@@ -49,8 +49,8 @@ function drawVertex(vertex, rectangle, canvas) {
 }
 
 function drawEdge(edge, rectangle, canvas) {
-    var p1 = edge.getSource()
-    var p2 = edge.getTarget()
+    var p1 = edge.getSource().getPoint()
+    var p2 = edge.getTarget().getPoint()
     var edgePaint = new Paint();
     edgePaint.setARGB(255, 255, 255, 0);
     edgePaint.setStyle(Paint.Style.STROKE);
