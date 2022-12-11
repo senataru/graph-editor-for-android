@@ -2,6 +2,8 @@ package com.example.graph_editor.client;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Client {
     private Socket socket;
@@ -16,18 +18,19 @@ public class Client {
     }
 
     // TO DO exception should actually be handled
-    public void getPlugin(String name) throws IOException {
+    public void getPlugin(File root, String name) throws IOException {
         socketOutput.writeUTF("get");
         socketOutput.writeUTF(name);
         
         // what to do if the directory already exists?
-        new File(name).mkdirs();
+        File pluginDirectory = new File(root, name);
+        pluginDirectory.mkdirs();
         int fileCount = socketInput.readInt();
         for(int i = 0; i < fileCount; i++) {
             String filename = socketInput.readUTF();
-            new File(name + '/' + filename).createNewFile();
-            FileOutputStream stream = new FileOutputStream(name + '/' + filename);
-
+            File downloaded = new File(pluginDirectory, filename);
+            downloaded.createNewFile();
+            FileOutputStream stream = new FileOutputStream(downloaded);
             long size = socketInput.readLong(); // get the size of the file
             byte[] buffer = new byte[Client.bufsize];
             int bytes = 0;
@@ -39,12 +42,15 @@ public class Client {
         }
     }
 
-    public void getList() throws IOException {
+    public List<String> getList() throws IOException {
         socketOutput.writeUTF("list");
         int numOfPlugins = socketInput.readInt();
+        List<String> result = new ArrayList<>(numOfPlugins);
         for(int i = 0; i < numOfPlugins; i++) {
-            System.out.println(socketInput.readUTF());
+            result.add(socketInput.readUTF());
         }
+        System.out.println(result);
+        return result;
     }
 
     public void disconnect() throws IOException {
@@ -55,15 +61,15 @@ public class Client {
         socketOutput.close();
     }
 
-    public static void main(String[] argv) {
-        try {
-            Client client = new Client("20.0.120.235");
-            client.getList();
-            client.getPlugin("Dummy");
-            client.disconnect();
-        }
-        catch(IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    public static void main(String[] argv) {
+//        try {
+//            Client client = new Client("20.0.120.235");
+//            client.getList();
+//            client.getPlugin("Dummy");
+//            client.disconnect();
+//        }
+//        catch(IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }

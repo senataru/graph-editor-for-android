@@ -20,7 +20,7 @@ public class ExtensionsActivity extends AppCompatActivity {
         super.onResume();
         installedExtensions.setAdapter(new ExtensionsRecyclerViewAdapter(
                 this,
-                ExtensionsProvider.provideExtensions())
+                ExtensionsProvider.provideExtensions(this))
         );
     }
 }

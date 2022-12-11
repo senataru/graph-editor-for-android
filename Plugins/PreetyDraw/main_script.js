@@ -22,7 +22,8 @@ function canvasY(y, rectangle, canvas) {
     return (y - rectangle.getTop()) * canvas.getHeight() / rectangle.getHeight();
 }
 
-function drawVertex(point, rectangle, canvas) {
+function drawVertex(vertex, rectangle, canvas) {
+    var point = vertex.getPoint()
     var aPaint = new Paint;
     aPaint.setARGB(255, 255, 0, 255);
     aPaint.setStyle(Paint.Style.FILL);
@@ -47,7 +48,9 @@ function drawVertex(point, rectangle, canvas) {
     canvas.drawCircle(cx, cy, 0.010 * canvas.getWidth() / rectangle.getWidth(), strokePaint2);
 }
 
-function drawEdge(p1, p2, rectangle, canvas) {
+function drawEdge(edge, rectangle, canvas) {
+    var p1 = edge.getSource()
+    var p2 = edge.getTarget()
     var edgePaint = new Paint();
     edgePaint.setARGB(255, 255, 255, 0);
     edgePaint.setStyle(Paint.Style.STROKE);
