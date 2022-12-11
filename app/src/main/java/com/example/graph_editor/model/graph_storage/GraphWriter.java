@@ -93,4 +93,36 @@ public class GraphWriter {
         }
         return builder.toString();
     }
+
+    public static Map<String, String> getAllEdgePropertyStrings(Graph graph) {
+        Map<String, String> propertyStrings = new HashMap<>();
+        for (String propertyName : graph.getEdgePropertyNames()) {
+            propertyStrings.put(propertyName, getEdgePropertyString(propertyName, graph));
+        }
+        return propertyStrings;
+    }
+
+    static String getEdgePropertyString(String propertyName, Graph graph) {
+        List<Edge> edges = graph.getEdgesWithProperty(propertyName);
+        if (edges == null) {
+            throw new IllegalArgumentException(
+                    "No edges with property " + propertyName + " have been found");
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append(propertyName);
+        builder.append("\n");
+        builder.append(edges.size());
+        builder.append("\n");
+
+        for (Edge edge : edges) {
+            String value = edge.getProperty(propertyName);
+            builder.append(edge.getSource().getIndex());
+            builder.append(" ");
+            builder.append(edge.getTarget().getIndex());
+            builder.append(" ");
+            builder.append(value);
+            builder.append("\n");
+        }
+        return builder.toString();
+    }
 }

@@ -79,7 +79,62 @@ public class GraphWriterTest {
                 + "1 b\n"
                 + "2 c\n";
 
-        String propertyString = GraphWriter.getPropertyString(propertyName, graph);
+        String propertyString = GraphWriter.getVertexPropertyString(propertyName, graph);
+
+        assertEquals(propertyString, expectedPropertyString);
+    }
+
+    @Test
+    public void shouldGetEdgePropertyStringDirected() {
+        String propertyName = "propertyName";
+        Graph graph = new GraphFactory(GraphType.DIRECTED).produce();
+        //assuming indexes are based on order on vertex addition
+        Vertex v1 = graph.addVertex();
+        Vertex v2 = graph.addVertex();
+        Vertex v3 = graph.addVertex();
+        graph.addEdge(v1, v2);
+        graph.addEdge(v2, v3);
+        graph.addEdge(v3, v1);
+        graph.setEdgeProperty(graph.getEdge(v1, v2), propertyName, "a");
+        graph.setEdgeProperty(graph.getEdge(v2, v3), propertyName, "b");
+        graph.setEdgeProperty(graph.getEdge(v3, v1), propertyName, "c");
+        graph.setEdgeProperty(graph.getEdge(v3, v1), "otherProperty", "d");
+        String expectedPropertyString = propertyName + "\n"
+                + "3\n"
+                + "0 1 a\n"
+                + "1 2 b\n"
+                + "2 0 c\n";
+
+        String propertyString = GraphWriter.getEdgePropertyString(propertyName, graph);
+
+        assertEquals(propertyString, expectedPropertyString);
+    }
+
+    @Test
+    public void shouldGetEdgePropertyStringUndirected() {
+        String propertyName = "propertyName";
+        Graph graph = new GraphFactory(GraphType.UNDIRECTED).produce();
+        //assuming indexes are based on order on vertex addition
+        Vertex v1 = graph.addVertex();
+        Vertex v2 = graph.addVertex();
+        Vertex v3 = graph.addVertex();
+        graph.addEdge(v1, v2);
+        graph.addEdge(v2, v3);
+        graph.addEdge(v3, v1);
+        graph.setEdgeProperty(graph.getEdge(v1, v2), propertyName, "a");
+        graph.setEdgeProperty(graph.getEdge(v2, v3), propertyName, "b");
+        graph.setEdgeProperty(graph.getEdge(v3, v1), propertyName, "c");
+        graph.setEdgeProperty(graph.getEdge(v3, v1), "otherProperty", "d");
+        String expectedPropertyString = propertyName + "\n"
+                + "6\n"
+                + "0 1 a\n"
+                + "1 0 a\n"
+                + "1 2 b\n"
+                + "2 1 b\n"
+                + "2 0 c\n"
+                + "0 2 c\n";
+
+        String propertyString = GraphWriter.getEdgePropertyString(propertyName, graph);
 
         assertEquals(propertyString, expectedPropertyString);
     }

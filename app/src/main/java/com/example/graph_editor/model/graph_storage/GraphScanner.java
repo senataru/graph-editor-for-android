@@ -82,4 +82,27 @@ public class GraphScanner {
         }
         return graph;
     }
+
+    public static Graph addEdgeProperty(Graph graph, String s) throws InvalidGraphStringException {
+        String[] text = s.split("\n");
+
+        String propertyName = text[0];
+        int count = Integer.parseInt(text[1]);
+
+        try {
+            List<Vertex> vertices = graph.getVertices();
+            for (int i = 2; i < 2 + count; i++) {
+                String[] split = text[i].split(" ");
+                int sourceIndex = Integer.parseInt(split[0]);
+                int targetIndex = Integer.parseInt(split[1]);
+                Vertex sourceVertex = vertices.get(sourceIndex);
+                Vertex targetVertex = vertices.get(targetIndex);
+                String value = split[2];
+                graph.setEdgeProperty(graph.getEdge(sourceVertex, targetVertex), propertyName, value);
+            }
+        } catch (RuntimeException e) {
+            throw new InvalidGraphStringException();
+        }
+        return graph;
+    }
 }
