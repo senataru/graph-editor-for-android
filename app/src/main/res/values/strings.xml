@@ -66,8 +66,12 @@
     <string name="my_graphs">My graphs</string>
     <string name="new_graph">New graph</string>
     <string name="extensions">Extensions</string>
+    <string name="available_extensions">Available Extensions</string>
     <string name="back">Back</string>
     <string name="saved_graphs">Saved graphs</string>
     <string name="dark_theme">Dark theme</string>
     <string name="read_graph_from_text">Read graph from text</string>
+    <string name="installed">installed</string>
+    <string name="installing">installing</string>
+    <string name="install">install</string>
 </resources>
