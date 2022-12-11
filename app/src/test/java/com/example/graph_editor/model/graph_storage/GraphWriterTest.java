@@ -62,24 +62,79 @@ public class GraphWriterTest {
     }
 
     @Test
-    public void shouldGetPropertyString() {
+    public void shouldGetVertexPropertyString() {
         String propertyName = "propertyName";
         Graph graph = new GraphFactory(GraphType.UNDIRECTED).produce();
         graph.addVertex();
         graph.addVertex();
         graph.addVertex();
         List<Vertex> vertices = graph.getVertices();
-        graph.setProperty(vertices.get(0), propertyName, "a");
-        graph.setProperty(vertices.get(1), propertyName, "b");
-        graph.setProperty(vertices.get(2), propertyName, "c");
-        graph.setProperty(vertices.get(0), "otherProperty", "d");
+        graph.setVertexProperty(vertices.get(0), propertyName, "a");
+        graph.setVertexProperty(vertices.get(1), propertyName, "b");
+        graph.setVertexProperty(vertices.get(2), propertyName, "c");
+        graph.setVertexProperty(vertices.get(0), "otherProperty", "d");
         String expectedPropertyString = propertyName + "\n"
                 + "3\n"
                 + "0 a\n"
                 + "1 b\n"
                 + "2 c\n";
 
-        String propertyString = GraphWriter.getPropertyString(propertyName, graph);
+        String propertyString = GraphWriter.getVertexPropertyString(propertyName, graph);
+
+        assertEquals(propertyString, expectedPropertyString);
+    }
+
+    @Test
+    public void shouldGetEdgePropertyStringDirected() {
+        String propertyName = "propertyName";
+        Graph graph = new GraphFactory(GraphType.DIRECTED).produce();
+        //assuming indexes are based on order on vertex addition
+        Vertex v1 = graph.addVertex();
+        Vertex v2 = graph.addVertex();
+        Vertex v3 = graph.addVertex();
+        graph.addEdge(v1, v2);
+        graph.addEdge(v2, v3);
+        graph.addEdge(v3, v1);
+        graph.setEdgeProperty(graph.getEdge(v1, v2), propertyName, "a");
+        graph.setEdgeProperty(graph.getEdge(v2, v3), propertyName, "b");
+        graph.setEdgeProperty(graph.getEdge(v3, v1), propertyName, "c");
+        graph.setEdgeProperty(graph.getEdge(v3, v1), "otherProperty", "d");
+        String expectedPropertyString = propertyName + "\n"
+                + "3\n"
+                + "0 1 a\n"
+                + "1 2 b\n"
+                + "2 0 c\n";
+
+        String propertyString = GraphWriter.getEdgePropertyString(propertyName, graph);
+
+        assertEquals(propertyString, expectedPropertyString);
+    }
+
+    @Test
+    public void shouldGetEdgePropertyStringUndirected() {
+        String propertyName = "propertyName";
+        Graph graph = new GraphFactory(GraphType.UNDIRECTED).produce();
+        //assuming indexes are based on order on vertex addition
+        Vertex v1 = graph.addVertex();
+        Vertex v2 = graph.addVertex();
+        Vertex v3 = graph.addVertex();
+        graph.addEdge(v1, v2);
+        graph.addEdge(v2, v3);
+        graph.addEdge(v3, v1);
+        graph.setEdgeProperty(graph.getEdge(v1, v2), propertyName, "a");
+        graph.setEdgeProperty(graph.getEdge(v2, v3), propertyName, "b");
+        graph.setEdgeProperty(graph.getEdge(v3, v1), propertyName, "c");
+        graph.setEdgeProperty(graph.getEdge(v3, v1), "otherProperty", "d");
+        String expectedPropertyString = propertyName + "\n"
+                + "6\n"
+                + "0 1 a\n"
+                + "1 0 a\n"
+                + "1 2 b\n"
+                + "2 1 b\n"
+                + "2 0 c\n"
+                + "0 2 c\n";
+
+        String propertyString = GraphWriter.getEdgePropertyString(propertyName, graph);
 
         assertEquals(propertyString, expectedPropertyString);
     }

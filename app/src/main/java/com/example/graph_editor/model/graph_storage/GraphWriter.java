@@ -23,7 +23,6 @@ public class GraphWriter {
         for (Edge e : edges) {
             int index1 = e.getSource().getIndex();
             int index2 = e.getTarget().getIndex();
-//            s.append(Math.min(index1, index2)).append(" ").append(Math.max(index1, index2)).append("\n");
             s.append(index1).append(" ").append(index2).append("\n");
         }
 
@@ -65,15 +64,15 @@ public class GraphWriter {
         return result.substring(0, result.length()-1);
     }
 
-    public static Map<String, String> getAllPropertyStrings(Graph graph) {
+    public static Map<String, String> getAllVertexPropertyStrings(Graph graph) {
         Map<String, String> propertyStrings = new HashMap<>();
         for (String propertyName : graph.getVertexPropertyNames()) {
-            propertyStrings.put(propertyName, getPropertyString(propertyName, graph));
+            propertyStrings.put(propertyName, getVertexPropertyString(propertyName, graph));
         }
         return propertyStrings;
     }
 
-    public static String getPropertyString(String propertyName, Graph graph) {
+    static String getVertexPropertyString(String propertyName, Graph graph) {
         List<Vertex> vertices = graph.getVerticesWithProperty(propertyName);
         if (vertices == null) {
             throw new IllegalArgumentException(
@@ -88,6 +87,38 @@ public class GraphWriter {
         for (Vertex vertex : vertices) {
             String value = vertex.getProperty(propertyName);
             builder.append(vertex.getIndex());
+            builder.append(" ");
+            builder.append(value);
+            builder.append("\n");
+        }
+        return builder.toString();
+    }
+
+    public static Map<String, String> getAllEdgePropertyStrings(Graph graph) {
+        Map<String, String> propertyStrings = new HashMap<>();
+        for (String propertyName : graph.getEdgePropertyNames()) {
+            propertyStrings.put(propertyName, getEdgePropertyString(propertyName, graph));
+        }
+        return propertyStrings;
+    }
+
+    static String getEdgePropertyString(String propertyName, Graph graph) {
+        List<Edge> edges = graph.getEdgesWithProperty(propertyName);
+        if (edges == null) {
+            throw new IllegalArgumentException(
+                    "No edges with property " + propertyName + " have been found");
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append(propertyName);
+        builder.append("\n");
+        builder.append(edges.size());
+        builder.append("\n");
+
+        for (Edge edge : edges) {
+            String value = edge.getProperty(propertyName);
+            builder.append(edge.getSource().getIndex());
+            builder.append(" ");
+            builder.append(edge.getTarget().getIndex());
             builder.append(" ");
             builder.append(value);
             builder.append("\n");

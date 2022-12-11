@@ -10,11 +10,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 public class GraphImpl implements Graph {
     private final GraphType type;
     private final List<Vertex> vertices = new ArrayList<>();
     private final Map<String, List<Vertex>> verticesByProperty = new HashMap<>();
+    private final Map<String, List<Edge>> edgesByProperty = new HashMap<>();
 
     public GraphImpl(GraphType type) {
         this.type = type;
@@ -38,6 +40,16 @@ public class GraphImpl implements Graph {
         if (type == GraphType.UNDIRECTED) {
             target.addEdge(source);
         }
+    }
+
+    @Override
+    public Edge getEdge(Vertex source, Vertex target) {
+        for (Edge edge: source.getEdges()) {
+            if (edge.getTarget().equals(target)) {
+                return edge;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -88,26 +100,46 @@ public class GraphImpl implements Graph {
         Graph result = null;
         try {
             result = GraphScanner.fromExact(GraphWriter.toExact(this));
-            copyVertexProperties(result);
+            copyProperties(result);
         } catch (InvalidGraphStringException e) {
             e.printStackTrace();
         }
         return result;
     }
 
-    private void copyVertexProperties(Graph target) {
+    private void copyProperties(Graph target) {
         List<Vertex> targetVertices = target.getVertices();
         for (Map.Entry<String, List<Vertex>> entry : verticesByProperty.entrySet()) {
             String propertyName = entry.getKey();
             for (Vertex vertex : entry.getValue()) {
-                target.setProperty(targetVertices.get(vertex.getIndex()), propertyName,
+                target.setVertexProperty(targetVertices.get(vertex.getIndex()), propertyName,
                         vertex.getProperty(propertyName));
+            }
+        }
+        Map<Edge, Edge> edgesMap = getCorrespondingEdges(target, getEdges());
+        for (Map.Entry<String, List<Edge>> entry : edgesByProperty.entrySet()) {
+            String propertyName = entry.getKey();
+            for (Edge edge : entry.getValue()) {
+                target.setEdgeProperty(edgesMap.get(edge), propertyName,
+                        edge.getProperty(propertyName));
             }
         }
     }
 
+    private Map<Edge, Edge> getCorrespondingEdges(Graph copy, List<Edge> edges) {
+        Map<Edge, Edge> edgesMap = new HashMap<>();
+        List<Vertex> copyVertices = copy.getVertices();
+        for (Edge edge : edges) {
+            Vertex sourceCopy = copyVertices.get(edge.getSource().getIndex());
+            Vertex targetCopy = copyVertices.get(edge.getTarget().getIndex());
+            Edge edgeCopy = copy.getEdge(sourceCopy, targetCopy);
+            edgesMap.put(edge, edgeCopy);
+        }
+        return edgesMap;
+    }
+
     @Override
-    public void setProperty(Vertex vertex, String name, String value) {
+    public void setVertexProperty(Vertex vertex, String name, String value) {
         Objects.requireNonNull(name, "Property name can not be null");
         Objects.requireNonNull(value, "Property value can not be null");
         if (!verticesByProperty.containsKey(name)) {
@@ -118,7 +150,7 @@ public class GraphImpl implements Graph {
     }
 
     @Override
-    public void removeProperty(String name) {
+    public void removeVertexProperty(String name) {
         List<Vertex> propertyVertices = verticesByProperty.get(name);
         if (propertyVertices == null) {
             return;
@@ -138,5 +170,43 @@ public class GraphImpl implements Graph {
     @Override
     public List<String> getVertexPropertyNames() {
         return new ArrayList<>(verticesByProperty.keySet());
+    }
+
+    @Override
+    public void setEdgeProperty(Edge edge, String name, String value) {
+        Objects.requireNonNull(name, "Property name can not be null");
+        Objects.requireNonNull(value, "Property value can not be null");
+        if (!edgesByProperty.containsKey(name)) {
+            edgesByProperty.put(name, new ArrayList<>());
+        }
+        edgesByProperty.get(name).add(edge);
+        edge.setProperty(name, value);
+        if (type == GraphType.UNDIRECTED) {
+            Edge correspondingEdge = getEdge(edge.getTarget(), edge.getSource());
+            edgesByProperty.get(name).add(correspondingEdge);
+            correspondingEdge.setProperty(name, value);
+        }
+    }
+
+    @Override
+    public void removeEdgeProperty(String name) {
+        List<Edge> propertyEdges= edgesByProperty.get(name);
+        if (propertyEdges == null) {
+            throw new IllegalArgumentException("No edges with property " + name + " have been found");
+        }
+        for (Edge edge : propertyEdges) {
+            edge.removeProperty(name);
+        }
+        edgesByProperty.remove(name);
+    }
+
+    @Override
+    public List<Edge> getEdgesWithProperty(String name) {
+        return edgesByProperty.getOrDefault(name, Collections.emptyList());
+    }
+
+    @Override
+    public List<String> getEdgePropertyNames() {
+        return new ArrayList<>(edgesByProperty.keySet());
     }
 }

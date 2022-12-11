@@ -12,8 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.graph_editor.R;
-import com.example.graph_editor.database.PropertySave;
-import com.example.graph_editor.database.PropertySaveDao;
+import com.example.graph_editor.database.VertexPropertySave;
+import com.example.graph_editor.database.VertexPropertySaveDao;
 import com.example.graph_editor.database.Save;
 import com.example.graph_editor.database.SaveDao;
 import com.example.graph_editor.database.SavesDatabase;
@@ -31,19 +31,18 @@ import com.example.graph_editor.model.state.StateStackImpl;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
     private final Context context;
     private List<Save> data;
-    private final List<PropertySave> propertySaves;
+    private final List<VertexPropertySave> vertexPropertySaves;
     private final BrowseActivity browseActivity;
 
-    SavedAdapter(Context context, List<Save> data, List<PropertySave> propertySaves,
+    SavedAdapter(Context context, List<Save> data, List<VertexPropertySave> vertexPropertySaves,
                  BrowseActivity browseActivity) {
         this.context = context;
         this.data = data;
-        this.propertySaves = propertySaves;
+        this.vertexPropertySaves = vertexPropertySaves;
         this.browseActivity = browseActivity;
     }
 
@@ -60,7 +59,7 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
         holder.txtName.setText(data.get(position).name);
         String graphString = data.get(position).graph;
         long saveUid = data.get(position).uid;
-        List<String> propertySaveStrings = propertySaves.stream()
+        List<String> propertySaveStrings = vertexPropertySaves.stream()
                 .filter(propertySave -> propertySave.graphSaveUid == saveUid)
                 .map(propertySave -> propertySave.property)
                 .collect(Collectors.toList());
@@ -80,9 +79,9 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
         holder.editButton.setOnClickListener(v -> {
             Save s = data.get(position);
             SaveDao dao = SavesDatabase.getDbInstance(context).saveDao();
-            PropertySaveDao propertyDao = SavesDatabase.getDbInstance(context).propertySaveDao();
+            VertexPropertySaveDao propertyDao = SavesDatabase.getDbInstance(context).propertySaveDao();
             dao.updateGraph(s.uid, s.graph, System.currentTimeMillis());
-            propertySaves.stream()
+            vertexPropertySaves.stream()
                     .filter(save -> save.graphSaveUid == s.uid)
                     .forEach(save -> propertyDao.updateProperty(
                             save.uid, save.property, System.currentTimeMillis()));

@@ -9,11 +9,11 @@ import java.util.Map;
 import java.util.Objects;
 
 public class VertexImpl implements Vertex {
-    int index = -1;
-    List<Edge> edges = new ArrayList<>();
-    Point absolutePoint;
-    EdgeFactory edgeFactory;
-    Map<String, String> properties = new HashMap<>();
+    private int index = -1;
+    private final List<Edge> edges = new ArrayList<>();
+    private Point absolutePoint;
+    private final EdgeFactory edgeFactory;
+    private final Map<String, String> properties = new HashMap<>();
 
     public VertexImpl() {
         edgeFactory = new EdgeFactory(this);

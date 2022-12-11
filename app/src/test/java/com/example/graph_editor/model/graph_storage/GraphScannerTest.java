@@ -1,6 +1,7 @@
 package com.example.graph_editor.model.graph_storage;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import com.example.graph_editor.model.Edge;
@@ -61,5 +62,59 @@ public class GraphScannerTest {
         assertEquals(vertices.get(2).getProperty(propertyName), "c");
         assertTrue(result.getVertexPropertyNames().contains(propertyName));
         assertEquals(result.getVertexPropertyNames().size(), 1);
+    }
+
+    @Test
+    public void shouldAddEdgePropertyDirected() throws InvalidGraphStringException {
+        String propertyName = "propertyName";
+        String propertyString = propertyName + "\n"
+                + "3\n"
+                + "1 2 b\n"
+                + "0 1 a\n"
+                + "2 0 c\n";
+        Graph graph = new GraphFactory(GraphType.DIRECTED).produce();
+        Vertex v1 = graph.addVertex();
+        Vertex v2 = graph.addVertex();
+        Vertex v3 = graph.addVertex();
+        graph.addEdge(v1, v2);
+        graph.addEdge(v2, v3);
+        graph.addEdge(v3, v1);
+
+        Graph result = GraphScanner.addEdgeProperty(graph, propertyString);
+
+        List<Edge> propertyEdges = result.getEdgesWithProperty(propertyName);
+        assertEquals(propertyEdges.size(), 3);
+        assertEquals(graph.getEdge(v1, v2).getProperty(propertyName), "a");
+        assertEquals(graph.getEdge(v2, v3).getProperty(propertyName), "b");
+        assertEquals(graph.getEdge(v3, v1).getProperty(propertyName), "c");
+        assertTrue(result.getEdgePropertyNames().contains(propertyName));
+        assertEquals(result.getEdgePropertyNames().size(), 1);
+    }
+
+    @Test
+    public void shouldAddEdgePropertyUndirected() throws InvalidGraphStringException {
+        String propertyName = "propertyName";
+        String propertyString = propertyName + "\n"
+                + "3\n"
+                + "2 1 b\n"
+                + "0 1 a\n"
+                + "2 0 c\n";
+        Graph graph = new GraphFactory(GraphType.UNDIRECTED).produce();
+        Vertex v1 = graph.addVertex();
+        Vertex v2 = graph.addVertex();
+        Vertex v3 = graph.addVertex();
+        graph.addEdge(v1, v2);
+        graph.addEdge(v2, v3);
+        graph.addEdge(v3, v1);
+
+        Graph result = GraphScanner.addEdgeProperty(graph, propertyString);
+
+        List<Edge> propertyEdges = result.getEdgesWithProperty(propertyName);
+        assertEquals(propertyEdges.size(), 6);
+        assertEquals(graph.getEdge(v1, v2).getProperty(propertyName), "a");
+        assertEquals(graph.getEdge(v2, v3).getProperty(propertyName), "b");
+        assertEquals(graph.getEdge(v3, v1).getProperty(propertyName), "c");
+        assertTrue(result.getEdgePropertyNames().contains(propertyName));
+        assertEquals(result.getEdgePropertyNames().size(), 1);
     }
 }
