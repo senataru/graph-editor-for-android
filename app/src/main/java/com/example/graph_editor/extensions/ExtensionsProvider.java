@@ -14,6 +14,7 @@ import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ExtensionsProvider {
@@ -28,12 +29,12 @@ public class ExtensionsProvider {
         try {
             t.join();
             File[] pluginsDirectories = context.getFilesDir().listFiles();
-            for (File f : pluginsDirectories) {
-                File script = f.listFiles()[0]; //TODO change!!
+            for (File pluginDirectory : pluginsDirectories) {
+                File script = new File(pluginDirectory, "main_script.js");
                 ExtensionInvoker invoker = RhinoJSInvoker.createInstance(new FileReader(script));
                 extensions.add(
                         new Extension(
-                                f.getName(),
+                                pluginDirectory.getName(),
                                 invoker,
                                 new ScriptProxy(
                                         invoker,
@@ -52,7 +53,7 @@ public class ExtensionsProvider {
     }
     private static void downloadAllExtensions(Context context) {
         try {
-            Client client = new Client("192.168.1.38");
+            Client client = new Client("192.168.43.113");
             for (String pluginName : client.getList()) {
                 client.getPlugin(context.getFilesDir(), pluginName);
             }
