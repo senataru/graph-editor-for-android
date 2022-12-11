@@ -19,8 +19,8 @@ function deactivate(coreProxy/* com.example.graph_editor.extensions.ScriptProxy*
     coreProxy.restoreDefaultEdgeDrawingBehaviour();
 }
 
-function createVertex(ids) {
-    return {adjacentIds:ids, color:-1, match:null, visited:false}
+function createVertex(vertexId, ids) {
+    return {id:vertexId, adjacentIds:ids, color:-1, match:null, visited:false}
 }
 
 
@@ -31,19 +31,28 @@ function buildVertices(coreGraph) {
         for (coreEdge in Iterator(coreVertex.getEdges())) {
             adjacentIds.push(coreEdge.getTarget().getIndex())
         }
-        vertices[coreVertex.getIndex()] = createVertex(adjacentIds)
+        var id = coreVertex.getIndex()
+        vertices[id] = createVertex(id, adjacentIds)
     }
     return vertices
 }
 
 function saveProperties(verticesMap, coreGraph) {
     if (verticesMap == null) {
-        coreGraph.removeProperty(vertexColorPropertyName)
+        coreGraph.removeVertexProperty(vertexColorPropertyName)
+        coreGraph.removeEdgeProperty(edgeColorPropertyName)
         return;
     }
     for (coreVertex in Iterator(coreGraph.getVertices())) {
         jsVertex = verticesMap[coreVertex.getIndex()];
-        coreGraph.setProperty(coreVertex, vertexColorPropertyName, jsVertex.color.toString())
+        coreGraph.setVertexProperty(coreVertex, vertexColorPropertyName, jsVertex.color.toString())
+    }
+    for (coreEdge in Iterator(coreGraph.getEdges())) {
+        if (coreEdge.getTarget().getIndex() == verticesMap[coreEdge.getSource().getIndex()].match.id) {
+            coreGraph.setEdgeProperty(coreEdge, edgeColorPropertyName, "match-true")
+        } else {
+            coreGraph.setEdgeProperty(coreEdge, edgeColorPropertyName, "match-false")
+        }
     }
 }
 
@@ -148,12 +157,13 @@ function drawEdge(edge, rectangle, canvas) {
     var source = edge.getSource();
     var target = edge.getTarget();
 
-    edgePaint.setARGB(255, 127, 127, 127);
-//    if (source == null || source.match != verticesMap[id2]) {
-//        edgePaint.setARGB(255, 127, 127, 127);
-//    } else {
-//        edgePaint.setARGB(255, 0, 0, 255);
-//    }
+    var matchingStatus = edge.getProperty(edgeColorPropertyName)
+    if (matchingStatus == "match-true") {
+        edgePaint.setARGB(255, 0, 0, 255);
+    } else {
+        edgePaint.setARGB(255, 127, 127, 127);
+    }
+
     edgePaint.setStyle(Paint.Style.STROKE);
     edgePaint.setStrokeWidth(0.005 * canvas.getWidth() / rectangle.getWidth());
     edgePaint.setFlags(Paint.ANTI_ALIAS_FLAG);

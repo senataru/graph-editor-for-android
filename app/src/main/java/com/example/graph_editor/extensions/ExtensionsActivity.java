@@ -17,9 +17,15 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-public class ExtensionsActivity extends AppCompatActivity {
+interface OnExtensionInstallClicked {
+    void onInstallClicked(String extensionName);
+}
+
+public class ExtensionsActivity extends AppCompatActivity implements OnExtensionInstallClicked {
     RecyclerView installedView;
     RecyclerView availableView;
+
+    ExtensionsClient client;
 
     //TODO remove and inject it instead
     private static ExtensionsRepository installedRepository;
@@ -68,7 +74,7 @@ public class ExtensionsActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        ExtensionsClient client = pair.first;
+        client = pair.first;
         List<String> availableExtensions = pair.second;
 
         installedView.setAdapter(new InstalledExtensionsRecyclerViewAdapter(
@@ -79,7 +85,21 @@ public class ExtensionsActivity extends AppCompatActivity {
                 this,
                 availableExtensions,
                 installedRepository,
-                client
+                this
         ));
+    }
+
+    // TODO move to presenter
+    @Override
+    public void onInstallClicked(String extensionName) {
+        new Thread(() -> {
+            try {
+                client.downloadExtension(getFilesDir(), extensionName);
+                installedRepository.add(extensionName);
+                installedView.post(() -> installedView.getAdapter().notifyDataSetChanged());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 }

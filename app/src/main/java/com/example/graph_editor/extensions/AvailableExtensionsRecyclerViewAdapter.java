@@ -21,18 +21,18 @@ public class AvailableExtensionsRecyclerViewAdapter
         extends RecyclerView.Adapter<AvailableExtensionsRecyclerViewAdapter.Holder> {
     private final Context context;
     private final List<String> availableExtensions;
+    private final OnExtensionInstallClicked callback;
     private final ExtensionsRepository repository;
-    private final ExtensionsClient client;
 
     public AvailableExtensionsRecyclerViewAdapter(
             Context context,
             List<String> availableExtensions,
             ExtensionsRepository repository,
-            ExtensionsClient client) {
+            OnExtensionInstallClicked onExtensionInstallClicked) {
         this.context = context;
         this.availableExtensions = availableExtensions;
         this.repository = repository;
-        this.client = client;
+        this.callback = onExtensionInstallClicked;
     }
 
     @NonNull
@@ -53,17 +53,8 @@ public class AvailableExtensionsRecyclerViewAdapter
             enableButton(holder.install);
             holder.install.setOnClickListener(v -> {
                 blockButton(holder.install);
-                //TODO run async
-                Thread t = new Thread(() -> {
-                    try {
-                        client.downloadExtension(context.getFilesDir(), extensionName);
-                        repository.add(extensionName);
-                        disableButton(holder.install);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-                t.start();
+                callback.onInstallClicked(extensionName);
+                disableButton(holder.install);
             });
         }
     }

@@ -120,6 +120,7 @@ public class GraphImpl implements Graph {
         for (Map.Entry<String, List<Edge>> entry : edgesByProperty.entrySet()) {
             String propertyName = entry.getKey();
             for (Edge edge : entry.getValue()) {
+                System.out.println(edge.getSource().getIndex() + " " + edge.getTarget().getIndex());
                 target.setEdgeProperty(edgesMap.get(edge), propertyName,
                         edge.getProperty(propertyName));
             }
@@ -181,18 +182,19 @@ public class GraphImpl implements Graph {
         }
         edgesByProperty.get(name).add(edge);
         edge.setProperty(name, value);
-        if (type == GraphType.UNDIRECTED) {
-            Edge correspondingEdge = getEdge(edge.getTarget(), edge.getSource());
-            edgesByProperty.get(name).add(correspondingEdge);
-            correspondingEdge.setProperty(name, value);
-        }
+//        if (type == GraphType.UNDIRECTED) {
+//            Edge correspondingEdge = getEdge(edge.getTarget(), edge.getSource());
+//            edgesByProperty.get(name).add(correspondingEdge);
+//            correspondingEdge.setProperty(name, value);
+//        }
     }
 
     @Override
     public void removeEdgeProperty(String name) {
         List<Edge> propertyEdges= edgesByProperty.get(name);
         if (propertyEdges == null) {
-            throw new IllegalArgumentException("No edges with property " + name + " have been found");
+            return;
+//            throw new IllegalArgumentException("No edges with property " + name + " have been found");
         }
         for (Edge edge : propertyEdges) {
             edge.removeProperty(name);
