@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 
 public class DrawManager {
+    public static native double[] arrangeGraph(int size, int i, double[] tab, double[] tabY, int[] tabEdgeSource, int[] tabEdgeTarget);
+
     public static Point getRelative(Rectangle rectangle, Point point) {
         double x = (point.getX() - rectangle.getLeft())/rectangle.getWidth();
         double y = (point.getY() - rectangle.getTop())/rectangle.getHeight();
@@ -92,9 +94,34 @@ public class DrawManager {
         double extremeHeight = extremeRightBot.getY() - extremeLeftTop.getY();
         for(Vertex vertex : graph.getVertices()) {
             Point point = vertex.getPoint();
-            double x = (extremeWidth == 0.0)? 0.0 : (point.getX()-extremeLeftTop.getX())/extremeWidth;
-            double y = (extremeHeight == 0.0)? 0.0 : (point.getY()-extremeLeftTop.getY())/extremeHeight;
-            vertex.setPoint(new Point(x, y));
+        }
+    }
+
+    public static void arrangeGraphJava(Graph graph) {
+
+        double[] tabX = new double[graph.getVertices().size()];
+        double[] tabY = new double[graph.getVertices().size()];
+        int[] tabEdgeSource = new int[graph.getEdges().size()];
+        int[] tabEdgeTarget = new int[graph.getEdges().size()];
+        System.out.println(graph.getVertices().size());
+        for(Vertex vertex : graph.getVertices()) {
+            Point point = vertex.getPoint();
+            System.out.println(vertex.getIndex());
+            System.out.println(point);
+            tabX[vertex.getIndex()] = point.getX();
+            tabY[vertex.getIndex()] = point.getY();
+        }
+        int j = 0;
+        for(Edge edge : graph.getEdges()) {
+            tabEdgeSource[j] = edge.getSource().getIndex();
+            tabEdgeTarget[j] = edge.getTarget().getIndex();
+            j++;
+        }
+        double[] new_pos = arrangeGraph(graph.getVertices().size(), graph.getEdges().size(), tabX, tabY, tabEdgeSource, tabEdgeTarget);
+        for(Vertex vertex : graph.getVertices()) {
+            vertex.setPoint(new Point(new_pos[vertex.getIndex()], new_pos[vertex.getIndex() + graph.getVertices().size()]));
+            System.out.println(vertex.getIndex());
+            System.out.println(vertex.getPoint());
         }
     }
 

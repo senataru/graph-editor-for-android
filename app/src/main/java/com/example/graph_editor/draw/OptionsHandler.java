@@ -44,6 +44,12 @@ public class OptionsHandler {
                 stateStack.undo();
                 graphView.postInvalidate();
                 return true;
+            case R.id.options_btn_arrange:
+                stateStack.backup();
+                State state = stateStack.getCurrentState();
+                DrawManager.arrangeGraphJava(state.getGraph());
+                graphView.postInvalidate();
+                return true;
             //more actions
             case R.id.options_btn_clear:
                 stateStack.backup();
