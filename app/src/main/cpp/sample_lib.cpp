@@ -89,7 +89,7 @@ JNIEXPORT jdoubleArray JNICALL
 Java_com_example_graph_1editor_model_DrawManager_arrangeGraph(__unused JNIEnv *env, jclass clazz,
                                                               jint n,
                                                               jint m,
-                                                                                                                                   jdoubleArray tab_x,
+                                                              jdoubleArray tab_x,
                                                               jdoubleArray tab_y,
                                                               jintArray tab_edge_source,
                                                               jintArray tab_edge_target) {
@@ -119,6 +119,7 @@ Java_com_example_graph_1editor_model_DrawManager_arrangeGraph(__unused JNIEnv *e
     ld cooling = 1.1;
     const int iterations = 200;
     for (int i = 0; i < iterations; ++i) {
+        ld max_diff = 0;
         // calculate repulsive forces
         for (auto &v : V) {
             // each Vertex has two vectors: .pos and .disp
@@ -154,13 +155,17 @@ Java_com_example_graph_1editor_model_DrawManager_arrangeGraph(__unused JNIEnv *e
 
         for (auto &v : V) {
             if (v.free) {
-                v.pos = v.pos + ((v.disp.module() > t) ? v.disp / v.disp.module() * t : v.disp);
+                auto delta = ((v.disp.module() > t) ? v.disp / v.disp.module() * t : v.disp);
+                max_diff = std::max(delta.x, max_diff);
+                max_diff = std::max(delta.y, max_diff);
+                v.pos = v.pos + delta;
             }
             v.pos.x = fmin(W, fmax(-W, v.pos.x));
             v.pos.y = fmin(H, fmax(-H, v.pos.y));
             v.disp.clear();
         }
         t = t / cooling;
+        if (max_diff <= 0.001) break;
     }
     jdoubleArray res = env->NewDoubleArray(n*2);
     jdouble res_tab[n*2];
