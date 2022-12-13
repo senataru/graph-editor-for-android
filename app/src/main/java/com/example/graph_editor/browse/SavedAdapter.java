@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.graph_editor.R;
+import com.example.graph_editor.database.EdgePropertySave;
+import com.example.graph_editor.database.EdgePropertySaveDao;
 import com.example.graph_editor.database.VertexPropertySave;
 import com.example.graph_editor.database.VertexPropertySaveDao;
 import com.example.graph_editor.database.Save;
@@ -23,6 +25,7 @@ import com.example.graph_editor.draw.popups.ShareAsTxtIntent;
 import com.example.graph_editor.extensions.CanvasManagerImpl;
 import com.example.graph_editor.model.graph_storage.GraphScanner;
 import com.example.graph_editor.model.Graph;
+import com.example.graph_editor.model.graph_storage.InvalidGraphStringException;
 import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
@@ -36,13 +39,15 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
     private final Context context;
     private List<Save> data;
     private final List<VertexPropertySave> vertexPropertySaves;
+    private final List<EdgePropertySave> edgePropertySaves;
     private final BrowseActivity browseActivity;
 
     SavedAdapter(Context context, List<Save> data, List<VertexPropertySave> vertexPropertySaves,
-                 BrowseActivity browseActivity) {
+                 List<EdgePropertySave> edgePropertySaves, BrowseActivity browseActivity) {
         this.context = context;
         this.data = data;
         this.vertexPropertySaves = vertexPropertySaves;
+        this.edgePropertySaves = edgePropertySaves;
         this.browseActivity = browseActivity;
     }
 
@@ -59,15 +64,18 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
         holder.txtName.setText(data.get(position).name);
         String graphString = data.get(position).graph;
         long saveUid = data.get(position).uid;
-        List<String> propertySaveStrings = vertexPropertySaves.stream()
+        List<String> vertexPropertySaveStrings = vertexPropertySaves.stream()
+                .filter(propertySave -> propertySave.graphSaveUid == saveUid)
+                .map(propertySave -> propertySave.property)
+                .collect(Collectors.toList());
+        List<String> edgePropertySaveStrings = edgePropertySaves.stream()
                 .filter(propertySave -> propertySave.graphSaveUid == saveUid)
                 .map(propertySave -> propertySave.property)
                 .collect(Collectors.toList());
         try {
             Graph graph = GraphScanner.fromExact(graphString);
-            for (String propertyString: propertySaveStrings) {
-                GraphScanner.addVertexProperty(graph, propertyString);
-            }
+            addAllProperties(graph, vertexPropertySaveStrings, edgePropertySaveStrings);
+
             StateStack stack = new StateStackImpl(
                 () -> {},
                 new State(graph, new Rectangle(new Point(0, 0), new Point(1, 1)), new GraphAction.MoveCanvas())
@@ -77,15 +85,13 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
             e.printStackTrace();
         }
         holder.editButton.setOnClickListener(v -> {
-            Save s = data.get(position);
+            Save newSave = data.get(position);
             SaveDao dao = SavesDatabase.getDbInstance(context).saveDao();
-            VertexPropertySaveDao propertyDao = SavesDatabase.getDbInstance(context).propertySaveDao();
-            dao.updateGraph(s.uid, s.graph, System.currentTimeMillis());
-            vertexPropertySaves.stream()
-                    .filter(save -> save.graphSaveUid == s.uid)
-                    .forEach(save -> propertyDao.updateProperty(
-                            save.uid, save.property, System.currentTimeMillis()));
-            browseActivity.changeActivity(graphString, data.get(position).uid, propertySaveStrings);
+            dao.updateGraph(newSave.uid, newSave.graph, System.currentTimeMillis());
+            updateAllProperties(newSave);
+
+            browseActivity.changeActivity(graphString, data.get(position).uid,
+                    vertexPropertySaveStrings, edgePropertySaveStrings);
         });
         holder.deleteButton.setOnClickListener(v ->
                 new ConfirmPopup(context, holder.dataGraph.getStateStack().getCurrentState().getGraph(), () -> {
@@ -96,7 +102,31 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
                     SavesDatabase.getDbInstance(context).saveDao().delete(s);
                 }).show()
         );
-        holder.shareButton.setOnClickListener(v -> new ShareAsTxtIntent(context, holder.dataGraph.getStateStack()).show());
+        holder.shareButton.setOnClickListener(
+                v -> new ShareAsTxtIntent(context, holder.dataGraph.getStateStack()).show());
+    }
+
+    private void addAllProperties(Graph graph, List<String> vertexPropertySaveStrings, List<String> edgePropertySaveStrings)
+            throws InvalidGraphStringException {
+        for (String vertexPropertyString: vertexPropertySaveStrings) {
+            GraphScanner.addVertexProperty(graph, vertexPropertyString);
+        }
+        for (String edgePropertyString: edgePropertySaveStrings) {
+            GraphScanner.addEdgeProperty(graph, edgePropertyString);
+        }
+    }
+
+    private void updateAllProperties(Save newSave) {
+        VertexPropertySaveDao vertexPropertyDao = SavesDatabase.getDbInstance(context).vertexPropertySaveDao();
+        EdgePropertySaveDao edgePropertyDao = SavesDatabase.getDbInstance(context).edgePropertySaveDao();
+        vertexPropertySaves.stream()
+                .filter(save -> save.graphSaveUid == newSave.uid)
+                .forEach(save -> vertexPropertyDao.updateProperty(
+                        save.uid, save.property, System.currentTimeMillis()));
+        edgePropertySaves.stream()
+                .filter(save -> save.graphSaveUid == newSave.uid)
+                .forEach(save -> edgePropertyDao.updateProperty(
+                        save.uid, save.property, System.currentTimeMillis()));
     }
 
     @Override

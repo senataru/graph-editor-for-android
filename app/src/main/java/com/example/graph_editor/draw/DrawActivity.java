@@ -3,6 +3,7 @@ package com.example.graph_editor.draw;
 import static com.example.graph_editor.draw.ExtensionsMenuOptions.extensionsOptions;
 import static com.example.graph_editor.menu.SharedPrefNames.CURRENT_GRAPH;
 import static com.example.graph_editor.menu.SharedPrefNames.CURRENT_GRAPH_ID;
+import static com.example.graph_editor.menu.SharedPrefNames.EDGE_PROPERTIES;
 import static com.example.graph_editor.menu.SharedPrefNames.GRAPH_TYPE;
 import static com.example.graph_editor.menu.SharedPrefNames.VERTEX_PROPERTIES;
 
@@ -62,6 +63,7 @@ public class DrawActivity extends AppCompatActivity {
     private long currentGraphId = -1;
     private String graphString;
     private Map<String, String> graphVertexPropertyStrings = new HashMap<>();
+    private Map<String, String> graphEdgePropertyStrings = new HashMap<>();
 
 
     @Override
@@ -74,12 +76,14 @@ public class DrawActivity extends AppCompatActivity {
         graphString = sharedPref.getString(CURRENT_GRAPH, null);
         int choiceOrd = sharedPref.getInt(GRAPH_TYPE, 0);
         Set<String> vertexPropertyStrings = sharedPref.getStringSet(VERTEX_PROPERTIES, Collections.emptySet());
+        Set<String> edgePropertyStrings = sharedPref.getStringSet(EDGE_PROPERTIES, Collections.emptySet());
 
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.remove(CURRENT_GRAPH_ID);
         editor.remove(CURRENT_GRAPH);
         editor.remove(GRAPH_TYPE);
         editor.remove(VERTEX_PROPERTIES);
+        editor.remove(EDGE_PROPERTIES);
         editor.apply();
 
         graphView = findViewById(R.id.viewGraph);
@@ -103,9 +107,7 @@ public class DrawActivity extends AppCompatActivity {
             if (graphString != null) {  // from browse
                 try {
                     graph = GraphScanner.fromExact(graphString);
-                    for (String propertyString : vertexPropertyStrings) {
-                        GraphScanner.addVertexProperty(graph, propertyString);
-                    }
+                    addAllProperties(graph, vertexPropertyStrings, edgePropertyStrings);
                 } catch (InvalidGraphStringException e) {
                     e.printStackTrace();
                 }
@@ -149,6 +151,15 @@ public class DrawActivity extends AppCompatActivity {
         stateStack.getCurrentState().setGraphAction(modeType);
     }
 
+    private void addAllProperties(Graph graph, Set<String> vertexPropertyStrings,
+                                  Set<String> edgePropertyStrings) throws InvalidGraphStringException {
+        for (String vertexPropertyString : vertexPropertyStrings) {
+            GraphScanner.addVertexProperty(graph, vertexPropertyString);
+        }
+        for (String edgePropertyString : edgePropertyStrings) {
+            GraphScanner.addEdgeProperty(graph, edgePropertyString);
+        }
+    }
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -198,6 +209,18 @@ public class DrawActivity extends AppCompatActivity {
         graphVertexPropertyStrings.put(name, value);
     }
 
+    public void updateGraphEdgeProperties(Map<String, String> propertyStrings) {
+        for(String propertyName : propertyStrings.keySet()) {
+            updateGraphEdgeProperty(propertyName, propertyStrings.get(propertyName));
+        }
+    }
+
+    public void updateGraphEdgeProperty(String name, String value) {
+        Objects.requireNonNull(name, "Property name can not be null");
+        Objects.requireNonNull(value, "Property value can not be null");
+        graphEdgePropertyStrings.put(name, value);
+    }
+
     public void makeSave(Runnable afterTask) {
         if(currentGraphId == -1) {
             new SavePopup().show(stateStack.getCurrentState().getGraph(), this, afterTask);
@@ -205,14 +228,24 @@ public class DrawActivity extends AppCompatActivity {
             Graph graph = stateStack.getCurrentState().getGraph();
             graphString = GraphWriter.toExact(graph);
             graphVertexPropertyStrings = GraphWriter.getAllVertexPropertyStrings(graph);
+            graphEdgePropertyStrings = GraphWriter.getAllEdgePropertyStrings(graph);
             SavesDatabase database = SavesDatabase.getDbInstance(getApplicationContext());
             database.saveDao().updateGraph(currentGraphId, graphString, System.currentTimeMillis());
-            for (String propertyString : graphVertexPropertyStrings.values()) {
-                database.propertySaveDao().updateProperty(currentGraphId, propertyString,
-                        System.currentTimeMillis());
-            }
+            saveAllProperties(database);
+
             Toast.makeText(this, "Graph saved", Toast.LENGTH_LONG).show();
             afterTask.run();
+        }
+    }
+
+    private void saveAllProperties(SavesDatabase database) {
+        for (String propertyString : graphVertexPropertyStrings.values()) {
+            database.vertexPropertySaveDao().updateProperty(currentGraphId, propertyString,
+                    System.currentTimeMillis());
+        }
+        for (String propertyString : graphEdgePropertyStrings.values()) {
+            database.edgePropertySaveDao().updateProperty(currentGraphId, propertyString,
+                    System.currentTimeMillis());
         }
     }
 

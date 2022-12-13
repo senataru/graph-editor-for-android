@@ -2,6 +2,7 @@ package com.example.graph_editor.browse;
 
 import static com.example.graph_editor.menu.SharedPrefNames.CURRENT_GRAPH;
 import static com.example.graph_editor.menu.SharedPrefNames.CURRENT_GRAPH_ID;
+import static com.example.graph_editor.menu.SharedPrefNames.EDGE_PROPERTIES;
 import static com.example.graph_editor.menu.SharedPrefNames.VERTEX_PROPERTIES;
 
 import android.content.Context;
@@ -37,7 +38,8 @@ public class BrowseActivity extends AppCompatActivity {
         super.onResume();
         SavesDatabase database = SavesDatabase.getDbInstance(getApplicationContext());
         SavedAdapter adapter = new SavedAdapter(this, database.saveDao().getAllSaves(),
-                database.propertySaveDao().getAllPropertySaves(), this);
+                database.vertexPropertySaveDao().getAllPropertySaves(),
+                database.edgePropertySaveDao().getAllPropertySaves(), this);
         saved.setAdapter(adapter);
         saved.setLayoutManager(new LinearLayoutManager(this));
 
@@ -45,12 +47,14 @@ public class BrowseActivity extends AppCompatActivity {
         if (adapter.getData().size() > 0) noSavedGraphs.setAlpha(0f);
     }
 
-    public void changeActivity(String graphString, long graphId, List<String> vertexPropertyStrings) {
+    public void changeActivity(String graphString, long graphId,
+                               List<String> vertexPropertyStrings, List<String> edgePropertyStrings) {
         SharedPreferences sharedPref = this.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(CURRENT_GRAPH, graphString);
         editor.putLong(CURRENT_GRAPH_ID, graphId);
         editor.putStringSet(VERTEX_PROPERTIES, new HashSet<>(vertexPropertyStrings));
+        editor.putStringSet(EDGE_PROPERTIES, new HashSet<>(edgePropertyStrings));
         editor.apply();
 
         Intent intent = new Intent(this, DrawActivity.class);
