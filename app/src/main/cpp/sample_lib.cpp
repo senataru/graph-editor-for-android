@@ -53,6 +53,19 @@ public:
     friend PairXY min(const PairXY &one, const PairXY &another) {
         return {std::min(one.x, another.x), std::min(one.y, another.y)};
     }
+    friend PairXY sqr(const PairXY &x)  {
+        return {x.x * x.x, x.y * x.y};
+    }
+    friend ld dist2(const PairXY &v, const PairXY &w)  {
+        return sqrt(v.x - w.x) + sqrt(v.y - w.y);
+    }
+    PairXY shortestPointFromSegment(const PairXY &v, const PairXY &w) const {
+        ld l2 = dist2(v, w);
+        if (l2 == 0) return v;
+        auto t = ((x - v.x) * (w.x - v.x) + (y - v.y) * (w.y - v.y)) / l2;
+        t = std::max((ld)0, std::min((ld)1, t));
+        return {v.x + t * (w.x - v.x), v.y + t * (w.y - v.y)};
+    }
 };
 
 class Vertex {
@@ -113,6 +126,18 @@ Java_com_example_graph_1editor_model_DrawManager_arrangeGraph(__unused JNIEnv *e
                     auto delta = v.pos - u.pos;
                     v.disp = v.disp + (delta / delta.module()) * fr(delta.module(), k, n);
 
+                }
+            }
+        }
+        // calculate repulsive forces between vertices and edges
+        for (auto &p : V) {
+            // each Vertex has two vectors: .pos and .disp
+            for (auto &v : V) {
+                for (auto &e: E[v.id]) {
+                    auto &u = V[e];
+                    if (p.id == v.id || p.id == u.id) continue;
+                    auto delta = (p.pos - p.pos.shortestPointFromSegment(v.pos, u.pos));
+                    p.disp = p.disp + (delta / delta.module()) * fr(delta.module(), k, n);
                 }
             }
         }
