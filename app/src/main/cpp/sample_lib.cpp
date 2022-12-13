@@ -91,7 +91,8 @@ Java_com_example_graph_1editor_model_DrawManager_arrangeGraph(__unused JNIEnv *e
     std::vector<std::vector<int>> E(n);
     for (int i = 0; i < n; ++i) {
         V.emplace_back(i);
-        V[i].setPos(x[i]*1000, y[i]*1000);
+        //V[i].setPos(x[i]*1000, y[i]*1000);
+        V[i].setPos(x[i], y[i]);
     }
     for (int i = 0; i < m; ++i) {
         E[edge_source[i]].push_back(edge_target[i]);
@@ -138,9 +139,29 @@ Java_com_example_graph_1editor_model_DrawManager_arrangeGraph(__unused JNIEnv *e
     jdoubleArray res = env->NewDoubleArray(n*2);
     jdouble res_tab[n*2];
     int j=0;
-    for (Vertex v : V) {
-        res_tab[j] = v.pos.x/1000;
-        res_tab[j+n] = v.pos.y/1000;
+    double mnx = (*std::min_element(V.begin(), V.end(), [](auto a, auto b) {
+       return a.pos.x < b.pos.x;
+    })).pos.x;
+    double mny = (*std::min_element(V.begin(), V.end(), [](auto a, auto b) {
+        return a.pos.y < b.pos.y;
+    })).pos.x;
+    double mxx = (*std::min_element(V.begin(), V.end(), [](auto a, auto b) {
+        return a.pos.x > b.pos.x;
+    })).pos.x;
+    double mxy = (*std::min_element(V.begin(), V.end(), [](auto a, auto b) {
+        return a.pos.y > b.pos.y;
+    })).pos.x;
+    for (Vertex &v : V) {
+        v.pos.x -= mnx;
+        v.pos.y -= mny;
+        v.pos.x /= (mxx - mnx);
+        v.pos.y /= (mxy - mny);
+    }
+
+    for (Vertex &v : V) {
+        res_tab[j] = v.pos.x;
+        res_tab[j+n] = v.pos.y;
+        ++j;
     };
     env->SetDoubleArrayRegion(res, (jsize)0, (jsize)n*2, res_tab);
     return res;
