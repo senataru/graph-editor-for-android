@@ -89,12 +89,12 @@ JNIEXPORT jdoubleArray JNICALL
 Java_com_example_graph_1editor_model_DrawManager_arrangeGraph(__unused JNIEnv *env, jclass clazz,
                                                               jint n,
                                                               jint m,
-                                                              jdoubleArray tab_x,
+                                                                                                                                   jdoubleArray tab_x,
                                                               jdoubleArray tab_y,
                                                               jintArray tab_edge_source,
                                                               jintArray tab_edge_target) {
 
-    ld W = 1000, H = 1000;
+    ld W = 1, H = 1;
     std::vector<Vertex> V;
     jint *edge_source = (*env).GetIntArrayElements(tab_edge_source, 0);
     jint *edge_target = (*env).GetIntArrayElements(tab_edge_target, 0);
@@ -105,7 +105,8 @@ Java_com_example_graph_1editor_model_DrawManager_arrangeGraph(__unused JNIEnv *e
     for (int i = 0; i < n; ++i) {
         V.emplace_back(i);
         //V[i].setPos(x[i]*1000, y[i]*1000);
-        V[i].setPos(x[i], y[i]);
+        //V[i].setPos(float(rand())/RAND_MAX-0.5, float(rand())/RAND_MAX-0.5);
+        V[i].setPos(x[i] / 2, y[i] / 2);
     }
     for (int i = 0; i < m; ++i) {
         E[edge_source[i]].push_back(edge_target[i]);
@@ -155,8 +156,8 @@ Java_com_example_graph_1editor_model_DrawManager_arrangeGraph(__unused JNIEnv *e
             if (v.free) {
                 v.pos = v.pos + ((v.disp.module() > t) ? v.disp / v.disp.module() * t : v.disp);
             }
-            v.pos.x = fmin(W / 2, fmax(-W / 2, v.pos.x));
-            v.pos.y = fmin(H / 2, fmax(-H / 2, v.pos.y));
+            v.pos.x = fmin(W, fmax(-W, v.pos.x));
+            v.pos.y = fmin(H, fmax(-H, v.pos.y));
             v.disp.clear();
         }
         t = t / cooling;
@@ -169,13 +170,13 @@ Java_com_example_graph_1editor_model_DrawManager_arrangeGraph(__unused JNIEnv *e
     })).pos.x;
     double mny = (*std::min_element(V.begin(), V.end(), [](auto a, auto b) {
         return a.pos.y < b.pos.y;
-    })).pos.x;
+    })).pos.y;
     double mxx = (*std::min_element(V.begin(), V.end(), [](auto a, auto b) {
         return a.pos.x > b.pos.x;
     })).pos.x;
     double mxy = (*std::min_element(V.begin(), V.end(), [](auto a, auto b) {
         return a.pos.y > b.pos.y;
-    })).pos.x;
+    })).pos.y;
     for (Vertex &v : V) {
         v.pos.x -= mnx;
         v.pos.y -= mny;
