@@ -11,7 +11,6 @@ import com.example.graph_editor.model.graph_storage.GraphScanner;
 import com.example.graph_editor.model.graph_storage.GraphWriter;
 import com.example.graph_editor.model.graph_storage.InvalidGraphStringException;
 import com.example.graph_editor.model.DrawManager;
-import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.model.state.StateStack;

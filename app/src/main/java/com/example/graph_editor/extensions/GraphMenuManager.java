@@ -1,12 +1,8 @@
-package com.example.graph_editor.model.extensions;
+package com.example.graph_editor.extensions;
 
-import android.content.Context;
 import android.view.View;
 
-import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.state.StateStack;
-
-import java.util.function.Consumer;
 
 public interface GraphMenuManager {
     interface MenuOptionHandler {

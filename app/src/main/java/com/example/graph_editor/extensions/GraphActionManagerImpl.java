@@ -2,7 +2,7 @@ package com.example.graph_editor.extensions;
 
 import android.util.Pair;
 
-import com.example.graph_editor.draw.action_mode_type.GraphAction;
+import com.example.graph_editor.draw.graph_action.GraphAction;
 import com.example.graph_editor.model.extensions.GraphActionManager;
 
 import java.util.Collection;

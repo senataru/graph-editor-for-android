@@ -1,7 +1,5 @@
 package com.example.graph_editor.model.state;
 
-import com.example.graph_editor.model.Graph;
-
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,9 +1,5 @@
 package com.example.graph_editor.model.graph_storage;
 
-import com.example.graph_editor.model.Edge;
-import com.example.graph_editor.model.Graph;
-import com.example.graph_editor.model.Vertex;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

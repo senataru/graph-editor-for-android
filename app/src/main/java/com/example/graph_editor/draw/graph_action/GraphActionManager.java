@@ -1,6 +1,4 @@
-package com.example.graph_editor.model.extensions;
-
-import com.example.graph_editor.draw.action_mode_type.GraphAction;
+package com.example.graph_editor.draw.graph_action;
 
 public interface GraphActionManager {
     int registerAction(String imageButtonPath, GraphAction onActionSelection);

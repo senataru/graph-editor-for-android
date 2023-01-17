@@ -19,14 +19,12 @@ import com.example.graph_editor.database.VertexPropertySaveDao;
 import com.example.graph_editor.database.Save;
 import com.example.graph_editor.database.SaveDao;
 import com.example.graph_editor.database.SavesDatabase;
-import com.example.graph_editor.draw.action_mode_type.GraphAction;
+import com.example.graph_editor.draw.graph_action.GraphAction;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.ShareAsTxtIntent;
 import com.example.graph_editor.extensions.CanvasManagerImpl;
 import com.example.graph_editor.model.graph_storage.GraphScanner;
-import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.graph_storage.InvalidGraphStringException;
-import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.model.state.StateStack;
@@ -34,6 +32,9 @@ import com.example.graph_editor.model.state.StateStackImpl;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import graph_editor.geometry.Point;
+import graph_editor.graph.Graph;
 
 public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
     private final Context context;

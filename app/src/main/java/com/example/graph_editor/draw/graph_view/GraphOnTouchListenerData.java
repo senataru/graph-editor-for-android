@@ -1,9 +1,6 @@
 package com.example.graph_editor.draw.graph_view;
 
-import com.example.graph_editor.draw.action_mode_type.GraphAction;
-import com.example.graph_editor.model.Graph;
-import com.example.graph_editor.model.Vertex;
-import com.example.graph_editor.model.mathematics.Point;
+import com.example.graph_editor.draw.graph_action.GraphAction;
 import com.example.graph_editor.model.mathematics.Rectangle;
 
 public class GraphOnTouchListenerData {

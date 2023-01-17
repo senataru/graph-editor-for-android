@@ -14,10 +14,7 @@ import android.widget.Toast;
 
 import com.example.graph_editor.R;
 import com.example.graph_editor.model.DrawManager;
-import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.InputSanitizer;
-import com.example.graph_editor.model.graph_generators.GraphGenerator;
-import com.example.graph_editor.model.graph_generators.Parameter;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.model.state.StateStack;
@@ -25,6 +22,10 @@ import com.example.graph_editor.model.state.StateStack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import graph_editor.graph.Graph;
+import graph_editor.graph_generators.GraphGenerator;
+import graph_editor.graph_generators.Parameter;
 
 public class GeneratePopup {
     private final Context context;

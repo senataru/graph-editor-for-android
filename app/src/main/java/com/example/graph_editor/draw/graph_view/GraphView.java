@@ -17,13 +17,11 @@ import android.view.View;
 import androidx.annotation.Nullable;
 
 import com.example.graph_editor.draw.Settings;
-import com.example.graph_editor.draw.action_mode_type.GraphActionObserver;
-import com.example.graph_editor.draw.action_mode_type.GraphAction;
+import com.example.graph_editor.draw.graph_action.GraphActionObserver;
+import com.example.graph_editor.draw.graph_action.GraphAction;
 import com.example.graph_editor.model.DrawManager;
-import com.example.graph_editor.model.Graph;
 import com.example.graph_editor.model.GraphType;
 import com.example.graph_editor.model.extensions.CanvasManager;
-import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.model.state.StateStack;

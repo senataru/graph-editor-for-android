@@ -1,14 +1,14 @@
-package com.example.graph_editor.model.extensions;
+package com.example.graph_editor.extensions;
 
 import android.graphics.Canvas;
 
-import com.example.graph_editor.model.Edge;
-import com.example.graph_editor.model.Vertex;
-import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.mathematics.Rectangle;
 
 import java.util.Collection;
 import java.util.Optional;
+
+import graph_editor.graph.Edge;
+import graph_editor.graph.Vertex;
 
 public interface CanvasManager {
     interface VertexDrawer {

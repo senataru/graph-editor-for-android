@@ -1,7 +1,5 @@
 package com.example.graph_editor.extensions;
 
-import com.example.graph_editor.model.extensions.CanvasManager;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;

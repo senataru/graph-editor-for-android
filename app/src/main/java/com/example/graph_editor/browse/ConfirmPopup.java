@@ -7,15 +7,15 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.graph_editor.R;
-import com.example.graph_editor.draw.action_mode_type.GraphAction;
+import com.example.graph_editor.draw.graph_action.GraphAction;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.extensions.CanvasManagerImpl;
-import com.example.graph_editor.model.Graph;
-import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.model.state.StateStack;
 import com.example.graph_editor.model.state.StateStackImpl;
+
+import graph_editor.graph.Graph;
 
 public class ConfirmPopup {
     Context context;

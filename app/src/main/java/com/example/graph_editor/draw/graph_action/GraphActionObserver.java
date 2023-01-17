@@ -1,4 +1,4 @@
-package com.example.graph_editor.draw.action_mode_type;
+package com.example.graph_editor.draw.graph_action;
 
 public interface GraphActionObserver {
     void update(GraphAction newAction);

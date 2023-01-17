@@ -6,7 +6,7 @@ import android.widget.ImageButton;
 import androidx.core.content.ContextCompat;
 
 import com.example.graph_editor.R;
-import com.example.graph_editor.draw.action_mode_type.GraphAction;
+import com.example.graph_editor.draw.graph_action.GraphAction;
 import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.model.state.StateStack;
 

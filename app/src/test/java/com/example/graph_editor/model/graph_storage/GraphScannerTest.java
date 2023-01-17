@@ -4,17 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import com.example.graph_editor.model.Edge;
-import com.example.graph_editor.model.Graph;
-import com.example.graph_editor.model.GraphFactory;
 import com.example.graph_editor.model.GraphType;
-import com.example.graph_editor.model.Vertex;
 
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class GraphScannerTest {
     @Test

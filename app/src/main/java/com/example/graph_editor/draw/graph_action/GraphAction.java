@@ -1,4 +1,4 @@
-package com.example.graph_editor.draw.action_mode_type;
+package com.example.graph_editor.draw.graph_action;
 
 import android.view.MotionEvent;
 import android.view.View;
@@ -8,9 +8,6 @@ import androidx.annotation.NonNull;
 import com.example.graph_editor.draw.graph_view.GraphOnTouchListenerData;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.model.DrawManager;
-import com.example.graph_editor.model.Edge;
-import com.example.graph_editor.model.Vertex;
-import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.StateStack;
 

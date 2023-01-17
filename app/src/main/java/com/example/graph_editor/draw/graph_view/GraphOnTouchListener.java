@@ -5,9 +5,8 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.example.graph_editor.draw.Settings;
-import com.example.graph_editor.draw.action_mode_type.GraphAction;
+import com.example.graph_editor.draw.graph_action.GraphAction;
 import com.example.graph_editor.model.DrawManager;
-import com.example.graph_editor.model.mathematics.Point;
 import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.model.state.StateStack;
 

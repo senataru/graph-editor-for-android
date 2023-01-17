@@ -1,8 +1,7 @@
 package com.example.graph_editor.model.state;
 
-import com.example.graph_editor.draw.action_mode_type.GraphActionObserver;
-import com.example.graph_editor.draw.action_mode_type.GraphAction;
-import com.example.graph_editor.model.Graph;
+import com.example.graph_editor.draw.graph_action.GraphActionObserver;
+import com.example.graph_editor.draw.graph_action.GraphAction;
 import com.example.graph_editor.model.mathematics.Rectangle;
 
 import java.util.ArrayList;
