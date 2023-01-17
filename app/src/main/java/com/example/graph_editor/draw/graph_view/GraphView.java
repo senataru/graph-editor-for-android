@@ -27,6 +27,7 @@ import com.example.graph_editor.model.state.State;
 
 import graph_editor.geometry.Point;
 import graph_editor.graph.Graph;
+import graph_editor.graph.GraphStack;
 
 public class GraphView extends View implements GraphActionObserver {
     private final int baseVertexRadius = 7;
@@ -37,11 +38,12 @@ public class GraphView extends View implements GraphActionObserver {
     private Paint edgePaint;
     private boolean fixedWidth;
 
-    private StateStack stateStack;
 
     private boolean interactive = false;
     private boolean isLazyInitialised = false;
     private CanvasManager canvasManager;
+    private GraphStack graphStack;
+    private State state;
 
     public GraphView(Context context) {
         super(context);
@@ -76,10 +78,11 @@ public class GraphView extends View implements GraphActionObserver {
     }
 
     // !! this alone is not enough, all due to height being lazily calculated
-    public void initialize(CanvasManager canvasManager, StateStack stack, boolean interactive) {
+    public void initialize(CanvasManager canvasManager, GraphStack stack, State state, boolean interactive) {
         this.canvasManager = canvasManager;
         this.interactive = interactive;
-        this.stateStack = stack;
+        this.graphStack = stack;
+        this.state = state;
         isLazyInitialised = false;
 
         postInvalidate();
@@ -87,10 +90,9 @@ public class GraphView extends View implements GraphActionObserver {
 
     @SuppressLint("ClickableViewAccessibility")
     private void lazyInitialize() {
-        State currentState = stateStack.getCurrentState();
         Rectangle rec = new Rectangle(new Point(0, 0), new Point(1.0, 1.0 * getHeight() / getWidth()));
-        Rectangle optimalRec = DrawManager.getOptimalRectangle(currentState.getGraph(),0.1, rec);
-        currentState.setRectangle(optimalRec);
+        Rectangle optimalRec = DrawManager.getOptimalRectangle(graphStack.getCurrentGraph(),0.1, rec);
+        state.setRectangle(optimalRec);
         if (interactive) {
             GraphOnTouchListener onTouchListener = new GraphOnTouchListener(getContext(), this, stateStack);
             this.setOnTouchListener(onTouchListener);
@@ -107,9 +109,8 @@ public class GraphView extends View implements GraphActionObserver {
         }
 
         fixedWidth = Settings.getFixedWidth(getContext());
-        State state = stateStack.getCurrentState();
         Rectangle rectangle = state.getRectangle();
-        Graph graph = state.getGraph();
+        Graph graph = graphStack.getCurrentGraph();
 
         vertexRadius = getDrawWidth(rectangle.getScale(), baseVertexRadius);
         edgePaint.setStrokeWidth((float)getDrawWidth(rectangle.getScale(), baseEdgeWidth));
@@ -119,9 +120,9 @@ public class GraphView extends View implements GraphActionObserver {
                 canvasManager.getEdgeDrawer().orElse((edge, r, canvas1) ->
                         drawEdge(
                                 canvas1,
-                                DrawManager.getRelative(rectangle, edge.getSource().getPoint()),
-                                DrawManager.getRelative(rectangle, edge.getTarget().getPoint()),
-                                graph.getType()
+                                DrawManager.getRelative(rectangle, state.getCoordinates(edge.getSource()),
+                                DrawManager.getRelative(rectangle, state.getCoordinates(edge.getTarget())
+//TODO use graphType?           graph.getType()
                         )
                 );
         graph.getEdges().forEach(e -> edgeDrawer.drawEdge(
@@ -146,7 +147,7 @@ public class GraphView extends View implements GraphActionObserver {
         canvas.drawCircle(x, y, (float)vertexRadius, vertexPaint);
     }
 
-    private void drawEdge(Canvas canvas, Point start, Point end, GraphType type) {
+    private void drawEdge(Canvas canvas, Point start, Point end /*, GraphType type*/) {
         float x1 = (float) start.getX() * getWidth();
         float y1 = (float) start.getY() * getHeight();
         float x2 = (float) end.getX() * getWidth();
@@ -157,13 +158,13 @@ public class GraphView extends View implements GraphActionObserver {
         if (dx*dx + dy*dy < 0.1*0.1) return;
 
         canvas.drawLine(x1, y1, x2, y2, edgePaint);
-        if (type == GraphType.DIRECTED) {
-            drawArrow(edgePaint, canvas, x1, y1, x2, y2);
-        }
+//        if (type == GraphType.DIRECTED) {
+//            drawArrow(edgePaint, canvas, x1, y1, x2, y2);
+//        }
     }
 
     private void drawArrow(Paint paint, Canvas canvas, float x1, float y1, float x2, float y2) {
-        float radius = (float)getDrawWidth(stateStack.getCurrentState().getRectangle().getScale(), 50);
+        float radius = (float)getDrawWidth(state.getRectangle().getScale(), 50);
         float angle = 30;
 
         float angleRad= (float) (PI*angle/180.0f);
@@ -195,6 +196,6 @@ public class GraphView extends View implements GraphActionObserver {
         return new Point(point.getX()/getWidth(), point.getY()/getHeight());
     }
 
-    public StateStack getStateStack() { return stateStack; }
+//    public StateStack getStateStack() { return stateStack; }
 
 }

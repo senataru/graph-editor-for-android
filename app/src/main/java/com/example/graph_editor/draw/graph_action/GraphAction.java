@@ -15,18 +15,19 @@ import java.util.HashSet;
 import java.util.Set;
 
 import graph_editor.geometry.Point;
+import graph_editor.graph.GraphStack;
 import graph_editor.graph.Vertex;
 
 public interface GraphAction {
     //TODO remove view parameter, because v == view
-    boolean perform(View v, @NonNull MotionEvent event, StateStack stateStack, GraphOnTouchListenerData data, GraphView view);
+    boolean perform(View v, @NonNull MotionEvent event, GraphStack graphStack, GraphOnTouchListenerData data, GraphView view);
 
     class NewVertex implements GraphAction {
         @Override
-        public boolean perform(View v, @NonNull MotionEvent event, StateStack stateStack, GraphOnTouchListenerData data, GraphView view) {
+        public boolean perform(View v, @NonNull MotionEvent event, GraphStack graphStack, GraphOnTouchListenerData data, GraphView view) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    stateStack.backup();
+                    graphStack.backup();
                     data.newVertex = data.graph.addVertex();
                     data.newVertex.setPoint(data.currentAbsolutePoint);
                     break;
@@ -44,10 +45,10 @@ public interface GraphAction {
     }
     class NewEdge implements GraphAction {
         @Override
-        public boolean perform(View v, @NonNull MotionEvent event, StateStack stateStack, GraphOnTouchListenerData data, GraphView view) {
+        public boolean perform(View v, @NonNull MotionEvent event, GraphStack graphStack, GraphOnTouchListenerData data, GraphView view) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    stateStack.backup();
+                    graphStack.backup();
                     Vertex nearest = DrawManager.getNearestVertex(data.graph, data.rectangle, data.currentRelativePoint, 0.1, Collections.emptySet());
                     data.edgeFirst = data.graph.addVertex();
                     if (nearest != null) {
@@ -103,11 +104,11 @@ public interface GraphAction {
     }
     class MoveObject implements GraphAction {
         @Override
-        public boolean perform(View v, @NonNull MotionEvent event, StateStack stateStack, GraphOnTouchListenerData data, GraphView view) {
+        public boolean perform(View v, @NonNull MotionEvent event, GraphStack graphStack, GraphOnTouchListenerData data, GraphView view) {
             Vertex nearest = DrawManager.getNearestVertex(data.graph, data.rectangle, data.currentRelativePoint, 0.1, Collections.emptySet());
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    stateStack.backup();
+                    graphStack.backup();
                     if (data.movedVertex == null && nearest != null)       // select a vertex
                         data.movedVertex = nearest;
                 case MotionEvent.ACTION_MOVE:
@@ -124,9 +125,9 @@ public interface GraphAction {
     }
     class RemoveObject implements GraphAction {
         @Override
-        public boolean perform(View v, @NonNull MotionEvent event, StateStack stateStack, GraphOnTouchListenerData data, GraphView view) {
+        public boolean perform(View v, @NonNull MotionEvent event, GraphStack graphStack, GraphOnTouchListenerData data, GraphView view) {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                stateStack.backup();
+                graphStack.backup();
             }
 
             Vertex nearestVertex;
@@ -143,7 +144,7 @@ public interface GraphAction {
     }
     class MoveCanvas implements GraphAction {
         @Override
-        public boolean perform(View v, @NonNull MotionEvent event, StateStack stateStack, GraphOnTouchListenerData data, GraphView view) {
+        public boolean perform(View v, @NonNull MotionEvent event, GraphStack graphStack, GraphOnTouchListenerData data, GraphView view) {
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
                 case MotionEvent.ACTION_DOWN:
                     data.movePreviousX = event.getX();
@@ -160,13 +161,13 @@ public interface GraphAction {
                 case MotionEvent.ACTION_POINTER_DOWN:
                     // going into zoom mode, initialize zoom variables
                     int indexB = event.getActionIndex();
-                    data.zoomInitialRectangle = stateStack.getCurrentState().getRectangle().deepCopy();
+                    data.zoomInitialRectangle = graphStack.getCurrentState().getRectangle().deepCopy();
                     data.secondPointerId = event.getPointerId(indexB);
                     data.zoomFirstAbsoluteStart = data.previousAbsolutePoint;
-                    data.zoomSecondAbsoluteStart = DrawManager.getAbsolute(stateStack.getCurrentState().getRectangle(),
+                    data.zoomSecondAbsoluteStart = DrawManager.getAbsolute(graphStack.getCurrentState().getRectangle(),
                             view.getRelative(new Point(event.getX(indexB), event.getY(indexB))));
                     data.zoomIsDeactivated = false;
-                    stateStack.getCurrentState().setGraphAction(new ZoomCanvas());
+                    graphStack.getCurrentState().setGraphAction(new ZoomCanvas());
                     break;
                 case MotionEvent.ACTION_UP:
                     break;
@@ -177,7 +178,7 @@ public interface GraphAction {
     }
     class ZoomCanvas implements GraphAction {
         @Override
-        public boolean perform(View v, @NonNull MotionEvent event, StateStack stateStack, GraphOnTouchListenerData data, GraphView view) {
+        public boolean perform(View v, @NonNull MotionEvent event, GraphStack graphStack, GraphOnTouchListenerData data, GraphView view) {
             int indexA = event.findPointerIndex(data.firstPointerId);
             int indexB = event.findPointerIndex(data.secondPointerId);
 
@@ -190,7 +191,7 @@ public interface GraphAction {
                     Point secondRelativeEnd = view.getRelative(new Point(event.getX(indexB), event.getY(indexB)));
 
                     Rectangle newRectangle = DrawManager.getZoomedRectangle(data.zoomInitialRectangle, data.zoomFirstAbsoluteStart, data.zoomSecondAbsoluteStart, firstRelativeEnd, secondRelativeEnd);
-                    stateStack.getCurrentState().setRectangle(newRectangle);
+                    graphStack.getCurrentState().setRectangle(newRectangle);
 
                     break;
                 case MotionEvent.ACTION_POINTER_DOWN:
@@ -198,7 +199,7 @@ public interface GraphAction {
                     data.zoomIsDeactivated = true;
                     break;
                 case MotionEvent.ACTION_UP:
-                    stateStack.getCurrentState().setGraphAction(new MoveCanvas());
+                    graphStack.getCurrentState().setGraphAction(new MoveCanvas());
                     break;
             }
             return true;

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GraphScanner {
+    //
     public static Graph fromExact(String s) throws InvalidGraphStringException {
         Graph g;
         String[] t = s.split("\n");

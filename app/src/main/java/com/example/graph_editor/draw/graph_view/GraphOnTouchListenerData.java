@@ -6,10 +6,11 @@ import com.example.graph_editor.model.mathematics.Rectangle;
 import graph_editor.geometry.Point;
 import graph_editor.graph.Graph;
 import graph_editor.graph.Vertex;
+import graph_editor.properties.PropertyGraphBuilder;
 
 public class GraphOnTouchListenerData {
     // globals
-    public Graph graph;
+    public PropertyGraphBuilder builder;
     public Rectangle rectangle;
     public Point currentRelativePoint;
     public Point currentAbsolutePoint;

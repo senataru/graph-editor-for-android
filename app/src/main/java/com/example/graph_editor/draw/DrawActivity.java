@@ -42,7 +42,6 @@ import com.example.graph_editor.model.graph_storage.InvalidGraphStringException;
 import com.example.graph_editor.model.GraphType;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
-import com.example.graph_editor.model.state.StateStackImpl;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -54,11 +53,16 @@ import java.util.Set;
 
 import graph_editor.geometry.Point;
 import graph_editor.graph.Graph;
+import graph_editor.graph.GraphStack;
 
 public class DrawActivity extends AppCompatActivity {
     private final static int extensions_start = 1;
     private GraphView graphView;
-    private StateStack stateStack;
+    private GraphStack graphStack;
+
+    //TODO anti-pattern?
+    private State state;
+
     private long currentGraphId = -1;
     private String graphString;
     private Map<String, String> graphVertexPropertyStrings = new HashMap<>();
@@ -117,20 +121,20 @@ public class DrawActivity extends AppCompatActivity {
             }
         }
         assert graph != null;
-        stateStack = new StateStackImpl(
+        graphStack = new StateStackImpl(
                 () -> {
                     invalidateOptionsMenu();
-                    graphView.update(stateStack.getCurrentState().getGraphAction());
+                    graphView.update(state.getGraphAction());
                 },
                 // the rectangle is temporary and will be replaced as soon as possible (when the height will be known)
                 new State(graph, new Rectangle(new Point(0, 0), new Point(1, 1)), new GraphAction.MoveCanvas()),
                 stack,
                 pointer
         );
-        graphView.initialize(new CanvasManagerImpl(), stateStack,true);
-        stateStack.getCurrentState().addObserver(graphView);
+        graphView.initialize(new CanvasManagerImpl(), graphStack, state, true);
+        state.addObserver(graphView);
 
-        NavigationButtonCollection buttonCollection = new NavigationButtonCollection(this, stateStack);
+        NavigationButtonCollection buttonCollection = new NavigationButtonCollection(this, graphStack);
         buttonCollection.add(findViewById(R.id.btnVertex), new GraphAction.NewVertex());
         buttonCollection.add(findViewById(R.id.btnEdge), new GraphAction.NewEdge());
         buttonCollection.add(findViewById(R.id.btnMoveObject), new GraphAction.MoveObject());
@@ -147,7 +151,7 @@ public class DrawActivity extends AppCompatActivity {
             buttonCollection.add(imageButton, it.second);
         }
         buttonCollection.setCurrent(modeType);
-        stateStack.getCurrentState().setGraphAction(modeType);
+        state.setGraphAction(modeType);
     }
 
     private void addAllProperties(Graph graph, Set<String> vertexPropertyStrings,
@@ -162,16 +166,16 @@ public class DrawActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        stateStack.getCurrentState().removeObserver(graphView);
+        state.removeObserver(graphView);
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        String s = GraphWriter.toExactList(stateStack.getGraphStack());
+        String s = GraphWriter.toExactList(graphStack.getGraphStack());
         outState.putString("GraphStack", s);
-        outState.putInt("Pointer", stateStack.getPointer());
+        outState.putInt("Pointer", graphStack.getPointer());
 //        outState.putString("ActionType", stateStack.getCurrentState().getGraphAction().name());
         outState.putLong("currentGraphId", currentGraphId);
     }
@@ -222,9 +226,9 @@ public class DrawActivity extends AppCompatActivity {
 
     public void makeSave(Runnable afterTask) {
         if(currentGraphId == -1) {
-            new SavePopup().show(stateStack.getCurrentState().getGraph(), this, afterTask);
+            new SavePopup().show(graphStack.getCurrentGraph(), this, afterTask);
         } else {
-            Graph graph = stateStack.getCurrentState().getGraph();
+            Graph graph = graphStack.getCurrentGraph();
             graphString = GraphWriter.toExact(graph);
             graphVertexPropertyStrings = GraphWriter.getAllVertexPropertyStrings(graph);
             graphEdgePropertyStrings = GraphWriter.getAllEdgePropertyStrings(graph);
@@ -250,25 +254,25 @@ public class DrawActivity extends AppCompatActivity {
 
     ActivityResultLauncher<Intent> importActivityResultLauncher = registerForActivityResult(
         new ActivityResultContracts.StartActivityForResult(),
-        (ActivityResult result) -> ImportExportLaunchers.exportCommand(result, this, stateStack));
+        (ActivityResult result) -> ImportExportLaunchers.exportCommand(result, this, graphStack));
 
     ActivityResultLauncher<Intent> exportActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            result -> ImportExportLaunchers.importCommand(result, this, stateStack));
+            result -> ImportExportLaunchers.importCommand(result, this, graphStack));
 
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (stateStack.getCurrentState().isCurrentlyModified()) return false;
-        if(!OptionsHandler.handle(item, this, stateStack, graphView,
-                ()->makeSave(()->{}), importActivityResultLauncher, exportActivityResultLauncher))
+        if (state.isCurrentlyModified()) return false;
+        if(!OptionsHandler.handle(item, this, graphStack, state, graphView,
+                ()->makeSave(()->{}), importActivityResultLauncher, exportActivityResultLauncher, ))
             return super.onOptionsItemSelected(item);
         return true;
     }
 
     @Override
     public void onBackPressed() {
-        Graph graph = stateStack.getCurrentState().getGraph();
+        Graph graph = graphStack.getCurrentGraph();
         if(currentGraphId == -1) {
             if(GraphWriter.toExact(graph).equals(GraphWriter.toExact(new GraphFactory(graph.getType()).produce()))) {
                 super.onBackPressed();
@@ -286,10 +290,10 @@ public class DrawActivity extends AppCompatActivity {
         MenuItem undo = menu.findItem(R.id.options_btn_undo);
         MenuItem redo = menu.findItem(R.id.options_btn_redo);
 
-        redo.setEnabled(stateStack.isRedoPossible());
-        redo.getIcon().setAlpha(stateStack.isRedoPossible() ? 255 : 128);
-        undo.setEnabled(stateStack.isUndoPossible());
-        undo.getIcon().setAlpha(stateStack.isUndoPossible() ? 255 : 128);
+        redo.setEnabled(graphStack.isRedoPossible());
+        redo.getIcon().setAlpha(graphStack.isRedoPossible() ? 255 : 128);
+        undo.setEnabled(graphStack.isUndoPossible());
+        undo.getIcon().setAlpha(graphStack.isUndoPossible() ? 255 : 128);
         return true;
     }
 }

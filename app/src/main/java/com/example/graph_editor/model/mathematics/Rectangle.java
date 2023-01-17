@@ -50,6 +50,6 @@ public class Rectangle {
     public Point getCentre() { return new Point((rightBot.getX() + leftTop.getX())/2, (rightBot.getY() + leftTop.getY())/2); }
 
     public Rectangle deepCopy() {
-        return new Rectangle(leftTop.deepCopy(), rightBot.deepCopy());
+        return new Rectangle(leftTop, rightBot);
     }
 }
