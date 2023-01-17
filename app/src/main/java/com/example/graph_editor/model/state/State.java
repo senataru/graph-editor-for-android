@@ -7,6 +7,8 @@ import com.example.graph_editor.model.mathematics.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
+import graph_editor.graph.Graph;
+
 public class State {
     private Graph graph;
     private Rectangle rectangle;

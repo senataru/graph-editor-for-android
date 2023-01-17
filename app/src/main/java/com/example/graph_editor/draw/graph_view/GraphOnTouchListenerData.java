@@ -3,6 +3,10 @@ package com.example.graph_editor.draw.graph_view;
 import com.example.graph_editor.draw.graph_action.GraphAction;
 import com.example.graph_editor.model.mathematics.Rectangle;
 
+import graph_editor.geometry.Point;
+import graph_editor.graph.Graph;
+import graph_editor.graph.Vertex;
+
 public class GraphOnTouchListenerData {
     // globals
     public Graph graph;

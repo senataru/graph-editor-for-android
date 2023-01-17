@@ -1,11 +1,6 @@
 package com.example.graph_editor.extensions;
 
-import com.example.graph_editor.model.extensions.CanvasManager;
-import com.example.graph_editor.model.extensions.Extension;
-import com.example.graph_editor.model.extensions.ExtensionInvoker;
-import com.example.graph_editor.model.extensions.ExtensionsRepository;
-import com.example.graph_editor.model.extensions.GraphActionManager;
-import com.example.graph_editor.model.extensions.GraphMenuManager;
+import com.example.graph_editor.draw.graph_action.GraphActionManager;
 
 import java.io.File;
 import java.io.FileReader;
@@ -13,6 +8,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import graph_editor.extensions.Extension;
+import graph_editor.extensions.ExtensionInvoker;
+import graph_editor.extensions.ExtensionsRepository;
+import graph_editor.extensions.js.RhinoJSInvoker;
 
 public class InstalledExtensionsProvider implements ExtensionsRepository {
     private static final GraphMenuManager graphMenuManager = new GraphMenuManagerImpl();

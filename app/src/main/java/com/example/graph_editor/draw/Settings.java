@@ -2,9 +2,6 @@ package com.example.graph_editor.draw;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatDelegate;
 
 public class Settings {
 

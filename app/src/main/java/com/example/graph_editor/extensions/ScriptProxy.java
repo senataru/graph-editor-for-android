@@ -1,9 +1,7 @@
 package com.example.graph_editor.extensions;
 
-import com.example.graph_editor.model.extensions.CanvasManager;
-import com.example.graph_editor.model.extensions.GraphActionManager;
-import com.example.graph_editor.model.extensions.GraphMenuManager;
-import com.example.graph_editor.model.extensions.ExtensionInvoker;
+import com.example.graph_editor.draw.graph_action.GraphActionManager;
+import graph_editor.extensions.ExtensionInvoker;
 
 public class ScriptProxy implements ExtensionInvoker.ExtensionProxy {
     private final ExtensionInvoker invoker;

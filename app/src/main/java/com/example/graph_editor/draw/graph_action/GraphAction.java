@@ -13,7 +13,6 @@ import com.example.graph_editor.model.state.StateStack;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Set;
 
 public interface GraphAction {
     //TODO remove view parameter, because v == view

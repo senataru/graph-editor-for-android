@@ -1,19 +1,18 @@
 package com.example.graph_editor.extensions;
 
 import android.os.Bundle;
-import android.util.Pair;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.graph_editor.R;
-import com.example.graph_editor.client.Client;
-import com.example.graph_editor.model.extensions.ExtensionsClient;
-import com.example.graph_editor.model.extensions.ExtensionsRepository;
 
-import java.time.Duration;
 import java.util.List;
+
+import graph_editor.extensions.ExtensionsClient;
+import graph_editor.extensions.ExtensionsRepository;
+import graph_editor.extensions.client.Client;
 
 interface OnExtensionInstallClicked {
     void onInstallClicked(String extensionName);

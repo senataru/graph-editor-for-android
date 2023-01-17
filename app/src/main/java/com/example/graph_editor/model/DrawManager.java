@@ -6,6 +6,12 @@ import com.example.graph_editor.model.mathematics.Rectangle;
 import java.util.List;
 import java.util.Set;
 
+import graph_editor.geometry.GeometryUtils;
+import graph_editor.geometry.Point;
+import graph_editor.graph.Edge;
+import graph_editor.graph.Graph;
+import graph_editor.graph.Vertex;
+
 public class DrawManager {
     public static Point getRelative(Rectangle rectangle, Point point) {
         double x = (point.getX() - rectangle.getLeft())/rectangle.getWidth();
@@ -19,10 +25,10 @@ public class DrawManager {
         return new Point(x, y);
     }
     public static double getRelativeDistanceFrom(Rectangle rectangle, Point relativePoint, Vertex vertex) {
-        return Geometry.distance(relativePoint, getRelative(rectangle, vertex.getPoint()));
+        return GeometryUtils.distance(relativePoint, getRelative(rectangle, vertex.getPoint()));
     }
     public static double getRelativeDistanceFrom(Rectangle rectangle, Point relativePoint, Edge edge) {
-        return Geometry.distanceFromSegment(relativePoint,
+        return GeometryUtils.distanceFromSegment(relativePoint,
                 getRelative(rectangle, edge.getSource().getPoint()),
                 getRelative(rectangle, edge.getTarget().getPoint()));
     }
@@ -35,7 +41,7 @@ public class DrawManager {
         for(Vertex vertex : graph.getVertices()) {
             if (excluded.contains(vertex))
                 continue;
-            double distance = Geometry.distance(point, vertex.getPoint());
+            double distance = GeometryUtils.distance(point, vertex.getPoint());
             if( distance < nearest){
                 result = vertex;
                 nearest = distance;
@@ -53,7 +59,7 @@ public class DrawManager {
         double nearest = Double.MAX_VALUE;
         Edge result = null;
         for(Edge edge : graph.getEdges()) {
-            double distance = Geometry.distanceFromSegment(point,
+            double distance = GeometryUtils.distanceFromSegment(point,
                     edge.getSource().getPoint(), edge.getTarget().getPoint());
             if( distance < nearest){
                 result = edge;
@@ -132,8 +138,8 @@ public class DrawManager {
     static int x = 0;
     public static Rectangle getZoomedRectangle(Rectangle original, Point startA, Point startB, Point endARelative, Point endBRelative) {
         Point endA = getAbsolute(original, endARelative), endB = getAbsolute(original, endBRelative);
-        double scale = Geometry.distance(startA, startB)/Geometry.distance(endA, endB);
-        Point startCenter = Geometry.centerPoint(startA, startB), endCenter = Geometry.centerPoint(endA, endB);
+        double scale = GeometryUtils.distance(startA, startB)/GeometryUtils.distance(endA, endB);
+        Point startCenter = GeometryUtils.centerPoint(startA, startB), endCenter = GeometryUtils.centerPoint(endA, endB);
 
         double toLeft = endCenter.getX() - original.getLeft();
         double toTop = endCenter.getY() - original.getTop();

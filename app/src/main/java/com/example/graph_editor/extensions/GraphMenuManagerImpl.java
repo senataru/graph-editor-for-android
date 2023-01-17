@@ -2,8 +2,6 @@ package com.example.graph_editor.extensions;
 
 import android.util.Pair;
 
-import com.example.graph_editor.model.extensions.GraphMenuManager;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;

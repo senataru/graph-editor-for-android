@@ -12,10 +12,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.graph_editor.R;
-import com.example.graph_editor.model.extensions.ExtensionsClient;
-import com.example.graph_editor.model.extensions.ExtensionsRepository;
 
 import java.util.List;
+
+import graph_editor.extensions.ExtensionsRepository;
 
 public class AvailableExtensionsRecyclerViewAdapter
         extends RecyclerView.Adapter<AvailableExtensionsRecyclerViewAdapter.Holder> {

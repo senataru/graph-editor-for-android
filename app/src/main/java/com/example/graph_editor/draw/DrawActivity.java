@@ -34,6 +34,7 @@ import com.example.graph_editor.draw.popups.DiscardPopup;
 import com.example.graph_editor.draw.popups.SavePopup;
 import com.example.graph_editor.extensions.CanvasManagerImpl;
 import com.example.graph_editor.extensions.GraphActionManagerImpl;
+import com.example.graph_editor.extensions.GraphMenuManager;
 import com.example.graph_editor.extensions.GraphMenuManagerImpl;
 import com.example.graph_editor.model.graph_storage.GraphScanner;
 import com.example.graph_editor.model.graph_storage.GraphWriter;
@@ -51,6 +52,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
+import graph_editor.geometry.Point;
+import graph_editor.graph.Graph;
 
 public class DrawActivity extends AppCompatActivity {
     private final static int extensions_start = 1;

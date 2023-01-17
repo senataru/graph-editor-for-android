@@ -1,5 +1,6 @@
 package com.example.graph_editor.draw;
 
+import com.example.graph_editor.extensions.GraphMenuManager;
 import com.example.graph_editor.model.extensions.GraphMenuManager;
 
 import java.util.Map;

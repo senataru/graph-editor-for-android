@@ -3,6 +3,8 @@ package com.example.graph_editor.model.state;
 import java.util.ArrayList;
 import java.util.List;
 
+import graph_editor.graph.Graph;
+
 
 //pointer always points towards what should be drawn right now
 public class StateStackImpl implements StateStack {

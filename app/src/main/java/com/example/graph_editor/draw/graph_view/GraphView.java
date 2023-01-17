@@ -19,12 +19,15 @@ import androidx.annotation.Nullable;
 import com.example.graph_editor.draw.Settings;
 import com.example.graph_editor.draw.graph_action.GraphActionObserver;
 import com.example.graph_editor.draw.graph_action.GraphAction;
+import com.example.graph_editor.extensions.CanvasManager;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.GraphType;
-import com.example.graph_editor.model.extensions.CanvasManager;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.model.state.StateStack;
+
+import graph_editor.geometry.Point;
+import graph_editor.graph.Graph;
 
 public class GraphView extends View implements GraphActionObserver {
     private final int baseVertexRadius = 7;

@@ -4,6 +4,8 @@ import android.graphics.Canvas;
 
 import com.example.graph_editor.model.mathematics.Rectangle;
 
+import graph_editor.geometry.Point;
+
 public class Utils {
     public static Point canvasPoint(Point absolutePoint, Rectangle rectangle, Canvas canvas) {
         return new Point(

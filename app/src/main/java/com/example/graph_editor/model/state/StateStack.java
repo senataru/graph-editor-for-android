@@ -2,6 +2,8 @@ package com.example.graph_editor.model.state;
 
 import java.util.List;
 
+import graph_editor.graph.Graph;
+
 public interface StateStack {
     State undo();
     State redo();
