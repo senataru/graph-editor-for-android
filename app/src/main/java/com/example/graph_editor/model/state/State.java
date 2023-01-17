@@ -8,26 +8,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 import graph_editor.graph.Graph;
+import graph_editor.properties.PropertyGraphBuilder;
 
 public class State {
-    private Graph graph;
+    private PropertyGraphBuilder builder;
     private Rectangle rectangle;
     private GraphAction graphAction;
     private boolean currentlyModified; //more accurately - isCurrentlyTouched, if true ignore button presses
     private final List<GraphActionObserver> observers = new ArrayList<>();
 
     public State(Graph graph, Rectangle rectangle, GraphAction graphAction) {
-        this.graph = graph;
+        this.builder = builder;
         this.rectangle = rectangle;
         this.graphAction = graphAction;
     }
 
-    public Graph getGraph() { return graph; }
+    public PropertyGraphBuilder getBuilder() { return builder; }
     public Rectangle getRectangle() { return rectangle; }
     public GraphAction getGraphAction() { return graphAction; }
     public boolean isCurrentlyModified() { return currentlyModified; }
 
-    public void setGraph(Graph graph) { this.graph = graph; }
+    public void setBuilder(PropertyGraphBuilder builder) { this.builder = builder; }
     public void setRectangle(Rectangle rectangle) { this.rectangle = rectangle; }
     public void setGraphAction(GraphAction graphAction) {
         this.graphAction = graphAction;

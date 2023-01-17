@@ -3,6 +3,7 @@ package com.example.graph_editor.model;
 import com.example.graph_editor.model.mathematics.Rectangle;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import graph_editor.geometry.GeometryUtils;
@@ -23,59 +24,60 @@ public class DrawManager {
         double y = rectangle.getTop() + point.getY() * rectangle.getHeight();
         return new Point(x, y);
     }
-    public static double getRelativeDistanceFrom(Rectangle rectangle, Point relativePoint, Vertex vertex) {
-        return GeometryUtils.distance(relativePoint, getRelative(rectangle, vertex.getPoint()));
+    public static double getRelativeDistanceFrom(Map<Vertex, Point> mapping, Rectangle rectangle, Point relativePoint, Vertex vertex) {
+        return GeometryUtils.distance(relativePoint, getRelative(rectangle, mapping.get(vertex)));
     }
-    public static double getRelativeDistanceFrom(Rectangle rectangle, Point relativePoint, Edge edge) {
+    public static double getRelativeDistanceFrom(Map<Vertex, Point> mapping, Rectangle rectangle, Point relativePoint, Edge edge) {
         return GeometryUtils.distanceFromSegment(relativePoint,
-                getRelative(rectangle, edge.getSource().getPoint()),
-                getRelative(rectangle, edge.getTarget().getPoint()));
+                getRelative(rectangle, mapping.get(edge.getSource())),
+                getRelative(rectangle, mapping.get(edge.getTarget()))
+        );
     }
 
     //returns null if there are no vertices
-    public static Vertex getNearestVertex(Graph graph, Rectangle rectangle, Point relativePoint, double delta, Set<Vertex> excluded) {
+    public static Vertex getNearestVertex(Map<Vertex, Point> mapping, Graph graph, Rectangle rectangle, Point relativePoint, double delta, Set<Vertex> excluded) {
         Point point = getAbsolute(rectangle, relativePoint);
         double nearest = Double.MAX_VALUE;
         Vertex result = null;
         for(Vertex vertex : graph.getVertices()) {
             if (excluded.contains(vertex))
                 continue;
-            double distance = GeometryUtils.distance(point, vertex.getPoint());
+            double distance = GeometryUtils.distance(point, mapping.get(vertex));
             if( distance < nearest){
                 result = vertex;
                 nearest = distance;
             }
         }
 
-        if (result != null && getRelativeDistanceFrom(rectangle, relativePoint, result) > delta)
+        if (result != null && getRelativeDistanceFrom(mapping, rectangle, relativePoint, result) > delta)
             return null;
         return result;
     }
 
     //returns null if there are no edges
-    public static Edge getNearestEdge(Graph graph, Rectangle rectangle, Point relativePoint, double delta) {
+    public static Edge getNearestEdge(Map<Vertex, Point> mapping, Graph graph, Rectangle rectangle, Point relativePoint, double delta) {
         Point point = getAbsolute(rectangle, relativePoint);
         double nearest = Double.MAX_VALUE;
         Edge result = null;
         for(Edge edge : graph.getEdges()) {
             double distance = GeometryUtils.distanceFromSegment(point,
-                    edge.getSource().getPoint(), edge.getTarget().getPoint());
+                    mapping.get(edge.getSource()), mapping.get(edge.getTarget()));
             if( distance < nearest){
                 result = edge;
                 nearest = distance;
             }
         }
-        if (result != null && getRelativeDistanceFrom(rectangle, relativePoint, result) > delta)
+        if (result != null && getRelativeDistanceFrom(mapping, rectangle, relativePoint, result) > delta)
             return null;
 
         return result;
     }
 
-    private static Rectangle getExtremeRectangle(Graph graph) {
+    private static Rectangle getExtremeRectangle(Map<Vertex, Point> mapping, Graph graph) {
         Point extremeLeftTop = new Point(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
         Point extremeRightBot = new Point(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
         for(Vertex vertex : graph.getVertices()) {
-            Point point = vertex.getPoint();
+            Point point = mapping.get(vertex);
             if(point.getX()<extremeLeftTop.getX())
                 extremeLeftTop = new Point(point.getX(), extremeLeftTop.getY());
             if(point.getY()<extremeLeftTop.getY())
@@ -88,27 +90,27 @@ public class DrawManager {
         return new Rectangle(extremeLeftTop, extremeRightBot);
     }
 
-    public static void normalizeGraph(Graph graph) {
-        Rectangle extremeRectangle = getExtremeRectangle(graph);
+    public static void normalizeGraph(Map<Vertex, Point> mapping, Graph graph) {
+        Rectangle extremeRectangle = getExtremeRectangle(mapping, graph);
         Point extremeLeftTop = extremeRectangle.getLeftTop();
         Point extremeRightBot = extremeRectangle.getRightBot();
         double extremeWidth = extremeRightBot.getX() - extremeLeftTop.getX();
         double extremeHeight = extremeRightBot.getY() - extremeLeftTop.getY();
         for(Vertex vertex : graph.getVertices()) {
-            Point point = vertex.getPoint();
+            Point point = mapping.get(vertex);
             double x = (extremeWidth == 0.0)? 0.0 : (point.getX()-extremeLeftTop.getX())/extremeWidth;
             double y = (extremeHeight == 0.0)? 0.0 : (point.getY()-extremeLeftTop.getY())/extremeHeight;
-            vertex.setPoint(new Point(x, y));
+            mapping.put(vertex, new Point(x, y));
         }
     }
 
-    public static Rectangle getOptimalRectangle(Graph graph, double paddingPercent, Rectangle rectangle) {
+    public static Rectangle getOptimalRectangle(Map<Vertex, Point> mapping, Graph graph, double paddingPercent, Rectangle rectangle) {
         List<Vertex> vertices = graph.getVertices();
         if(vertices.isEmpty()){
             return new Rectangle(new Point(0,0), new Point(1, rectangle.getHeight()/rectangle.getWidth()));
         }
 
-        Rectangle extremeRectangle = getExtremeRectangle(graph);
+        Rectangle extremeRectangle = getExtremeRectangle(mapping, graph);
         Point extremeLeftTop = extremeRectangle.getLeftTop();
         Point extremeRightBot = extremeRectangle.getRightBot();
 
