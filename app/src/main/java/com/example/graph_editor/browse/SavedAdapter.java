@@ -23,11 +23,9 @@ import com.example.graph_editor.draw.graph_action.GraphAction;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.ShareAsTxtIntent;
 import com.example.graph_editor.extensions.CanvasManagerImpl;
-import com.example.graph_editor.model.graph_storage.GraphScanner;
 import com.example.graph_editor.model.graph_storage.InvalidGraphStringException;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
-import com.example.graph_editor.model.state.StateStackImpl;
 
 import java.util.List;
 import java.util.stream.Collectors;
