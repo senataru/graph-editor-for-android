@@ -5,16 +5,20 @@ import com.example.graph_editor.model.GraphType;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GraphScanner {
-    //
-    public static Graph fromExact(String s) throws InvalidGraphStringException {
+import graph_editor.geometry.Point;
+import graph_editor.graph.Graph;
+import graph_editor.graph.Vertex;
+
+//do not use: disabled functionality, TODO retrieve ASAP, remove all '/' marks
+class GraphScanner {
+    private static Graph fromExact(String s) throws InvalidGraphStringException {
         Graph g;
         String[] t = s.split("\n");
 
         if (t[0].equals("DIRECTED")) {
-            g = new GraphFactory(GraphType.DIRECTED).produce();
+//            g = new GraphFactory(GraphType.DIRECTED).produce();
         } else if (t[0].equals("UNDIRECTED")) {
-            g = new GraphFactory(GraphType.UNDIRECTED).produce();
+//            g = new GraphFactory(GraphType.UNDIRECTED).produce();
         } else {
             throw new InvalidGraphStringException();
         }
@@ -35,7 +39,7 @@ public class GraphScanner {
                 double x = Double.parseDouble(split[1]);
                 double y = Double.parseDouble(split[2]);
                 Point point = new Point(x, y);
-                g.getVertices().get(index).setPoint(point);
+                //g.getVertices().get(index).setPoint(point);
             }
 
             for (int i = 2 + v; i < 2 + v + e; i++) {
@@ -43,7 +47,7 @@ public class GraphScanner {
                 int a = Integer.parseInt(split[0]);
                 int b = Integer.parseInt(split[1]);
 
-                g.addEdge(vertices.get(a), vertices.get(b));
+                //g.addEdge(vertices.get(a), vertices.get(b));
             }
         } catch (NumberFormatException e) {
             throw new InvalidGraphStringException();
@@ -72,7 +76,7 @@ public class GraphScanner {
                 String[] split = text[i].split(" ");
                 int index = Integer.parseInt(split[0]);
                 String value = split[1];
-                graph.setVertexProperty(graph.getVertices().get(index), propertyName, value);
+                //graph.setVertexProperty(graph.getVertices().get(index), propertyName, value);
             }
         } catch (RuntimeException e) {
             throw new InvalidGraphStringException();
@@ -95,7 +99,7 @@ public class GraphScanner {
                 Vertex sourceVertex = vertices.get(sourceIndex);
                 Vertex targetVertex = vertices.get(targetIndex);
                 String value = split[2];
-                graph.setEdgeProperty(graph.getEdge(sourceVertex, targetVertex), propertyName, value);
+                //graph.setEdgeProperty(graph.getEdge(sourceVertex, targetVertex), propertyName, value);
             }
         } catch (RuntimeException e) {
             throw new InvalidGraphStringException();

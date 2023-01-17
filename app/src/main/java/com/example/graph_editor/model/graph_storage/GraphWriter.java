@@ -4,8 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GraphWriter {
-    public static String toVE(Graph g) {
+import graph_editor.graph.Edge;
+import graph_editor.graph.Graph;
+import graph_editor.graph.Vertex;
+
+//do not use: disabled functionality, TODO retrieve ASAP, remove all '/' marks
+class GraphWriter {
+    private static String toVE(Graph g) {
         StringBuilder s = new StringBuilder();
 
         List<Vertex> vertices = g.getVertices();
@@ -25,12 +30,12 @@ public class GraphWriter {
         return new String(s);
     }
 
-    public static String toExact (Graph g) {
+    private static String toExact (Graph g) {
         String ve = toVE(g);
         String[] veSplit = ve.split("\n");
 
         StringBuilder s = new StringBuilder();
-        s.append(g.getType().toString()).append("\n");
+//        s.append(g.getType().toString()).append("\n");
         s.append(veSplit[0]).append("\n");
 
         List<Vertex> vertices = g.getVertices();
@@ -38,9 +43,9 @@ public class GraphWriter {
         for (Vertex v : vertices) {
             s.append(v.getIndex());
             s.append(" ");
-            s.append((float)v.getPoint().getX());
+//            s.append((float)v.getPoint().getX());
             s.append(" ");
-            s.append((float)v.getPoint().getY());
+//            s.append((float)v.getPoint().getY());
             s.append("\n");
         }
 
@@ -51,7 +56,7 @@ public class GraphWriter {
         return new String(s);
     }
 
-    public static String toExactList(List<Graph> list){
+    private static String toExactList(List<Graph> list){
         StringBuilder result = new StringBuilder();
         for (Graph g : list) {
             result.append(toExact(g));
@@ -60,11 +65,11 @@ public class GraphWriter {
         return result.substring(0, result.length()-1);
     }
 
-    public static Map<String, String> getAllVertexPropertyStrings(Graph graph) {
+    private static Map<String, String> getAllVertexPropertyStrings(Graph graph) {
         Map<String, String> propertyStrings = new HashMap<>();
-        for (String propertyName : graph.getVertexPropertyNames()) {
-            propertyStrings.put(propertyName, getVertexPropertyString(propertyName, graph));
-        }
+//        for (String propertyName : graph.getVertexPropertyNames()) {
+//            propertyStrings.put(propertyName, getVertexPropertyString(propertyName, graph));
+//        }
         return propertyStrings;
     }
 
