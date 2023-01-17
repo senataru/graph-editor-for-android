@@ -12,7 +12,6 @@ import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.extensions.CanvasManagerImpl;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
-import com.example.graph_editor.model.state.StateStack;
 import com.example.graph_editor.model.state.StateStackImpl;
 
 import graph_editor.graph.Graph;

@@ -17,7 +17,6 @@ import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.InputSanitizer;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
-import com.example.graph_editor.model.state.StateStack;
 
 import java.util.ArrayList;
 import java.util.List;

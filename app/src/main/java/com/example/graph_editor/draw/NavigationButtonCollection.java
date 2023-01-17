@@ -8,7 +8,6 @@ import androidx.core.content.ContextCompat;
 import com.example.graph_editor.R;
 import com.example.graph_editor.draw.graph_action.GraphAction;
 import com.example.graph_editor.model.state.State;
-import com.example.graph_editor.model.state.StateStack;
 
 import java.util.HashMap;
 import java.util.Map;

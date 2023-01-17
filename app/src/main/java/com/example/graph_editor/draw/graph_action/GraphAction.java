@@ -9,16 +9,17 @@ import com.example.graph_editor.draw.graph_view.GraphOnTouchListenerData;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.mathematics.Rectangle;
-import com.example.graph_editor.model.state.StateStack;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
+
+import graph_editor.geometry.Point;
+import graph_editor.graph.Vertex;
 
 public interface GraphAction {
     //TODO remove view parameter, because v == view
     boolean perform(View v, @NonNull MotionEvent event, StateStack stateStack, GraphOnTouchListenerData data, GraphView view);
-
-//    String name();
 
     class NewVertex implements GraphAction {
         @Override
@@ -40,11 +41,6 @@ public interface GraphAction {
             }
             return true;
         }
-
-//        @Override
-//        public String name() {
-//            return "New Vertex";
-//        }
     }
     class NewEdge implements GraphAction {
         @Override
@@ -104,11 +100,6 @@ public interface GraphAction {
             }
             return false;
         }
-
-//        @Override
-//        public String name() {
-//            return "New Edge";
-//        }
     }
     class MoveObject implements GraphAction {
         @Override
@@ -130,11 +121,6 @@ public interface GraphAction {
             }
             return true;
         }
-
-//        @Override
-//        public String name() {
-//            return "Move Object";
-//        }
     }
     class RemoveObject implements GraphAction {
         @Override
@@ -154,11 +140,6 @@ public interface GraphAction {
 
             return true;
         }
-
-//        @Override
-//        public String name() {
-//            return "Remove Object";
-//        }
     }
     class MoveCanvas implements GraphAction {
         @Override
@@ -193,11 +174,6 @@ public interface GraphAction {
             DrawManager.translate(data.rectangle, data.moveDeltaX/v.getWidth(), data.moveDeltaY/v.getWidth());
             return true;
         }
-
-//        @Override
-//        public String name() {
-//            return "Move Canvas";
-//        }
     }
     class ZoomCanvas implements GraphAction {
         @Override
@@ -227,10 +203,5 @@ public interface GraphAction {
             }
             return true;
         }
-
-//        @Override
-//        public String name() {
-//            return "Zoom Canvas";
-//        }
     }
 }

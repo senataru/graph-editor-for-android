@@ -1,6 +1,5 @@
 package com.example.graph_editor.model;
 
-import com.example.graph_editor.model.mathematics.Geometry;
 import com.example.graph_editor.model.mathematics.Rectangle;
 
 import java.util.List;

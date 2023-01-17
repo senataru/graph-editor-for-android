@@ -8,7 +8,8 @@ import com.example.graph_editor.draw.Settings;
 import com.example.graph_editor.draw.graph_action.GraphAction;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.state.State;
-import com.example.graph_editor.model.state.StateStack;
+
+import graph_editor.geometry.Point;
 
 public class GraphOnTouchListener implements View.OnTouchListener {
     private final Context context;

@@ -17,6 +17,8 @@ import com.example.graph_editor.model.graph_storage.GraphWriter;
 
 import java.util.Map;
 
+import graph_editor.graph.Graph;
+
 public class SavePopup {
     AlertDialog dialog;
 

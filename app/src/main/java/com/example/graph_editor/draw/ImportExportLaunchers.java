@@ -13,12 +13,13 @@ import com.example.graph_editor.model.graph_storage.InvalidGraphStringException;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
-import com.example.graph_editor.model.state.StateStack;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+
+import graph_editor.graph.Graph;
 
 public class ImportExportLaunchers {
     public static void importCommand(ActivityResult result, Context context, StateStack stateStack) {

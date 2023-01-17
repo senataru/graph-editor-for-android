@@ -25,7 +25,6 @@ import com.example.graph_editor.model.graph_generators.GraphGeneratorGrid;
 import com.example.graph_editor.model.graph_generators.GraphGeneratorKingGrid;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
-import com.example.graph_editor.model.state.StateStack;
 
 import java.util.Objects;
 
