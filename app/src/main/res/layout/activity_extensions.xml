@@ -49,4 +49,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/availableTitle" />
 
+    <EditText
+        android:id="@+id/serverAddress"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="@string/change_server_ip"
+        android:text="@string/defaultServerIp"
+        android:inputType="text"
+        android:importantForAutofill="no"
+        app:layout_constraintTop_toBottomOf="@id/availableExtensions" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

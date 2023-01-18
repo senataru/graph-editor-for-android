@@ -74,4 +74,6 @@
     <string name="installed">installed</string>
     <string name="installing">installing</string>
     <string name="install">install</string>
+    <string name="defaultServerIp">192.168.43.113</string>
+    <string name="change_server_ip">change server ip</string>
 </resources>
