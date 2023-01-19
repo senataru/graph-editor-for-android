@@ -53,11 +53,11 @@ public:
     friend PairXY min(const PairXY &one, const PairXY &another) {
         return {std::min(one.x, another.x), std::min(one.y, another.y)};
     }
-    friend PairXY sqr(const PairXY &x)  {
-        return {x.x * x.x, x.y * x.y};
+    static ld sqr(const ld &x)  {
+        return x * x;
     }
     friend ld dist2(const PairXY &v, const PairXY &w)  {
-        return sqrt(v.x - w.x) + sqrt(v.y - w.y);
+        return sqr(v.x - w.x) + sqr(v.y - w.y);
     }
     PairXY shortestPointFromSegment(const PairXY &v, const PairXY &w) const {
         ld l2 = dist2(v, w);
