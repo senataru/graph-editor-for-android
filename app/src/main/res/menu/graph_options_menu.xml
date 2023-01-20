@@ -16,13 +16,6 @@
         app:showAsAction="always" >
     </item>
 
-    <item android:id="@+id/options_btn_arrange"
-        android:icon="@drawable/arrange"
-        android:title="@string/undo"
-        app:showAsAction="always"
-        tools:ignore="AlwaysShowAction">
-    </item>
-
     <item android:id="@+id/options_btn_save"
         android:icon="@drawable/ic_save"
         android:title="@string/save"
@@ -73,6 +66,11 @@
     <item android:id="@+id/options_btn_settings"
         android:title="@string/settings"
         app:showAsAction="never" >
+    </item>
+
+    <item android:id="@+id/options_btn_arrange"
+        android:title="Aesthetic layout"
+        app:showAsAction="never">
     </item>
 
     <item android:id="@+id/options_btn_generate_graph"
