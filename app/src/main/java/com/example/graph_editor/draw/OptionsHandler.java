@@ -1,7 +1,6 @@
 package com.example.graph_editor.draw;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.view.MenuItem;
 
@@ -48,6 +47,12 @@ public class OptionsHandler {
                 stateStack.backup();
                 State state = stateStack.getCurrentState();
                 DrawManager.arrangeGraphJava(state.getGraph());
+                graphView.postInvalidate();
+                return true;
+            case R.id.options_btn_planar_arrange:
+                stateStack.backup();
+                State state2 = stateStack.getCurrentState();
+                DrawManager.arrangePlanarGraphJava(state2.getGraph());
                 graphView.postInvalidate();
                 return true;
             //more actions

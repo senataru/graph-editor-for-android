@@ -83,6 +83,38 @@ public:
     }
 };
 
+ld distance_between_points(ld x_0, ld y_0, ld x_1, ld y_1) {
+    return sqrt((x_0 - x_1) * (x_0 - x_1) + (y_0 - y_1) * (y_0 - y_1));
+}
+
+ld vertex_edge_distance(Vertex& v, Vertex& e1, Vertex& e2) {    // first one is a vertex, two next are ends of an edge
+    PairXY v_coords = v.pos;
+    PairXY ort_proj = v_coords.shortestPointFromSegment(e1.pos, e2.pos);
+    return distance_between_points(v_coords.x, v_coords.y, ort_proj.x, ort_proj.y);
+}
+
+ld smallest_vertex_edge_distance(const std::vector<Vertex>& V, const std::vector<std::vector<int>>& E) {
+    ld result = 1e18;
+    for (int w_id = 0; w_id < V.size(); ++w_id) {
+        for (int e1 = 0; e1 < V.size(); ++e1) {
+            if (e1 == w_id) continue;
+            for (auto &e2: E[e1]) {
+                if (e2 == w_id) continue;
+                if (e1 < e2) continue;
+
+                auto v = V[e1];
+                auto u = V[e2];
+                auto w = V[w_id];
+                ld dist = vertex_edge_distance(w, v, u);
+
+                if (dist < result) result = dist;
+            }
+        }
+    }
+
+    return result;
+}
+
 
 extern "C"
 JNIEXPORT jdoubleArray JNICALL
@@ -171,7 +203,124 @@ Java_com_example_graph_1editor_model_DrawManager_arrangeGraph(__unused JNIEnv *e
     jdouble res_tab[n*2];
     int j=0;
     double mnx = (*std::min_element(V.begin(), V.end(), [](auto a, auto b) {
-       return a.pos.x < b.pos.x;
+        return a.pos.x < b.pos.x;
+    })).pos.x;
+    double mny = (*std::min_element(V.begin(), V.end(), [](auto a, auto b) {
+        return a.pos.y < b.pos.y;
+    })).pos.y;
+    double mxx = (*std::min_element(V.begin(), V.end(), [](auto a, auto b) {
+        return a.pos.x > b.pos.x;
+    })).pos.x;
+    double mxy = (*std::min_element(V.begin(), V.end(), [](auto a, auto b) {
+        return a.pos.y > b.pos.y;
+    })).pos.y;
+    for (Vertex &v : V) {
+        v.pos.x -= mnx;
+        v.pos.y -= mny;
+        v.pos.x /= (mxx - mnx);
+        v.pos.y /= (mxy - mny);
+    }
+
+    for (Vertex &v : V) {
+        res_tab[j] = v.pos.x;
+        res_tab[j+n] = v.pos.y;
+        ++j;
+    };
+    env->SetDoubleArrayRegion(res, (jsize)0, (jsize)n*2, res_tab);
+    return res;
+}
+
+
+// SECOND FUNCTION
+extern "C"
+JNIEXPORT jdoubleArray JNICALL
+Java_com_example_graph_1editor_model_DrawManager_arrangePlanarGraph(__unused JNIEnv *env, jclass clazz,
+                                                              jint n,
+                                                              jint m,
+                                                              jdoubleArray tab_x,
+                                                              jdoubleArray tab_y,
+                                                              jintArray tab_edge_source,
+                                                              jintArray tab_edge_target) {
+
+    ld W = 1, H = 1;
+    std::vector<Vertex> V;
+    jint *edge_source = (*env).GetIntArrayElements(tab_edge_source, 0);
+    jint *edge_target = (*env).GetIntArrayElements(tab_edge_target, 0);
+    jdouble *x = (*env).GetDoubleArrayElements(tab_x, 0);
+    jdouble *y = (*env).GetDoubleArrayElements(tab_y, 0);
+    // TODO: solve for several connectivity component
+    std::vector<std::vector<int>> E(n);
+    for (int i = 0; i < n; ++i) {
+        V.emplace_back(i);
+        V[i].setPos(x[i] / 2, y[i] / 2);
+    }
+    for (int i = 0; i < m; ++i) {
+        E[edge_source[i]].push_back(edge_target[i]);
+        E[edge_target[i]].push_back(edge_source[i]);
+    }
+
+    ld area = W * H;
+    ld k = std::sqrt(area / n);
+    ld t = W + H;
+    ld cooling = 1.001;
+    const int iterations = 100;
+    for (int i = 0; i < iterations; ++i) {
+        // calculate repulsive forces
+        for (auto &v : V) {
+            // each Vertex has two vectors: .pos and .disp
+            for (auto &u : V) {
+                if (u.id != v.id) {
+                    auto delta = v.pos - u.pos;
+                    v.disp = v.disp + (delta / delta.module()) * fr(delta.module(), k, n);
+
+                }
+            }
+        }
+        // calculate repulsive forces between vertices and edges
+        for (auto &p : V) {
+            // each Vertex has two vectors: .pos and .disp
+            for (auto &v : V) {
+                for (auto &e: E[v.id]) {
+                    auto &u = V[e];
+                    if (p.id == v.id || p.id == u.id) continue;
+                    auto delta = (p.pos - p.pos.shortestPointFromSegment(v.pos, u.pos));
+                    p.disp = p.disp + (delta / delta.module()) * fr(delta.module(), k, n);
+                }
+            }
+        }
+        // calculate attractive forces
+        for (int v_id = 0; v_id < V.size(); ++v_id) {
+            for (auto &e: E[v_id]) {
+                auto &v = V[v_id];
+                auto &u = V[e];
+                auto delta = v.pos - u.pos;
+                v.disp = v.disp - (delta / delta.module()) * fa(std::max(delta.module(), (ld)0.001), k, n);
+            }
+        }
+
+        ld epsilon = smallest_vertex_edge_distance(V, E);
+
+        for (auto &v : V) {
+            if (v.free) {
+                ld disp_module = v.disp.module();
+                if (disp_module > epsilon/2) {
+                    v.disp.x /= (disp_module/(epsilon/2));
+                    v.disp.y /= (disp_module/(epsilon/2));
+                }
+                v.pos.x += v.disp.x;
+                v.pos.y += v.disp.y;
+            }
+            v.pos.x = fmin(W / 2, fmax(-W / 2, v.pos.x));
+            v.pos.y = fmin(H / 2, fmax(-H / 2, v.pos.y));
+            v.disp.clear();
+        }
+        t = t / cooling;
+    }
+    jdoubleArray res = env->NewDoubleArray(n*2);
+    jdouble res_tab[n*2];
+    int j=0;
+    double mnx = (*std::min_element(V.begin(), V.end(), [](auto a, auto b) {
+        return a.pos.x < b.pos.x;
     })).pos.x;
     double mny = (*std::min_element(V.begin(), V.end(), [](auto a, auto b) {
         return a.pos.y < b.pos.y;
