@@ -32,6 +32,8 @@ import java.util.stream.Collectors;
 
 import graph_editor.geometry.Point;
 import graph_editor.graph.Graph;
+import graph_editor.graph.GraphStack;
+import graph_editor.graph.GraphStackImpl;
 
 public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
     private final Context context;
@@ -74,11 +76,14 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
             Graph graph = GraphScanner.fromExact(graphString);
             addAllProperties(graph, vertexPropertySaveStrings, edgePropertySaveStrings);
 
-            StateStack stack = new StateStackImpl(
-                () -> {},
-                new State(graph, new Rectangle(new Point(0, 0), new Point(1, 1)), new GraphAction.MoveCanvas())
+            //TODO this code is same in other classes, fix it
+            GraphStack stack = new GraphStackImpl(graph);
+            State state = new State(
+                    visualization,
+                    new Rectangle(new Point(0, 0), new Point(1, 1)),
+                    new GraphAction.MoveCanvas()
             );
-            holder.dataGraph.initialize(new CanvasManagerImpl(), stack, false);
+            holder.dataGraph.initialize(new CanvasManagerImpl(), stack, state,false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -92,7 +97,7 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
                     vertexPropertySaveStrings, edgePropertySaveStrings);
         });
         holder.deleteButton.setOnClickListener(v ->
-                new ConfirmPopup(context, holder.dataGraph.getStateStack().getCurrentState().getGraph(), () -> {
+                new ConfirmPopup(context, holder.dataGraph.getStateStack().getCurrentState().getGraph(), visualization, () -> {
                     Save s = data.get(position);
                     data.remove(position);
                     notifyItemRemoved(position);

@@ -12,20 +12,26 @@ import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.extensions.CanvasManagerImpl;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
-import com.example.graph_editor.model.state.StateStackImpl;
 
+import graph_editor.geometry.Point;
 import graph_editor.graph.Graph;
+import graph_editor.graph.GraphStack;
+import graph_editor.graph.GraphStackImpl;
+import graph_editor.visual.BuilderVisualizer;
+import graph_editor.visual.GraphVisualization;
 
 public class ConfirmPopup {
     Context context;
     Graph graph;
+    private final GraphVisualization visualization;
     Runnable deleteFunction;
 
     AlertDialog dialog;
 
-    ConfirmPopup(Context context, Graph graph, Runnable deleteFunction) {
+    ConfirmPopup(Context context, Graph graph, GraphVisualization visualization, Runnable deleteFunction) {
         this.context = context;
         this.graph = graph;
+        this.visualization = visualization;
         this.deleteFunction = deleteFunction;
     }
 
@@ -38,11 +44,13 @@ public class ConfirmPopup {
         Button btnYes = popupView.findViewById(R.id.btn_yes);
         Button btnNo = popupView.findViewById(R.id.btn_no);
 
-        StateStack stack = new StateStackImpl(
-                () -> {},
-                new State(graph, new Rectangle(new Point(0, 0), new Point(1, 1)), new GraphAction.MoveCanvas())
+        GraphStack stack = new GraphStackImpl(graph);
+        State state = new State(
+                visualization,
+                new Rectangle(new Point(0, 0), new Point(1, 1)),
+                new GraphAction.MoveCanvas()
         );
-        graphView.initialize(new CanvasManagerImpl(), stack, false);
+        graphView.initialize(new CanvasManagerImpl(), stack, state,false);
 
         btnYes.setOnClickListener(v -> {
             deleteFunction.run();

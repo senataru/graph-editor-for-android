@@ -120,8 +120,8 @@ public class GraphView extends View implements GraphActionObserver {
                 canvasManager.getEdgeDrawer().orElse((edge, r, canvas1) ->
                         drawEdge(
                                 canvas1,
-                                DrawManager.getRelative(rectangle, state.getCoordinates(edge.getSource()),
-                                DrawManager.getRelative(rectangle, state.getCoordinates(edge.getTarget())
+                                DrawManager.getRelative(rectangle, state.getCoordinates(edge.getSource())),
+                                DrawManager.getRelative(rectangle, state.getCoordinates(edge.getTarget()))
 //TODO use graphType?           graph.getType()
                         )
                 );
@@ -195,7 +195,4 @@ public class GraphView extends View implements GraphActionObserver {
     public Point getRelative(Point point) {
         return new Point(point.getX()/getWidth(), point.getY()/getHeight());
     }
-
-//    public StateStack getStateStack() { return stateStack; }
-
 }

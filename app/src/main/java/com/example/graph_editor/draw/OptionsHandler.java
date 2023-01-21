@@ -17,18 +17,13 @@ import com.example.graph_editor.draw.popups.SavePopup;
 import com.example.graph_editor.draw.popups.SettingsPopup;
 import com.example.graph_editor.draw.popups.ShareAsTxtIntent;
 import com.example.graph_editor.model.DrawManager;
-import com.example.graph_editor.model.graph_generators.GraphGeneratorBipartiteClique;
-import com.example.graph_editor.model.graph_generators.GraphGeneratorClique;
-import com.example.graph_editor.model.graph_generators.GraphGeneratorCycle;
-import com.example.graph_editor.model.graph_generators.GraphGeneratorFullBinaryTree;
-import com.example.graph_editor.model.graph_generators.GraphGeneratorGrid;
-import com.example.graph_editor.model.graph_generators.GraphGeneratorKingGrid;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
 
 import java.util.Objects;
 
 import graph_editor.graph.GraphStack;
+import graph_editor.graph_generators.GraphGeneratorBipartiteClique;
 
 public class OptionsHandler {
     @SuppressLint("NonConstantResourceId")
@@ -101,24 +96,26 @@ public class OptionsHandler {
                 importActivityResultLauncher.launch(importFromFileIntent);
                 return true;
             //generate graph
-            case R.id.generate_btn_cycle:
-                new GeneratePopup(context, graphStack, new GraphGeneratorCycle()).show();
-                return true;
-            case R.id.generate_btn_clique:
-                new GeneratePopup(context, graphStack, new GraphGeneratorClique()).show();
-                return true;
+            //TODO retrieve disabled generators
+
+//            case R.id.generate_btn_cycle:
+//                new GeneratePopup(context, graphStack, new GraphGeneratorCycle()).show();
+//                return true;
+//            case R.id.generate_btn_clique:
+//                new GeneratePopup(context, graphStack, new GraphGeneratorClique()).show();
+//                return true;
             case R.id.generate_btn_bipartite_clique:
                 new GeneratePopup(context, graphStack, new GraphGeneratorBipartiteClique()).show();
                 return true;
-            case R.id.generate_btn_full_binary_tree:
-                new GeneratePopup(context, graphStack, new GraphGeneratorFullBinaryTree()).show();
-                return true;
-            case R.id.generate_btn_grid:
-                new GeneratePopup(context, graphStack, new GraphGeneratorGrid()).show();
-                return true;
-            case R.id.generate_btn_king_grid:
-                new GeneratePopup(context, graphStack, new GraphGeneratorKingGrid()).show();
-                return true;
+//            case R.id.generate_btn_full_binary_tree:
+//                new GeneratePopup(context, graphStack, new GraphGeneratorFullBinaryTree()).show();
+//                return true;
+//            case R.id.generate_btn_grid:
+//                new GeneratePopup(context, graphStack, new GraphGeneratorGrid()).show();
+//                return true;
+//            case R.id.generate_btn_king_grid:
+//                new GeneratePopup(context, graphStack, new GraphGeneratorKingGrid()).show();
+//                return true;
             default:
                 return false;
         }

@@ -12,27 +12,26 @@ import graph_editor.geometry.Point;
 import graph_editor.graph.Graph;
 import graph_editor.graph.Vertex;
 import graph_editor.properties.PropertyGraphBuilder;
+import graph_editor.visual.GraphVisualization;
 
 public class State {
-//    private PropertyGraphBuilder builder;
-    private Map<Vertex, Point> coordinates;
+    private GraphVisualization visualization;
     private Rectangle rectangle;
     private GraphAction graphAction;
     private boolean currentlyModified; //more accurately - isCurrentlyTouched, if true ignore button presses
     private final List<GraphActionObserver> observers = new ArrayList<>();
 
-    public State(Map<Vertex, Point> coordinates, Rectangle rectangle, GraphAction graphAction) {
-        this.coordinates = coordinates;
+    public State(GraphVisualization visualization, Rectangle rectangle, GraphAction graphAction) {
+        this.visualization = visualization;
         this.rectangle = rectangle;
         this.graphAction = graphAction;
     }
 
-    public Point getCoordinates(Vertex v) { return coordinates.get(v); }
+    public Point getCoordinates(Vertex v) { return visualization.getVertexPoint(v); }
     public Rectangle getRectangle() { return rectangle; }
     public GraphAction getGraphAction() { return graphAction; }
     public boolean isCurrentlyModified() { return currentlyModified; }
 
-//    public void setBuilder(PropertyGraphBuilder builder) { this.builder = builder; }
     public void setRectangle(Rectangle rectangle) { this.rectangle = rectangle; }
     public void setGraphAction(GraphAction graphAction) {
         this.graphAction = graphAction;
