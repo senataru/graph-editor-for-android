@@ -32,12 +32,14 @@ public class GeneratePopup {
     private final Context context;
     private final GraphStack graphStack;
     private final GraphGenerator generator;
+    private final State state;
 
     private AlertDialog dialog;
 
-    public GeneratePopup(Context context, GraphStack graphStack, GraphGenerator generator) {
+    public GeneratePopup(Context context, GraphStack graphStack, State state, GraphGenerator generator) {
         this.context = context;
         this.graphStack = graphStack;
+        this.state = state;
         this.generator = generator;
     }
 
@@ -92,12 +94,11 @@ public class GeneratePopup {
 
             graphStack.backup();
             GraphVisualization g = generator.generate(parametersInteger);
-            Rectangle oldRec = stateStack.getCurrentState().getRectangle();
+            Rectangle oldRec = state.getRectangle();
             Rectangle optimalRec = DrawManager.getOptimalRectangle(g, 0.1, oldRec);
-            State currentState = stateStack.getCurrentState();
             currentState.setGraph(g);
             currentState.setRectangle(optimalRec);
-            stateStack.invalidateView();
+            graphStack.invalidateView();
 
             dialog.dismiss();
         });

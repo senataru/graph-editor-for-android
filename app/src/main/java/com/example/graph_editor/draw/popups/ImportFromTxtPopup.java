@@ -12,23 +12,25 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.graph_editor.R;
-import com.example.graph_editor.model.graph_storage.GraphScanner;
 import com.example.graph_editor.model.graph_storage.InvalidGraphStringException;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
 
 import graph_editor.graph.Graph;
+import graph_editor.graph.GraphStack;
 
 public class ImportFromTxtPopup {
     private final Context context;
-    private final StateStack stateStack;
+    private final GraphStack stack;
+    private final State state;
 
     private AlertDialog dialog;
 
-    public ImportFromTxtPopup(Context context, StateStack stateStack) {
+    public ImportFromTxtPopup(Context context, GraphStack stack, State state) {
         this.context = context;
-        this.stateStack = stateStack;
+        this.stack = stack;
+        this.state = state;
     }
 
     public void show() {
@@ -56,13 +58,13 @@ public class ImportFromTxtPopup {
                 Toast.makeText(context, "Invalid graph", Toast.LENGTH_SHORT).show();
                 return;
             }
-            stateStack.backup();
-            Rectangle oldRec = stateStack.getCurrentState().getRectangle();
+            stack.backup();
+            Rectangle oldRec = state.getRectangle();
             Rectangle optimalRec = DrawManager.getOptimalRectangle(g, 0.1, oldRec);
-            State currentState = stateStack.getCurrentState();
+
             currentState.setGraph(g);
-            currentState.setRectangle(optimalRec);
-            stateStack.invalidateView();
+            state.setRectangle(optimalRec);
+            stack.invalidateView();
 
             Toast.makeText(context, "Import complete", Toast.LENGTH_SHORT).show();
             dialog.dismiss();

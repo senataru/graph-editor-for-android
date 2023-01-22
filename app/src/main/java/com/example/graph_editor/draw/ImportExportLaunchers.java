@@ -7,8 +7,6 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 
-import com.example.graph_editor.model.graph_storage.GraphScanner;
-import com.example.graph_editor.model.graph_storage.GraphWriter;
 import com.example.graph_editor.model.graph_storage.InvalidGraphStringException;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.mathematics.Rectangle;
@@ -20,15 +18,16 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 import graph_editor.graph.Graph;
+import graph_editor.graph.GraphStack;
 
 public class ImportExportLaunchers {
-    public static void importCommand(ActivityResult result, Context context, StateStack stateStack) {
+    public static void importCommand(ActivityResult result, Context context, GraphStack graphStack, State state) {
         if( result.getResultCode() != Activity.RESULT_OK || result.getData() == null)
             return;
         Uri uri = result.getData().getData();
         try {
             OutputStream outputStream = context.getContentResolver().openOutputStream(uri);
-            outputStream.write(GraphWriter.toExact(stateStack.getCurrentState().getGraph()).getBytes());
+            outputStream.write(GraphWriter.toExact(graphStack.getCurrentGraph()).getBytes());
             outputStream.close();
         } catch (Exception e) {
             Toast.makeText(context, "Invalid text", Toast.LENGTH_SHORT).show();
@@ -36,7 +35,7 @@ public class ImportExportLaunchers {
         }
         Toast.makeText(context, "Export complete", Toast.LENGTH_SHORT).show();
     }
-    public static void exportCommand(ActivityResult result, Context context, StateStack stateStack) {
+    public static void exportCommand(ActivityResult result, Context context, GraphStack graphStack, State state) {
         if( result.getResultCode() != Activity.RESULT_OK || result.getData() == null)
             return;
         Uri uri = result.getData().getData();
@@ -61,13 +60,12 @@ public class ImportExportLaunchers {
             Toast.makeText(context, "Invalid graph", Toast.LENGTH_SHORT).show();
             return;
         }
-        stateStack.backup();
-        Rectangle oldRec = stateStack.getCurrentState().getRectangle();
+        graphStack.backup();
+        Rectangle oldRec = state.getRectangle();
         Rectangle optimalRec = DrawManager.getOptimalRectangle(g, 0.1, oldRec);
-        State currentState = stateStack.getCurrentState();
-        currentState.setGraph(g);
-        currentState.setRectangle(optimalRec);
-        stateStack.invalidateView();
+        state.setGraph(g);
+        state.setRectangle(optimalRec);
+        graphStack.invalidateView();
 
         Toast.makeText(context, "Import complete", Toast.LENGTH_SHORT).show();
     }

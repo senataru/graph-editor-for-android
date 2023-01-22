@@ -29,6 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.graph_editor.R;
 import com.example.graph_editor.database.SavesDatabase;
 import com.example.graph_editor.draw.graph_action.GraphAction;
+import com.example.graph_editor.draw.graph_action.GraphActionObserver;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.DiscardPopup;
 import com.example.graph_editor.draw.popups.SavePopup;
@@ -36,8 +37,6 @@ import com.example.graph_editor.extensions.CanvasManagerImpl;
 import com.example.graph_editor.extensions.GraphActionManagerImpl;
 import com.example.graph_editor.extensions.GraphMenuManager;
 import com.example.graph_editor.extensions.GraphMenuManagerImpl;
-import com.example.graph_editor.model.graph_storage.GraphScanner;
-import com.example.graph_editor.model.graph_storage.GraphWriter;
 import com.example.graph_editor.model.graph_storage.InvalidGraphStringException;
 import com.example.graph_editor.model.GraphType;
 import com.example.graph_editor.model.mathematics.Rectangle;
@@ -54,6 +53,7 @@ import java.util.Set;
 import graph_editor.geometry.Point;
 import graph_editor.graph.Graph;
 import graph_editor.graph.GraphStack;
+import graph_editor.graph.GraphStackImpl;
 
 public class DrawActivity extends AppCompatActivity {
     private final static int extensions_start = 1;
@@ -121,20 +121,13 @@ public class DrawActivity extends AppCompatActivity {
             }
         }
         assert graph != null;
-        graphStack = new StateStackImpl(
-                () -> {
-                    invalidateOptionsMenu();
-                    graphView.update(state.getGraphAction());
-                },
-                // the rectangle is temporary and will be replaced as soon as possible (when the height will be known)
-                new State(graph, new Rectangle(new Point(0, 0), new Point(1, 1)), new GraphAction.MoveCanvas()),
-                stack,
-                pointer
-        );
+        graphStack = new GraphStackImpl(graph);
+        state = new State(visualization, new Rectangle(new Point(0, 0), new Point(1, 1)), new GraphAction.MoveCanvas());
         graphView.initialize(new CanvasManagerImpl(), graphStack, state, true);
         state.addObserver(graphView);
+        state.addObserver(actionObserver);
 
-        NavigationButtonCollection buttonCollection = new NavigationButtonCollection(this, graphStack);
+        NavigationButtonCollection buttonCollection = new NavigationButtonCollection(this, state);
         buttonCollection.add(findViewById(R.id.btnVertex), new GraphAction.NewVertex());
         buttonCollection.add(findViewById(R.id.btnEdge), new GraphAction.NewEdge());
         buttonCollection.add(findViewById(R.id.btnMoveObject), new GraphAction.MoveObject());
@@ -167,6 +160,7 @@ public class DrawActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         state.removeObserver(graphView);
+        state.removeObserver(actionObserver);
     }
 
     @Override
@@ -258,7 +252,7 @@ public class DrawActivity extends AppCompatActivity {
 
     ActivityResultLauncher<Intent> exportActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            result -> ImportExportLaunchers.importCommand(result, this, graphStack));
+            result -> ImportExportLaunchers.importCommand(result, this, graphStack, ));
 
     @SuppressLint("NonConstantResourceId")
     @Override
@@ -296,4 +290,9 @@ public class DrawActivity extends AppCompatActivity {
         undo.getIcon().setAlpha(graphStack.isUndoPossible() ? 255 : 128);
         return true;
     }
+
+    private final GraphActionObserver actionObserver = action -> {
+        invalidateOptionsMenu();
+        graphView.update(action);
+    };
 }

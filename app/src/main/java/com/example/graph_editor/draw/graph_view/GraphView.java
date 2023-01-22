@@ -94,7 +94,7 @@ public class GraphView extends View implements GraphActionObserver {
         Rectangle optimalRec = DrawManager.getOptimalRectangle(graphStack.getCurrentGraph(),0.1, rec);
         state.setRectangle(optimalRec);
         if (interactive) {
-            GraphOnTouchListener onTouchListener = new GraphOnTouchListener(getContext(), this, stateStack);
+            GraphOnTouchListener onTouchListener = new GraphOnTouchListener(getContext(), this, graphStack, state);
             this.setOnTouchListener(onTouchListener);
         }
         isLazyInitialised = true;
@@ -194,5 +194,12 @@ public class GraphView extends View implements GraphActionObserver {
 
     public Point getRelative(Point point) {
         return new Point(point.getX()/getWidth(), point.getY()/getHeight());
+    }
+
+    public Graph getCurrentGraph() {
+        return graphStack.getCurrentGraph();
+    }
+    public State getState() {
+        return state;
     }
 }

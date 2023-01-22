@@ -22,7 +22,7 @@ public class ScriptProxy implements ExtensionInvoker.ExtensionProxy {
     public int registerGraphMenuOption(String optionName, String functionCalledOnOptionSelected) {
         return graphMenuManager.registerOption(
                 optionName,
-                (stateStack, graph, view) -> invoker.callFunction(functionCalledOnOptionSelected, stateStack, graph, view)
+                (graphStack, graph, view) -> invoker.callFunction(functionCalledOnOptionSelected, graphStack, graph, view)
         );
     }
 

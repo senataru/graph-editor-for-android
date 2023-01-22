@@ -10,18 +10,21 @@ import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.state.State;
 
 import graph_editor.geometry.Point;
+import graph_editor.graph.GraphStack;
 
 public class GraphOnTouchListener implements View.OnTouchListener {
     private final Context context;
     private final GraphView graphView;
-    private final StateStack stateStack;
+    private final GraphStack graphStack;
+    private final State state;
 
     GraphOnTouchListenerData data;
 
-    public GraphOnTouchListener(Context context, GraphView graphView, StateStack stateStack) {
+    public GraphOnTouchListener(Context context, GraphView graphView, GraphStack graphStack, State state) {
         this.context = context;
         this.graphView = graphView;
-        this.stateStack = stateStack;
+        this.graphStack = graphStack;
+        this.state = state;
 
         this.data = new GraphOnTouchListenerData();
     }
@@ -30,9 +33,8 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     public boolean onTouch(View v, MotionEvent event) {
         v.performClick();
 
-        State currentState = stateStack.getCurrentState();
-        data.rectangle = currentState.getRectangle();
-        data.graph = currentState.getGraph();
+        data.rectangle = state.getRectangle();
+        data.graph = graphStack.getCurrentGraph();
 
         data.currentRelativePoint = graphView.getRelative(new Point(event.getX(), event.getY()));
         data.currentAbsolutePoint = DrawManager.getAbsolute(data.rectangle, data.currentRelativePoint);
@@ -45,32 +47,32 @@ public class GraphOnTouchListener implements View.OnTouchListener {
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             data.firstPointerId = event.getPointerId(event.getActionIndex());
-            currentState.setCurrentlyModified(true);
+            state.setCurrentlyModified(true);
         }
 
 
         if (stylusMode) {
             if (event.getToolType(0) == MotionEvent.TOOL_TYPE_FINGER) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    data.stylusActionMode = currentState.getGraphAction();
-                    currentState.setGraphAction(new GraphAction.MoveCanvas());
+                    data.stylusActionMode = state.getGraphAction();
+                    state.setGraphAction(new GraphAction.MoveCanvas());
                 }
             }
         }
 
-        boolean result = currentState.getGraphAction().perform(v, event, stateStack, data, graphView);
+        boolean result = state.getGraphAction().perform(v, event, graphStack, data, graphView);
 
         if (stylusMode) {
             if (event.getToolType(0) == MotionEvent.TOOL_TYPE_FINGER) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
-                    currentState.setGraphAction(data.stylusActionMode);
+                    state.setGraphAction(data.stylusActionMode);
                     data.stylusActionMode = null;
                 }
             }
         }
 
         if (event.getAction() == MotionEvent.ACTION_UP) {
-            currentState.setCurrentlyModified(false);
+            state.setCurrentlyModified(false);
         }
 
         data.previousAbsolutePoint = data.currentAbsolutePoint;

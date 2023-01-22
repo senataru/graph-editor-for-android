@@ -76,7 +76,7 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
             Graph graph = GraphScanner.fromExact(graphString);
             addAllProperties(graph, vertexPropertySaveStrings, edgePropertySaveStrings);
 
-            //TODO this code is same in other classes, fix it
+            //TODO this code is same or similar in other classes, remove redundancy
             GraphStack stack = new GraphStackImpl(graph);
             State state = new State(
                     visualization,
@@ -97,7 +97,7 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
                     vertexPropertySaveStrings, edgePropertySaveStrings);
         });
         holder.deleteButton.setOnClickListener(v ->
-                new ConfirmPopup(context, holder.dataGraph.getStateStack().getCurrentState().getGraph(), visualization, () -> {
+                new ConfirmPopup(context, holder.dataGraph.getCurrentGraph(), visualization, () -> {
                     Save s = data.get(position);
                     data.remove(position);
                     notifyItemRemoved(position);
@@ -106,7 +106,7 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
                 }).show()
         );
         holder.shareButton.setOnClickListener(
-                v -> new ShareAsTxtIntent(context, holder.dataGraph.getStateStack()).show());
+                v -> new ShareAsTxtIntent(context, holder.dataGraph.getCurrentGraph()).show());
     }
 
     private void addAllProperties(Graph graph, List<String> vertexPropertySaveStrings, List<String> edgePropertySaveStrings)

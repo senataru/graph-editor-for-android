@@ -64,22 +64,21 @@ public class OptionsHandler {
 //                graphView.postInvalidate();
 //                return true;
             case R.id.options_btn_recenter:
-                State state1 = graphStack.getCurrentState();
-                Rectangle newRectangle1 = DrawManager.getOptimalRectangle(state1.getGraph(), 0.1, state1.getRectangle());
-                state1.setRectangle(newRectangle1);
+                Rectangle newRectangle1 = DrawManager.getOptimalRectangle(graphStack.getCurrentGraph(), 0.1, state.getRectangle());
+                state.setRectangle(newRectangle1);
                 graphView.postInvalidate();
                 return true;
             case R.id.options_btn_settings:
                 new SettingsPopup(context, graphView::postInvalidate).show();
                 return true;
             case R.id.options_btn_save_as:
-                new SavePopup().show(graphStack.getCurrentState().getGraph(), context, ()->{});
+                new SavePopup().show(graphStack.getCurrentGraph(), context, ()->{});
                 return true;
             case R.id.options_btn_export_txt:
                 new ShareAsTxtIntent(context, graphStack).show();
                 return true;
             case R.id.options_btn_import_txt:
-                new ImportFromTxtPopup(context, graphStack).show();
+                new ImportFromTxtPopup(context, graphStack, state).show();
                 return true;
             case R.id.options_btn_export_file:
                 Intent exportAsFileIntent = new Intent(Intent.ACTION_CREATE_DOCUMENT);

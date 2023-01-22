@@ -3,21 +3,22 @@ package com.example.graph_editor.draw.popups;
 import android.content.Context;
 import android.content.Intent;
 
-import com.example.graph_editor.model.graph_storage.GraphWriter;
+import graph_editor.graph.Graph;
+import graph_editor.graph.GraphStack;
 
 public class ShareAsTxtIntent {
     private final Context context;
-    private final StateStack stateStack;
+    private final Graph graph;
 
-    public ShareAsTxtIntent(Context context, StateStack stateStack) {
+    public ShareAsTxtIntent(Context context, Graph graph) {
         this.context = context;
-        this.stateStack = stateStack;
+        this.graph = graph;
     }
 
     public void show() {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);  // for some reason this action won't display custom titles
-        sendIntent.putExtra(Intent.EXTRA_TEXT, GraphWriter.toExact(stateStack.getCurrentState().getGraph()));
+        sendIntent.putExtra(Intent.EXTRA_TEXT, GraphWriter.toExact(graph));
         sendIntent.setType("text/plain");
 
         Intent shareIntent = Intent.createChooser(sendIntent, "Export your graph");
