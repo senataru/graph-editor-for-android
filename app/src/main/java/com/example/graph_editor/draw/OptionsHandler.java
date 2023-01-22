@@ -12,18 +12,19 @@ import androidx.annotation.NonNull;
 import com.example.graph_editor.R;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.GeneratePopup;
-import com.example.graph_editor.draw.popups.ImportFromTxtPopup;
 import com.example.graph_editor.draw.popups.SavePopup;
 import com.example.graph_editor.draw.popups.SettingsPopup;
-import com.example.graph_editor.draw.popups.ShareAsTxtIntent;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
 
 import java.util.Objects;
 
+import graph_editor.graph.Graph;
 import graph_editor.graph.VersionStack;
 import graph_editor.graph_generators.GraphGeneratorBipartiteClique;
+import graph_editor.properties.PropertyGraphBuilder;
+import graph_editor.visual.BuilderVisualizer;
 import graph_editor.visual.GraphVisualization;
 
 public class OptionsHandler {
@@ -38,6 +39,7 @@ public class OptionsHandler {
                     .handle(stack, stack.getCurrent().getGraph(), graphView);
             return true;
         }
+        GraphVisualization visualization;
         switch (item.getItemId()) {
             case R.id.options_btn_save:
                 makeSave.run();
@@ -52,8 +54,9 @@ public class OptionsHandler {
                 return true;
             //more actions
             case R.id.options_btn_clear:
-                stack.backup();
-                stack.getCurrent().getGraph().getVertices().clear();
+                Graph emptyGraph = new PropertyGraphBuilder(0).build();
+                visualization = new BuilderVisualizer().generateVisual(emptyGraph);
+                stack.push(visualization);
                 graphView.postInvalidate();
                 return true;
 //            case R.id.options_btn_normalize:
@@ -65,7 +68,7 @@ public class OptionsHandler {
 //                graphView.postInvalidate();
 //                return true;
             case R.id.options_btn_recenter:
-                GraphVisualization visualization = stack.getCurrent();
+                visualization = stack.getCurrent();
                 Rectangle newRectangle1 = DrawManager.getOptimalRectangle(visualization.getVisualization(), visualization.getGraph(), 0.1, state.getRectangle());
                 state.setRectangle(newRectangle1);
                 graphView.postInvalidate();
@@ -74,14 +77,14 @@ public class OptionsHandler {
                 new SettingsPopup(context, graphView::postInvalidate).show();
                 return true;
             case R.id.options_btn_save_as:
-                new SavePopup().show(stack.getCurrent().getGraph(), context, ()->{});
+                new SavePopup().show(stack.getCurrent(), context, ()->{});
                 return true;
-            case R.id.options_btn_export_txt:
-                new ShareAsTxtIntent(context, stack.getCurrent()).show();
-                return true;
-            case R.id.options_btn_import_txt:
-                new ImportFromTxtPopup(context, stack, state).show();
-                return true;
+//            case R.id.options_btn_export_txt:
+//                new ShareAsTxtIntent(context, stack.getCurrent()).show();
+//                return true;
+//            case R.id.options_btn_import_txt:
+//                new ImportFromTxtPopup(context, stack, state).show();
+//                return true;
             case R.id.options_btn_export_file:
                 Intent exportAsFileIntent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
                 exportAsFileIntent.setType("text/plain");

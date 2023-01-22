@@ -28,15 +28,15 @@
     </item>
 
 
-    <item android:id="@+id/options_btn_import_txt"
-        android:title="@string/read_graph_from_text"
-        app:showAsAction="never" >
-    </item>
+<!--    <item android:id="@+id/options_btn_import_txt"-->
+<!--        android:title="@string/read_graph_from_text"-->
+<!--        app:showAsAction="never" >-->
+<!--    </item>-->
 
-    <item android:id="@+id/options_btn_export_txt"
-        android:title="@string/share_graph_as_text"
-        app:showAsAction="never" >
-    </item>
+<!--    <item android:id="@+id/options_btn_export_txt"-->
+<!--        android:title="@string/share_graph_as_text"-->
+<!--        app:showAsAction="never" >-->
+<!--    </item>-->
 
     <item android:id="@+id/options_btn_import_file"
         android:title="@string/import_graph_from_file"

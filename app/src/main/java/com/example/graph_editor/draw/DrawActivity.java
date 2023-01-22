@@ -1,11 +1,7 @@
 package com.example.graph_editor.draw;
 
 import static com.example.graph_editor.draw.ExtensionsMenuOptions.extensionsOptions;
-import static com.example.graph_editor.menu.SharedPrefNames.CURRENT_GRAPH;
-import static com.example.graph_editor.menu.SharedPrefNames.CURRENT_GRAPH_ID;
-import static com.example.graph_editor.menu.SharedPrefNames.EDGE_PROPERTIES;
-import static com.example.graph_editor.menu.SharedPrefNames.GRAPH_TYPE;
-import static com.example.graph_editor.menu.SharedPrefNames.VERTEX_PROPERTIES;
+import static com.example.graph_editor.menu.SharedPrefNames.CURRENT_GRAPH_NAME;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -37,15 +33,16 @@ import com.example.graph_editor.extensions.CanvasManagerImpl;
 import com.example.graph_editor.extensions.GraphActionManagerImpl;
 import com.example.graph_editor.extensions.GraphMenuManager;
 import com.example.graph_editor.extensions.GraphMenuManagerImpl;
+import com.example.graph_editor.file_serialization.Loader;
+import com.example.graph_editor.file_serialization.Saver;
+import com.example.graph_editor.file_serialization.SerializationConstants;
 import com.example.graph_editor.model.graph_storage.InvalidGraphStringException;
-import com.example.graph_editor.model.GraphType;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
 
+import java.io.Serializable;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -53,9 +50,10 @@ import java.util.Set;
 import graph_editor.geometry.Point;
 import graph_editor.graph.Graph;
 import graph_editor.graph.ObservableStackImpl;
-import graph_editor.graph.VersionStack;
 import graph_editor.graph.VersionStack.ObservableStack;
 import graph_editor.graph.VersionStackImpl;
+import graph_editor.properties.PropertyGraphBuilder;
+import graph_editor.visual.BuilderVisualizer;
 import graph_editor.visual.GraphVisualization;
 
 public class DrawActivity extends AppCompatActivity {
@@ -65,11 +63,13 @@ public class DrawActivity extends AppCompatActivity {
 
     private State state;
 
-    private long currentGraphId = -1;
-    private String graphString;
-    private Map<String, String> graphVertexPropertyStrings = new HashMap<>();
-    private Map<String, String> graphEdgePropertyStrings = new HashMap<>();
+//    private long currentGraphId = -1;
+//    private String graphString;
+//    private Map<String, String> graphVertexPropertyStrings = new HashMap<>();
+//    private Map<String, String> graphEdgePropertyStrings = new HashMap<>();
 
+    private String name;
+    private boolean stackChangedSinceLastSave;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,59 +77,67 @@ public class DrawActivity extends AppCompatActivity {
         setContentView(R.layout.activity_draw);
 
         SharedPreferences sharedPref = this.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
-        currentGraphId = sharedPref.getLong(CURRENT_GRAPH_ID, -1);
-        graphString = sharedPref.getString(CURRENT_GRAPH, null);
-        int choiceOrd = sharedPref.getInt(GRAPH_TYPE, 0);
-        Set<String> vertexPropertyStrings = sharedPref.getStringSet(VERTEX_PROPERTIES, Collections.emptySet());
-        Set<String> edgePropertyStrings = sharedPref.getStringSet(EDGE_PROPERTIES, Collections.emptySet());
+
+        name = sharedPref.getString(CURRENT_GRAPH_NAME, null);
+
+//        currentGraphId = sharedPref.getLong(CURRENT_GRAPH_ID, -1);
+//        graphString = sharedPref.getString(CURRENT_GRAPH, null);
+//        int choiceOrd = sharedPref.getInt(GRAPH_TYPE, 0);
+//        Set<String> vertexPropertyStrings = sharedPref.getStringSet(VERTEX_PROPERTIES, Collections.emptySet());
+//        Set<String> edgePropertyStrings = sharedPref.getStringSet(EDGE_PROPERTIES, Collections.emptySet());
 
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.remove(CURRENT_GRAPH_ID);
-        editor.remove(CURRENT_GRAPH);
-        editor.remove(GRAPH_TYPE);
-        editor.remove(VERTEX_PROPERTIES);
-        editor.remove(EDGE_PROPERTIES);
+//        editor.remove(CURRENT_GRAPH_ID);
+//        editor.remove(CURRENT_GRAPH);
+//        editor.remove(GRAPH_TYPE);
+//        editor.remove(VERTEX_PROPERTIES);
+//        editor.remove(EDGE_PROPERTIES);
+        editor.remove(CURRENT_GRAPH_NAME);
+
         editor.apply();
 
         graphView = findViewById(R.id.viewGraph);
-
-        Graph graph = null;
-        List<Graph> stack = null;
-        int pointer = 0;
         GraphAction modeType = new GraphAction.MoveCanvas();
-        if (savedInstanceState != null) { // re-initialize
-            try {
-                stack = GraphScanner.fromExactList(savedInstanceState.getString("GraphStack"));
-            } catch (InvalidGraphStringException e) {
-                e.printStackTrace();
-                throw new RuntimeException("Failed graph list scanning");
-            }
-            pointer = savedInstanceState.getInt("Pointer");
-            graph = stack.get(pointer);
-//            modeType = ActionModeType.valueOf(savedInstanceState.getString("ActionType"));
-            currentGraphId = savedInstanceState.getLong(CURRENT_GRAPH_ID, -1);
-        } else { // either from browse or new graph
-            if (graphString != null) {  // from browse
-                try {
-                    graph = GraphScanner.fromExact(graphString);
-                    addAllProperties(graph, vertexPropertyStrings, edgePropertyStrings);
-                } catch (InvalidGraphStringException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (graph == null) {
-                GraphType choice = GraphType.values()[choiceOrd];
-                graph = new GraphFactory(choice).produce();
-            }
-        }
-        assert graph != null;
+//        if (savedInstanceState != null) { // re-initialize
+//            try {
+//                stack = GraphScanner.fromExactList(savedInstanceState.getString("GraphStack"));
+//            } catch (InvalidGraphStringException e) {
+//                e.printStackTrace();
+//                throw new RuntimeException("Failed graph list scanning");
+//            }
+//            pointer = savedInstanceState.getInt("Pointer");
+//            graph = stack.get(pointer);
+////            modeType = ActionModeType.valueOf(savedInstanceState.getString("ActionType"));
+//            currentGraphId = savedInstanceState.getLong(CURRENT_GRAPH_ID, -1);
+//        } else { // either from browse or new graph
+//            if (graphString != null) {  // from browse
+//                try {
+//                    graph = GraphScanner.fromExact(graphString);
+//                    addAllProperties(graph, vertexPropertyStrings, edgePropertyStrings);
+//                } catch (InvalidGraphStringException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            if (graph == null) {
+//                GraphType choice = GraphType.values()[choiceOrd];
+//                graph = new GraphFactory(choice).produce();
+//            }
+//        }
+//        assert graph != null;
 
-        GraphVisualization visualization = null;
-        var observableStack = new ObservableStackImpl<>(new VersionStackImpl<>(visualization));
+        GraphVisualization visualization;
+        if (name != null) {
+            visualization = Loader.load(this, SerializationConstants.savesDirectory + name);
+        } else  {
+            visualization = new BuilderVisualizer().generateVisual(new PropertyGraphBuilder(0).build());
+        }
+
+        stack = new ObservableStackImpl<>(new VersionStackImpl<>(visualization));
         state = new State(new Rectangle(new Point(0, 0), new Point(1, 1)), new GraphAction.MoveCanvas());
-        graphView.initialize(new CanvasManagerImpl(), observableStack, state, true);
+        graphView.initialize(new CanvasManagerImpl(), stack, state, true);
         state.addObserver(graphView);
         state.addObserver(actionObserver);
+        stack.addObserver(stackObserver);
 
         NavigationButtonCollection buttonCollection = new NavigationButtonCollection(this, state);
         buttonCollection.add(findViewById(R.id.btnVertex), new GraphAction.NewVertex());
@@ -151,13 +159,14 @@ public class DrawActivity extends AppCompatActivity {
         state.setGraphAction(modeType);
     }
 
+    //do not use: disabled functionality, if you want to retrieve it, remember to remove all '/' marks
     private void addAllProperties(Graph graph, Set<String> vertexPropertyStrings,
                                   Set<String> edgePropertyStrings) throws InvalidGraphStringException {
         for (String vertexPropertyString : vertexPropertyStrings) {
-            GraphScanner.addVertexProperty(graph, vertexPropertyString);
+//            GraphScanner.addVertexProperty(graph, vertexPropertyString);
         }
         for (String edgePropertyString : edgePropertyStrings) {
-            GraphScanner.addEdgeProperty(graph, edgePropertyString);
+//            GraphScanner.addEdgeProperty(graph, edgePropertyString);
         }
     }
     @Override
@@ -165,17 +174,18 @@ public class DrawActivity extends AppCompatActivity {
         super.onDestroy();
         state.removeObserver(graphView);
         state.removeObserver(actionObserver);
+        stack.removeObserver(stackObserver);
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        String s = GraphWriter.toExactList(stack.getStack());
-        outState.putString("GraphStack", s);
-        outState.putInt("Pointer", graphStack.getPointer());
+//        String s = GraphWriter.toExactList(stack.getStack());
+//        outState.putString("GraphStack", s);
+//        outState.putInt("Pointer", graphStack.getPointer());
 //        outState.putString("ActionType", stateStack.getCurrentState().getGraphAction().name());
-        outState.putLong("currentGraphId", currentGraphId);
+//        outState.putLong("currentGraphId", currentGraphId);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -193,9 +203,10 @@ public class DrawActivity extends AppCompatActivity {
         return true;
     }
 
-    public void updateGraph(long id, String string) {
-        currentGraphId = id;
-        graphString = string;
+    //do not use: disabled functionality, if you want to retrieve it, remember to remove all '/' marks
+    private void updateGraph(long id, String string) {
+//        currentGraphId = id;
+//        graphString = string;
     }
 
     public void updateGraphVertexProperties(Map<String, String> propertyStrings) {
@@ -204,50 +215,50 @@ public class DrawActivity extends AppCompatActivity {
         }
     }
 
-    public void updateGraphVertexProperty(String name, String value) {
+    //do not use: disabled functionality, if you want to retrieve it, remember to remove all '/' marks
+    private void updateGraphVertexProperty(String name, String value) {
         Objects.requireNonNull(name, "Property name can not be null");
         Objects.requireNonNull(value, "Property value can not be null");
-        graphVertexPropertyStrings.put(name, value);
+//        graphVertexPropertyStrings.put(name, value);
     }
 
-    public void updateGraphEdgeProperties(Map<String, String> propertyStrings) {
+    //do not use: disabled functionality, if you want to retrieve it, remember to remove all '/' marks
+    private void updateGraphEdgeProperties(Map<String, String> propertyStrings) {
         for(String propertyName : propertyStrings.keySet()) {
             updateGraphEdgeProperty(propertyName, propertyStrings.get(propertyName));
         }
     }
 
-    public void updateGraphEdgeProperty(String name, String value) {
+    //do not use: disabled functionality, if you want to retrieve it, remember to remove all '/' marks
+    private void updateGraphEdgeProperty(String name, String value) {
         Objects.requireNonNull(name, "Property name can not be null");
         Objects.requireNonNull(value, "Property value can not be null");
-        graphEdgePropertyStrings.put(name, value);
+//        graphEdgePropertyStrings.put(name, value);
     }
 
     public void makeSave(Runnable afterTask) {
-        if(currentGraphId == -1) {
-            new SavePopup().show(stack.getCurrent().getGraph(), this, afterTask);
+        if(name == null) {
+            new SavePopup().show(stack.getCurrent(), this, afterTask);
         } else {
             GraphVisualization visualization = stack.getCurrent();
-            graphString = GraphWriter.toExact(graph);
-            graphVertexPropertyStrings = GraphWriter.getAllVertexPropertyStrings(graph);
-            graphEdgePropertyStrings = GraphWriter.getAllEdgePropertyStrings(graph);
-            SavesDatabase database = SavesDatabase.getDbInstance(getApplicationContext());
-            database.saveDao().updateGraph(currentGraphId, graphString, System.currentTimeMillis());
-            saveAllProperties(database);
+            Saver.save(this, SerializationConstants.savesDirectory + name , (Serializable) visualization);
 
             Toast.makeText(this, "Graph saved", Toast.LENGTH_LONG).show();
             afterTask.run();
         }
+        stackChangedSinceLastSave = false;
     }
 
+    //do not use: disabled functionality, if you want to retrieve it, remember to remove all '/' marks
     private void saveAllProperties(SavesDatabase database) {
-        for (String propertyString : graphVertexPropertyStrings.values()) {
-            database.vertexPropertySaveDao().updateProperty(currentGraphId, propertyString,
-                    System.currentTimeMillis());
-        }
-        for (String propertyString : graphEdgePropertyStrings.values()) {
-            database.edgePropertySaveDao().updateProperty(currentGraphId, propertyString,
-                    System.currentTimeMillis());
-        }
+//        for (String propertyString : graphVertexPropertyStrings.values()) {
+//            database.vertexPropertySaveDao().updateProperty(currentGraphId, propertyString,
+//                    System.currentTimeMillis());
+//        }
+//        for (String propertyString : graphEdgePropertyStrings.values()) {
+//            database.edgePropertySaveDao().updateProperty(currentGraphId, propertyString,
+//                    System.currentTimeMillis());
+//        }
     }
 
     ActivityResultLauncher<Intent> importActivityResultLauncher = registerForActivityResult(
@@ -270,13 +281,7 @@ public class DrawActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        GraphVisualization visualization = stack.getCurrent();
-        if(currentGraphId == -1) {
-            if(GraphWriter.toExact(graph).equals(GraphWriter.toExact(new GraphFactory(graph.getType()).produce()))) {
-                super.onBackPressed();
-                return;
-            }
-        } else if(GraphWriter.toExact(graph).equals(graphString)) {
+        if(!stackChangedSinceLastSave) {
             super.onBackPressed();
             return;
         }
@@ -298,5 +303,13 @@ public class DrawActivity extends AppCompatActivity {
     private final GraphActionObserver actionObserver = action -> {
         invalidateOptionsMenu();
         graphView.update(action);
+    };
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    private final ObservableStack.Observer<GraphVisualization> stackObserver = visualization -> {
+        stackChangedSinceLastSave = true;
     };
 }

@@ -29,7 +29,7 @@ import graph_editor.visual.GraphVisualization;
 
 public class GeneratePopup {
     private final Context context;
-    private final VersionStack<GraphVisualization> stack
+    private final VersionStack<GraphVisualization> stack;
     private final GraphGenerator generator;
     private final State state;
 
@@ -91,13 +91,12 @@ public class GeneratePopup {
                 parametersInteger.add(Integer.parseInt(str));
             }
 
-            stack.backup();
-            GraphVisualization g = generator.generate(parametersInteger);
+            GraphVisualization visualization = generator.generate(parametersInteger);
+            stack.push(visualization);
+
             Rectangle oldRec = state.getRectangle();
-            Rectangle optimalRec = DrawManager.getOptimalRectangle(g, 0.1, oldRec);
-            currentState.setGraph(g);
+            Rectangle optimalRec = DrawManager.getOptimalRectangle(visualization.getVisualization(), visualization.getGraph(), 0.1, oldRec);
             state.setRectangle(optimalRec);
-            stack.invalidateView();
 
             dialog.dismiss();
         });

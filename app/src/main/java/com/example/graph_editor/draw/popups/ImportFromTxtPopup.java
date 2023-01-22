@@ -21,7 +21,8 @@ import graph_editor.graph.Graph;
 import graph_editor.graph.VersionStack;
 import graph_editor.visual.GraphVisualization;
 
-public class ImportFromTxtPopup {
+//do not use: disabled functionality, if you want to retrieve it, remember to remove all '/' marks
+class ImportFromTxtPopup {
     private final Context context;
     private final VersionStack<GraphVisualization> stack;
     private final State state;
@@ -52,23 +53,23 @@ public class ImportFromTxtPopup {
 
 
         popupView.findViewById(R.id.import_popup_confirm).setOnClickListener(v -> {
-            Graph g;
-            try {
-                g = GraphScanner.fromExact(input.getText().toString());
-            } catch (InvalidGraphStringException e) {
-                Toast.makeText(context, "Invalid graph", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            stack.backup();
-            Rectangle oldRec = state.getRectangle();
-            Rectangle optimalRec = DrawManager.getOptimalRectangle(g, 0.1, oldRec);
-
-            currentState.setGraph(g);
-            state.setRectangle(optimalRec);
-            stack.invalidateView();
-
-            Toast.makeText(context, "Import complete", Toast.LENGTH_SHORT).show();
-            dialog.dismiss();
+//            Graph g;
+//            try {
+//                g = GraphScanner.fromExact(input.getText().toString());
+//            } catch (InvalidGraphStringException e) {
+//                Toast.makeText(context, "Invalid graph", Toast.LENGTH_SHORT).show();
+//                return;
+//            }
+//            stack.backup();
+//            Rectangle oldRec = state.getRectangle();
+//            Rectangle optimalRec = DrawManager.getOptimalRectangle(g, 0.1, oldRec);
+//
+//            currentState.setGraph(g);
+//            state.setRectangle(optimalRec);
+//            stack.invalidateView();
+//
+//            Toast.makeText(context, "Import complete", Toast.LENGTH_SHORT).show();
+//            dialog.dismiss();
         });
 
         builder.setView(popupView);
