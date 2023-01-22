@@ -52,15 +52,17 @@ import java.util.Set;
 
 import graph_editor.geometry.Point;
 import graph_editor.graph.Graph;
-import graph_editor.graph.GraphStack;
-import graph_editor.graph.GraphStackImpl;
+import graph_editor.graph.ObservableStackImpl;
+import graph_editor.graph.VersionStack;
+import graph_editor.graph.VersionStack.ObservableStack;
+import graph_editor.graph.VersionStackImpl;
+import graph_editor.visual.GraphVisualization;
 
 public class DrawActivity extends AppCompatActivity {
     private final static int extensions_start = 1;
     private GraphView graphView;
-    private GraphStack graphStack;
+    private ObservableStack<GraphVisualization> stack;
 
-    //TODO anti-pattern?
     private State state;
 
     private long currentGraphId = -1;
@@ -121,9 +123,11 @@ public class DrawActivity extends AppCompatActivity {
             }
         }
         assert graph != null;
-        graphStack = new GraphStackImpl(graph);
-        state = new State(visualization, new Rectangle(new Point(0, 0), new Point(1, 1)), new GraphAction.MoveCanvas());
-        graphView.initialize(new CanvasManagerImpl(), graphStack, state, true);
+
+        GraphVisualization visualization = null;
+        var observableStack = new ObservableStackImpl<>(new VersionStackImpl<>(visualization));
+        state = new State(new Rectangle(new Point(0, 0), new Point(1, 1)), new GraphAction.MoveCanvas());
+        graphView.initialize(new CanvasManagerImpl(), observableStack, state, true);
         state.addObserver(graphView);
         state.addObserver(actionObserver);
 
@@ -167,7 +171,7 @@ public class DrawActivity extends AppCompatActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        String s = GraphWriter.toExactList(graphStack.getGraphStack());
+        String s = GraphWriter.toExactList(stack.getStack());
         outState.putString("GraphStack", s);
         outState.putInt("Pointer", graphStack.getPointer());
 //        outState.putString("ActionType", stateStack.getCurrentState().getGraphAction().name());
@@ -220,9 +224,9 @@ public class DrawActivity extends AppCompatActivity {
 
     public void makeSave(Runnable afterTask) {
         if(currentGraphId == -1) {
-            new SavePopup().show(graphStack.getCurrentGraph(), this, afterTask);
+            new SavePopup().show(stack.getCurrent().getGraph(), this, afterTask);
         } else {
-            Graph graph = graphStack.getCurrentGraph();
+            GraphVisualization visualization = stack.getCurrent();
             graphString = GraphWriter.toExact(graph);
             graphVertexPropertyStrings = GraphWriter.getAllVertexPropertyStrings(graph);
             graphEdgePropertyStrings = GraphWriter.getAllEdgePropertyStrings(graph);
@@ -248,25 +252,25 @@ public class DrawActivity extends AppCompatActivity {
 
     ActivityResultLauncher<Intent> importActivityResultLauncher = registerForActivityResult(
         new ActivityResultContracts.StartActivityForResult(),
-        (ActivityResult result) -> ImportExportLaunchers.exportCommand(result, this, graphStack));
+        (ActivityResult result) -> ImportExportLaunchers.exportCommand(result, this, stack, state));
 
     ActivityResultLauncher<Intent> exportActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            result -> ImportExportLaunchers.importCommand(result, this, graphStack, ));
+            result -> ImportExportLaunchers.importCommand(result, this, stack, state));
 
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (state.isCurrentlyModified()) return false;
-        if(!OptionsHandler.handle(item, this, graphStack, state, graphView,
-                ()->makeSave(()->{}), importActivityResultLauncher, exportActivityResultLauncher, ))
+        if(!OptionsHandler.handle(item, this, stack, state, graphView,
+                ()->makeSave(()->{}), importActivityResultLauncher, exportActivityResultLauncher))
             return super.onOptionsItemSelected(item);
         return true;
     }
 
     @Override
     public void onBackPressed() {
-        Graph graph = graphStack.getCurrentGraph();
+        GraphVisualization visualization = stack.getCurrent();
         if(currentGraphId == -1) {
             if(GraphWriter.toExact(graph).equals(GraphWriter.toExact(new GraphFactory(graph.getType()).produce()))) {
                 super.onBackPressed();
@@ -284,10 +288,10 @@ public class DrawActivity extends AppCompatActivity {
         MenuItem undo = menu.findItem(R.id.options_btn_undo);
         MenuItem redo = menu.findItem(R.id.options_btn_redo);
 
-        redo.setEnabled(graphStack.isRedoPossible());
-        redo.getIcon().setAlpha(graphStack.isRedoPossible() ? 255 : 128);
-        undo.setEnabled(graphStack.isUndoPossible());
-        undo.getIcon().setAlpha(graphStack.isUndoPossible() ? 255 : 128);
+        redo.setEnabled(stack.isRedoPossible());
+        redo.getIcon().setAlpha(stack.isRedoPossible() ? 255 : 128);
+        undo.setEnabled(stack.isUndoPossible());
+        undo.getIcon().setAlpha(stack.isUndoPossible() ? 255 : 128);
         return true;
     }
 

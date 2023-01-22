@@ -22,23 +22,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import graph_editor.graph.Graph;
-import graph_editor.graph.GraphStack;
+import graph_editor.graph.VersionStack;
 import graph_editor.graph_generators.GraphGenerator;
 import graph_editor.graph_generators.Parameter;
 import graph_editor.visual.GraphVisualization;
 
 public class GeneratePopup {
     private final Context context;
-    private final GraphStack graphStack;
+    private final VersionStack<GraphVisualization> stack
     private final GraphGenerator generator;
     private final State state;
 
     private AlertDialog dialog;
 
-    public GeneratePopup(Context context, GraphStack graphStack, State state, GraphGenerator generator) {
+    public GeneratePopup(Context context, VersionStack<GraphVisualization> stack, State state, GraphGenerator generator) {
         this.context = context;
-        this.graphStack = graphStack;
+        this.stack = stack;
         this.state = state;
         this.generator = generator;
     }
@@ -92,13 +91,13 @@ public class GeneratePopup {
                 parametersInteger.add(Integer.parseInt(str));
             }
 
-            graphStack.backup();
+            stack.backup();
             GraphVisualization g = generator.generate(parametersInteger);
             Rectangle oldRec = state.getRectangle();
             Rectangle optimalRec = DrawManager.getOptimalRectangle(g, 0.1, oldRec);
             currentState.setGraph(g);
-            currentState.setRectangle(optimalRec);
-            graphStack.invalidateView();
+            state.setRectangle(optimalRec);
+            stack.invalidateView();
 
             dialog.dismiss();
         });

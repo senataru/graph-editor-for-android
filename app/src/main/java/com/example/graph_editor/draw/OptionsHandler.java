@@ -22,19 +22,20 @@ import com.example.graph_editor.model.state.State;
 
 import java.util.Objects;
 
-import graph_editor.graph.GraphStack;
+import graph_editor.graph.VersionStack;
 import graph_editor.graph_generators.GraphGeneratorBipartiteClique;
+import graph_editor.visual.GraphVisualization;
 
 public class OptionsHandler {
     @SuppressLint("NonConstantResourceId")
-    public static boolean handle(@NonNull MenuItem item, DrawActivity context, GraphStack graphStack,
+    public static boolean handle(@NonNull MenuItem item, DrawActivity context, VersionStack<GraphVisualization> stack,
                                  State state, GraphView graphView, Runnable makeSave,
                                  ActivityResultLauncher<Intent> importActivityResultLauncher,
                                  ActivityResultLauncher<Intent> exportActivityResultLauncher) {
         if (extensionsOptions.containsKey(item.getItemId())) {
             Objects
                     .requireNonNull(extensionsOptions.get(item.getItemId()))
-                    .handle(graphStack, graphStack.getCurrentGraph(), graphView);
+                    .handle(stack, stack.getCurrent().getGraph(), graphView);
             return true;
         }
         switch (item.getItemId()) {
@@ -42,17 +43,17 @@ public class OptionsHandler {
                 makeSave.run();
                 return true;
             case R.id.options_btn_redo:
-                graphStack.redo();
+                stack.redo();
                 graphView.postInvalidate();
                 return true;
             case R.id.options_btn_undo:
-                graphStack.undo();
+                stack.undo();
                 graphView.postInvalidate();
                 return true;
             //more actions
             case R.id.options_btn_clear:
-                graphStack.backup();
-                graphStack.getCurrentState().getGraph().getVertices().clear();
+                stack.backup();
+                stack.getCurrentState().getGraph().getVertices().clear();
                 graphView.postInvalidate();
                 return true;
 //            case R.id.options_btn_normalize:
@@ -64,7 +65,8 @@ public class OptionsHandler {
 //                graphView.postInvalidate();
 //                return true;
             case R.id.options_btn_recenter:
-                Rectangle newRectangle1 = DrawManager.getOptimalRectangle(graphStack.getCurrentGraph(), 0.1, state.getRectangle());
+                GraphVisualization visualization = stack.getCurrent();
+                Rectangle newRectangle1 = DrawManager.getOptimalRectangle(visualization.getVisualization(), visualization.getGraph(), 0.1, state.getRectangle());
                 state.setRectangle(newRectangle1);
                 graphView.postInvalidate();
                 return true;
@@ -72,13 +74,13 @@ public class OptionsHandler {
                 new SettingsPopup(context, graphView::postInvalidate).show();
                 return true;
             case R.id.options_btn_save_as:
-                new SavePopup().show(graphStack.getCurrentGraph(), context, ()->{});
+                new SavePopup().show(stack.getCurrent().getGraph(), context, ()->{});
                 return true;
             case R.id.options_btn_export_txt:
-                new ShareAsTxtIntent(context, graphStack).show();
+                new ShareAsTxtIntent(context, stack.getCurrent().getGraph()).show();
                 return true;
             case R.id.options_btn_import_txt:
-                new ImportFromTxtPopup(context, graphStack, state).show();
+                new ImportFromTxtPopup(context, stack, state).show();
                 return true;
             case R.id.options_btn_export_file:
                 Intent exportAsFileIntent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
@@ -104,7 +106,7 @@ public class OptionsHandler {
 //                new GeneratePopup(context, graphStack, new GraphGeneratorClique()).show();
 //                return true;
             case R.id.generate_btn_bipartite_clique:
-                new GeneratePopup(context, graphStack, new GraphGeneratorBipartiteClique()).show();
+                new GeneratePopup(context, stack, new GraphGeneratorBipartiteClique()).show();
                 return true;
 //            case R.id.generate_btn_full_binary_tree:
 //                new GeneratePopup(context, graphStack, new GraphGeneratorFullBinaryTree()).show();

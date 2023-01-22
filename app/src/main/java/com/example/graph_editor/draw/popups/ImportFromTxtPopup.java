@@ -18,16 +18,17 @@ import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
 
 import graph_editor.graph.Graph;
-import graph_editor.graph.GraphStack;
+import graph_editor.graph.VersionStack;
+import graph_editor.visual.GraphVisualization;
 
 public class ImportFromTxtPopup {
     private final Context context;
-    private final GraphStack stack;
+    private final VersionStack<GraphVisualization> stack;
     private final State state;
 
     private AlertDialog dialog;
 
-    public ImportFromTxtPopup(Context context, GraphStack stack, State state) {
+    public ImportFromTxtPopup(Context context, VersionStack<GraphVisualization> stack, State state) {
         this.context = context;
         this.stack = stack;
         this.state = state;

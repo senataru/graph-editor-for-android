@@ -21,13 +21,13 @@ import com.example.graph_editor.draw.graph_action.GraphActionObserver;
 import com.example.graph_editor.draw.graph_action.GraphAction;
 import com.example.graph_editor.extensions.CanvasManager;
 import com.example.graph_editor.model.DrawManager;
-import com.example.graph_editor.model.GraphType;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
 
 import graph_editor.geometry.Point;
 import graph_editor.graph.Graph;
-import graph_editor.graph.GraphStack;
+import graph_editor.graph.VersionStack.ObservableStack;
+import graph_editor.visual.GraphVisualization;
 
 public class GraphView extends View implements GraphActionObserver {
     private final int baseVertexRadius = 7;
@@ -42,7 +42,7 @@ public class GraphView extends View implements GraphActionObserver {
     private boolean interactive = false;
     private boolean isLazyInitialised = false;
     private CanvasManager canvasManager;
-    private GraphStack graphStack;
+    private ObservableStack<GraphVisualization> stack;
     private State state;
 
     public GraphView(Context context) {
@@ -78,10 +78,10 @@ public class GraphView extends View implements GraphActionObserver {
     }
 
     // !! this alone is not enough, all due to height being lazily calculated
-    public void initialize(CanvasManager canvasManager, GraphStack stack, State state, boolean interactive) {
+    public void initialize(CanvasManager canvasManager, ObservableStack<GraphVisualization> stack, State state, boolean interactive) {
         this.canvasManager = canvasManager;
         this.interactive = interactive;
-        this.graphStack = stack;
+        this.stack = stack;
         this.state = state;
         isLazyInitialised = false;
 
@@ -91,10 +91,10 @@ public class GraphView extends View implements GraphActionObserver {
     @SuppressLint("ClickableViewAccessibility")
     private void lazyInitialize() {
         Rectangle rec = new Rectangle(new Point(0, 0), new Point(1.0, 1.0 * getHeight() / getWidth()));
-        Rectangle optimalRec = DrawManager.getOptimalRectangle(graphStack.getCurrentGraph(),0.1, rec);
+        Rectangle optimalRec = DrawManager.getOptimalRectangle(stack.getCurrent().getVisualization(), stack.getCurrent().getGraph(),0.1, rec);
         state.setRectangle(optimalRec);
         if (interactive) {
-            GraphOnTouchListener onTouchListener = new GraphOnTouchListener(getContext(), this, graphStack, state);
+            GraphOnTouchListener onTouchListener = new GraphOnTouchListener(getContext(), this, stack, state);
             this.setOnTouchListener(onTouchListener);
         }
         isLazyInitialised = true;
@@ -110,7 +110,8 @@ public class GraphView extends View implements GraphActionObserver {
 
         fixedWidth = Settings.getFixedWidth(getContext());
         Rectangle rectangle = state.getRectangle();
-        Graph graph = graphStack.getCurrentGraph();
+        GraphVisualization visualization = stack.getCurrent();
+        Graph graph = visualization.getGraph();
 
         vertexRadius = getDrawWidth(rectangle.getScale(), baseVertexRadius);
         edgePaint.setStrokeWidth((float)getDrawWidth(rectangle.getScale(), baseEdgeWidth));
@@ -120,8 +121,8 @@ public class GraphView extends View implements GraphActionObserver {
                 canvasManager.getEdgeDrawer().orElse((edge, r, canvas1) ->
                         drawEdge(
                                 canvas1,
-                                DrawManager.getRelative(rectangle, state.getCoordinates(edge.getSource())),
-                                DrawManager.getRelative(rectangle, state.getCoordinates(edge.getTarget()))
+                                DrawManager.getRelative(rectangle, visualization.getVertexPoint(edge.getSource())),
+                                DrawManager.getRelative(rectangle, visualization.getVertexPoint(edge.getTarget()))
 //TODO use graphType?           graph.getType()
                         )
                 );
@@ -134,7 +135,7 @@ public class GraphView extends View implements GraphActionObserver {
 
         CanvasManager.VertexDrawer vertexDrawer =
                 canvasManager.getVertexDrawer().orElse((v, r, canvas1) ->
-                        drawVertex(canvas1, DrawManager.getRelative(rectangle, v.getPoint())));
+                        drawVertex(canvas1, DrawManager.getRelative(rectangle, visualization.getVertexPoint(v))));
         graph.getVertices().forEach(v -> vertexDrawer.drawVertex(v, rectangle, canvas));
 
         canvasManager.getExtendedDrawers().forEach(drawer -> drawer.drawElements(rectangle, canvas));
@@ -197,7 +198,7 @@ public class GraphView extends View implements GraphActionObserver {
     }
 
     public Graph getCurrentGraph() {
-        return graphStack.getCurrentGraph();
+        return stack.getCurrent().getGraph();
     }
     public State getState() {
         return state;

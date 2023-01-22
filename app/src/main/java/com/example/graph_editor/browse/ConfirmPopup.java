@@ -15,9 +15,9 @@ import com.example.graph_editor.model.state.State;
 
 import graph_editor.geometry.Point;
 import graph_editor.graph.Graph;
-import graph_editor.graph.GraphStack;
-import graph_editor.graph.GraphStackImpl;
-import graph_editor.visual.BuilderVisualizer;
+import graph_editor.graph.ObservableStackImpl;
+import graph_editor.graph.VersionStack.ObservableStack;
+import graph_editor.graph.VersionStackImpl;
 import graph_editor.visual.GraphVisualization;
 
 public class ConfirmPopup {
@@ -44,9 +44,8 @@ public class ConfirmPopup {
         Button btnYes = popupView.findViewById(R.id.btn_yes);
         Button btnNo = popupView.findViewById(R.id.btn_no);
 
-        GraphStack stack = new GraphStackImpl(graph);
+        ObservableStack<GraphVisualization> stack = new ObservableStackImpl<>(new VersionStackImpl<>(visualization));
         State state = new State(
-                visualization,
                 new Rectangle(new Point(0, 0), new Point(1, 1)),
                 new GraphAction.MoveCanvas()
         );

@@ -22,7 +22,7 @@ public class ScriptProxy implements ExtensionInvoker.ExtensionProxy {
     public int registerGraphMenuOption(String optionName, String functionCalledOnOptionSelected) {
         return graphMenuManager.registerOption(
                 optionName,
-                (graphStack, graph, view) -> invoker.callFunction(functionCalledOnOptionSelected, graphStack, graph, view)
+                (stack, graph, view) -> invoker.callFunction(functionCalledOnOptionSelected, stack, graph, view)
         );
     }
 
@@ -57,8 +57,8 @@ public class ScriptProxy implements ExtensionInvoker.ExtensionProxy {
 
     @Override
     public int registerGraphAction(String imageButtonPath, String functionCalled) {
-        return graphActionManager.registerAction(imageButtonPath, (v, event, graphStack, data, view) -> {
-            invoker.callFunction(functionCalled, v, event, graphStack, data);
+        return graphActionManager.registerAction(imageButtonPath, (v, event, stack, data, view) -> {
+            invoker.callFunction(functionCalled, v, event, stack, data);
             return true;
         });
     }

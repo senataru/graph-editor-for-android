@@ -10,7 +10,6 @@ import graph_editor.properties.PropertyGraphBuilder;
 
 public class GraphOnTouchListenerData {
     // globals
-    public PropertyGraphBuilder builder;
     public Rectangle rectangle;
     public Point currentRelativePoint;
     public Point currentAbsolutePoint;

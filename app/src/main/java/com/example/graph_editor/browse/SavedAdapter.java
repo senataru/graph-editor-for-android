@@ -32,8 +32,10 @@ import java.util.stream.Collectors;
 
 import graph_editor.geometry.Point;
 import graph_editor.graph.Graph;
-import graph_editor.graph.GraphStack;
-import graph_editor.graph.GraphStackImpl;
+import graph_editor.graph.ObservableStackImpl;
+import graph_editor.graph.VersionStack.ObservableStack;
+import graph_editor.graph.VersionStackImpl;
+import graph_editor.visual.GraphVisualization;
 
 public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
     private final Context context;
@@ -76,10 +78,10 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
             Graph graph = GraphScanner.fromExact(graphString);
             addAllProperties(graph, vertexPropertySaveStrings, edgePropertySaveStrings);
 
-            //TODO this code is same or similar in other classes, remove redundancy
-            GraphStack stack = new GraphStackImpl(graph);
+            //TODO initialize
+            GraphVisualization visualization = null;
+            ObservableStack<GraphVisualization> stack = new ObservableStackImpl<>(new VersionStackImpl<>(visualization));
             State state = new State(
-                    visualization,
                     new Rectangle(new Point(0, 0), new Point(1, 1)),
                     new GraphAction.MoveCanvas()
             );

@@ -10,20 +10,21 @@ import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.state.State;
 
 import graph_editor.geometry.Point;
-import graph_editor.graph.GraphStack;
+import graph_editor.graph.VersionStack;
+import graph_editor.visual.GraphVisualization;
 
 public class GraphOnTouchListener implements View.OnTouchListener {
     private final Context context;
     private final GraphView graphView;
-    private final GraphStack graphStack;
+    private final VersionStack<GraphVisualization> stack;
     private final State state;
 
     GraphOnTouchListenerData data;
 
-    public GraphOnTouchListener(Context context, GraphView graphView, GraphStack graphStack, State state) {
+    public GraphOnTouchListener(Context context, GraphView graphView, VersionStack<GraphVisualization> stack, State state) {
         this.context = context;
         this.graphView = graphView;
-        this.graphStack = graphStack;
+        this.stack = stack;
         this.state = state;
 
         this.data = new GraphOnTouchListenerData();
@@ -34,7 +35,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
         v.performClick();
 
         data.rectangle = state.getRectangle();
-        data.graph = graphStack.getCurrentGraph();
+//        data.graph = graphStack.getCurrentGraph();
 
         data.currentRelativePoint = graphView.getRelative(new Point(event.getX(), event.getY()));
         data.currentAbsolutePoint = DrawManager.getAbsolute(data.rectangle, data.currentRelativePoint);
@@ -60,7 +61,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
             }
         }
 
-        boolean result = state.getGraphAction().perform(v, event, graphStack, data, graphView);
+        boolean result = state.getGraphAction().perform(v, event, stack, data, graphView);
 
         if (stylusMode) {
             if (event.getToolType(0) == MotionEvent.TOOL_TYPE_FINGER) {

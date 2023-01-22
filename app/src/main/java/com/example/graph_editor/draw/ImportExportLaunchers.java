@@ -18,16 +18,17 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 import graph_editor.graph.Graph;
-import graph_editor.graph.GraphStack;
+import graph_editor.graph.VersionStack;
+import graph_editor.visual.GraphVisualization;
 
 public class ImportExportLaunchers {
-    public static void importCommand(ActivityResult result, Context context, GraphStack graphStack, State state) {
+    public static void importCommand(ActivityResult result, Context context, VersionStack<GraphVisualization> stack, State state) {
         if( result.getResultCode() != Activity.RESULT_OK || result.getData() == null)
             return;
         Uri uri = result.getData().getData();
         try {
             OutputStream outputStream = context.getContentResolver().openOutputStream(uri);
-            outputStream.write(GraphWriter.toExact(graphStack.getCurrentGraph()).getBytes());
+            outputStream.write(GraphWriter.toExact(stack.getCurrent()).getBytes());
             outputStream.close();
         } catch (Exception e) {
             Toast.makeText(context, "Invalid text", Toast.LENGTH_SHORT).show();
@@ -35,7 +36,7 @@ public class ImportExportLaunchers {
         }
         Toast.makeText(context, "Export complete", Toast.LENGTH_SHORT).show();
     }
-    public static void exportCommand(ActivityResult result, Context context, GraphStack graphStack, State state) {
+    public static void exportCommand(ActivityResult result, Context context, VersionStack<GraphVisualization> stack, State state) {
         if( result.getResultCode() != Activity.RESULT_OK || result.getData() == null)
             return;
         Uri uri = result.getData().getData();
@@ -60,12 +61,12 @@ public class ImportExportLaunchers {
             Toast.makeText(context, "Invalid graph", Toast.LENGTH_SHORT).show();
             return;
         }
-        graphStack.backup();
+        stack.backup();
         Rectangle oldRec = state.getRectangle();
         Rectangle optimalRec = DrawManager.getOptimalRectangle(g, 0.1, oldRec);
         state.setGraph(g);
         state.setRectangle(optimalRec);
-        graphStack.invalidateView();
+        stack.invalidateView();
 
         Toast.makeText(context, "Import complete", Toast.LENGTH_SHORT).show();
     }

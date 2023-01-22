@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 
 import graph_editor.graph.Graph;
-import graph_editor.graph.GraphStack;
 
 public class ShareAsTxtIntent {
     private final Context context;

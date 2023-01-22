@@ -12,8 +12,6 @@ import com.example.graph_editor.model.state.State;
 import java.util.HashMap;
 import java.util.Map;
 
-import graph_editor.graph.GraphStack;
-
 public class NavigationButtonCollection {
     private final State state;
 
