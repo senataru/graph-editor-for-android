@@ -1,7 +1,5 @@
 package com.example.graph_editor.model.graph_storage;
 
-import com.example.graph_editor.model.GraphType;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,10 +7,10 @@ import graph_editor.geometry.Point;
 import graph_editor.graph.Graph;
 import graph_editor.graph.Vertex;
 
-//do not use: disabled functionality, TODO retrieve ASAP, remove all '/' marks
+//do not use: disabled functionality, if you want to retrieve it, remember to remove all '/' marks
 class GraphScanner {
     private static Graph fromExact(String s) throws InvalidGraphStringException {
-        Graph g;
+        Graph g = null;
         String[] t = s.split("\n");
 
         if (t[0].equals("DIRECTED")) {
@@ -28,9 +26,9 @@ class GraphScanner {
             int e = Integer.parseInt(t[1].split(" ")[1]);
 
             for (int i = 0; i < v; i++) {
-                g.addVertex();
+//                g.addVertex();
             }
-            List<Vertex> vertices = g.getVertices();
+//            List<Vertex> vertices = g.getVertices();
 
 
             for (int i = 2; i < 2 + v; i++) {
@@ -56,7 +54,7 @@ class GraphScanner {
         return g;
     }
 
-    public static List<Graph> fromExactList(String s) throws InvalidGraphStringException {
+    private static List<Graph> fromExactList(String s) throws InvalidGraphStringException {
         List<Graph> result = new ArrayList<>();
         String[] t = s.split("#");
         for (String g : t) {
@@ -65,7 +63,7 @@ class GraphScanner {
         return result;
     }
 
-    public static Graph addVertexProperty(Graph graph, String s) throws InvalidGraphStringException {
+    private static Graph addVertexProperty(Graph graph, String s) throws InvalidGraphStringException {
         String[] text = s.split("\n");
 
         String propertyName = text[0];
@@ -84,7 +82,7 @@ class GraphScanner {
         return graph;
     }
 
-    public static Graph addEdgeProperty(Graph graph, String s) throws InvalidGraphStringException {
+    private static Graph addEdgeProperty(Graph graph, String s) throws InvalidGraphStringException {
         String[] text = s.split("\n");
 
         String propertyName = text[0];
