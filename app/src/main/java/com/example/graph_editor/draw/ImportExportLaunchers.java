@@ -16,20 +16,21 @@ import com.example.graph_editor.model.state.State;
 import java.io.Serializable;
 
 import graph_editor.graph.VersionStack;
+import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.GraphVisualization;
 
 public class ImportExportLaunchers {
-    public static void importCommand(ActivityResult result, Context context, VersionStack<GraphVisualization> stack, State state) {
+    public static void importCommand(ActivityResult result, Context context, VersionStack<GraphVisualization<PropertySupportingGraph>> stack, State state) {
         if( result.getResultCode() != Activity.RESULT_OK || result.getData() == null)
             return;
         Uri uri = result.getData().getData();
         Saver.save(context, uri, (Serializable) stack.getCurrent());
     }
-    public static void exportCommand(ActivityResult result, Context context, VersionStack<GraphVisualization> stack, State state) {
+    public static void exportCommand(ActivityResult result, Context context, VersionStack<GraphVisualization<PropertySupportingGraph>> stack, State state) {
         if( result.getResultCode() != Activity.RESULT_OK || result.getData() == null)
             return;
         Uri uri = result.getData().getData();
-        var visualization = Loader.<GraphVisualization>load(context, uri);
+        var visualization = Loader.<GraphVisualization<PropertySupportingGraph>>load(context, uri);
 
         stack.push(visualization);
         Rectangle oldRec = state.getRectangle();

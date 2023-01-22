@@ -19,17 +19,18 @@ import com.example.graph_editor.model.state.State;
 
 import graph_editor.graph.Graph;
 import graph_editor.graph.VersionStack;
+import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.GraphVisualization;
 
 //do not use: disabled functionality, if you want to retrieve it, remember to remove all '/' marks
 class ImportFromTxtPopup {
     private final Context context;
-    private final VersionStack<GraphVisualization> stack;
+    private final VersionStack<GraphVisualization<PropertySupportingGraph>> stack;
     private final State state;
 
     private AlertDialog dialog;
 
-    public ImportFromTxtPopup(Context context, VersionStack<GraphVisualization> stack, State state) {
+    public ImportFromTxtPopup(Context context, VersionStack<GraphVisualization<PropertySupportingGraph>> stack, State state) {
         this.context = context;
         this.stack = stack;
         this.state = state;

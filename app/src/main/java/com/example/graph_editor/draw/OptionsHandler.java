@@ -24,12 +24,13 @@ import graph_editor.graph.Graph;
 import graph_editor.graph.VersionStack;
 import graph_editor.graph_generators.GraphGeneratorBipartiteClique;
 import graph_editor.properties.PropertyGraphBuilder;
+import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.BuilderVisualizer;
 import graph_editor.visual.GraphVisualization;
 
 public class OptionsHandler {
     @SuppressLint("NonConstantResourceId")
-    public static boolean handle(@NonNull MenuItem item, DrawActivity context, VersionStack<GraphVisualization> stack,
+    public static boolean handle(@NonNull MenuItem item, DrawActivity context, VersionStack<GraphVisualization<PropertySupportingGraph>> stack,
                                  State state, GraphView graphView, Runnable makeSave,
                                  ActivityResultLauncher<Intent> importActivityResultLauncher,
                                  ActivityResultLauncher<Intent> exportActivityResultLauncher) {
@@ -39,7 +40,7 @@ public class OptionsHandler {
                     .handle(stack, stack.getCurrent().getGraph(), graphView);
             return true;
         }
-        GraphVisualization visualization;
+        GraphVisualization<PropertySupportingGraph> visualization;
         switch (item.getItemId()) {
             case R.id.options_btn_save:
                 makeSave.run();
@@ -54,7 +55,7 @@ public class OptionsHandler {
                 return true;
             //more actions
             case R.id.options_btn_clear:
-                Graph emptyGraph = new PropertyGraphBuilder(0).build();
+                PropertySupportingGraph emptyGraph = new PropertyGraphBuilder(0).build();
                 visualization = new BuilderVisualizer().generateVisual(emptyGraph);
                 stack.push(visualization);
                 graphView.postInvalidate();

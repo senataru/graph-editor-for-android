@@ -6,22 +6,25 @@ import android.view.View;
 
 import com.example.graph_editor.draw.Settings;
 import com.example.graph_editor.draw.graph_action.GraphAction;
+import com.example.graph_editor.draw.graph_action.NewVertex;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.state.State;
+import com.example.graph_editor.point_mapping.PointMapperImpl;
 
 import graph_editor.geometry.Point;
 import graph_editor.graph.VersionStack;
+import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.GraphVisualization;
 
 public class GraphOnTouchListener implements View.OnTouchListener {
     private final Context context;
     private final GraphView graphView;
-    private final VersionStack<GraphVisualization> stack;
+    private final VersionStack<GraphVisualization<PropertySupportingGraph>> stack;
     private final State state;
 
     GraphOnTouchListenerData data;
 
-    public GraphOnTouchListener(Context context, GraphView graphView, VersionStack<GraphVisualization> stack, State state) {
+    public GraphOnTouchListener(Context context, GraphView graphView, VersionStack<GraphVisualization<PropertySupportingGraph>> stack, State state) {
         this.context = context;
         this.graphView = graphView;
         this.stack = stack;
@@ -56,12 +59,12 @@ public class GraphOnTouchListener implements View.OnTouchListener {
             if (event.getToolType(0) == MotionEvent.TOOL_TYPE_FINGER) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     data.stylusActionMode = state.getGraphAction();
-                    state.setGraphAction(new GraphAction.MoveCanvas());
+                    state.setGraphAction(new NewVertex());
                 }
             }
         }
 
-        boolean result = state.getGraphAction().perform(graphView, event, stack, data);
+        boolean result = state.getGraphAction().perform(new PointMapperImpl(...), event, stack);
 
         if (stylusMode) {
             if (event.getToolType(0) == MotionEvent.TOOL_TYPE_FINGER) {

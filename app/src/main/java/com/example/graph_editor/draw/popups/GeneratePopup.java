@@ -25,17 +25,18 @@ import java.util.Locale;
 import graph_editor.graph.VersionStack;
 import graph_editor.graph_generators.GraphGenerator;
 import graph_editor.graph_generators.Parameter;
+import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.GraphVisualization;
 
 public class GeneratePopup {
     private final Context context;
-    private final VersionStack<GraphVisualization> stack;
+    private final VersionStack<GraphVisualization<PropertySupportingGraph>> stack;
     private final GraphGenerator generator;
     private final State state;
 
     private AlertDialog dialog;
 
-    public GeneratePopup(Context context, VersionStack<GraphVisualization> stack, State state, GraphGenerator generator) {
+    public GeneratePopup(Context context, VersionStack<GraphVisualization<PropertySupportingGraph>> stack, State state, GraphGenerator generator) {
         this.context = context;
         this.stack = stack;
         this.state = state;
@@ -91,7 +92,7 @@ public class GeneratePopup {
                 parametersInteger.add(Integer.parseInt(str));
             }
 
-            GraphVisualization visualization = generator.generate(parametersInteger);
+            GraphVisualization<PropertySupportingGraph> visualization = generator.generate(parametersInteger);
             stack.push(visualization);
 
             Rectangle oldRec = state.getRectangle();

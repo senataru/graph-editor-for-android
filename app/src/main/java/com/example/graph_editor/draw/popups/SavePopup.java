@@ -20,13 +20,14 @@ import java.io.Serializable;
 import java.util.Map;
 
 import graph_editor.graph.Graph;
+import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.GraphVisualization;
 
 public class SavePopup {
     AlertDialog dialog;
 
     public SavePopup() {}
-    public void show(GraphVisualization visualization, DrawActivity context, Runnable afterTask) {
+    public void show(GraphVisualization<PropertySupportingGraph> visualization, DrawActivity context, Runnable afterTask) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = (LayoutInflater)context.getSystemService( Context.LAYOUT_INFLATER_SERVICE);

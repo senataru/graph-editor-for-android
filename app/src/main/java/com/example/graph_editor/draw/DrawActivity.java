@@ -26,6 +26,7 @@ import com.example.graph_editor.R;
 import com.example.graph_editor.database.SavesDatabase;
 import com.example.graph_editor.draw.graph_action.GraphAction;
 import com.example.graph_editor.draw.graph_action.GraphActionObserver;
+import com.example.graph_editor.draw.graph_action.NewVertex;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.DiscardPopup;
 import com.example.graph_editor.draw.popups.SavePopup;
@@ -53,13 +54,14 @@ import graph_editor.graph.ObservableStackImpl;
 import graph_editor.graph.VersionStack.ObservableStack;
 import graph_editor.graph.VersionStackImpl;
 import graph_editor.properties.PropertyGraphBuilder;
+import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.BuilderVisualizer;
 import graph_editor.visual.GraphVisualization;
 
 public class DrawActivity extends AppCompatActivity {
     private final static int extensions_start = 1;
     private GraphView graphView;
-    private ObservableStack<GraphVisualization> stack;
+    private ObservableStack<GraphVisualization<PropertySupportingGraph>> stack;
 
     private State state;
 
@@ -97,7 +99,7 @@ public class DrawActivity extends AppCompatActivity {
         editor.apply();
 
         graphView = findViewById(R.id.viewGraph);
-        GraphAction modeType = new GraphAction.MoveCanvas();
+        GraphAction modeType = new NewVertex();
 //        if (savedInstanceState != null) { // re-initialize
 //            try {
 //                stack = GraphScanner.fromExactList(savedInstanceState.getString("GraphStack"));
@@ -125,7 +127,7 @@ public class DrawActivity extends AppCompatActivity {
 //        }
 //        assert graph != null;
 
-        GraphVisualization visualization;
+        GraphVisualization<PropertySupportingGraph> visualization;
         if (name != null) {
             visualization = Loader.load(this, SerializationConstants.savesDirectory + name);
         } else  {
@@ -133,18 +135,20 @@ public class DrawActivity extends AppCompatActivity {
         }
 
         stack = new ObservableStackImpl<>(new VersionStackImpl<>(visualization));
-        state = new State(new Rectangle(new Point(0, 0), new Point(1, 1)), new GraphAction.MoveCanvas());
+        state = new State(new Rectangle(new Point(0, 0), new Point(1, 1)), new NewVertex());
         graphView.initialize(new CanvasManagerImpl(), stack, state, true);
         state.addObserver(graphView);
         state.addObserver(actionObserver);
         stack.addObserver(stackObserver);
 
         NavigationButtonCollection buttonCollection = new NavigationButtonCollection(this, state);
-        buttonCollection.add(findViewById(R.id.btnVertex), new GraphAction.NewVertex());
-        buttonCollection.add(findViewById(R.id.btnEdge), new GraphAction.NewEdge());
-        buttonCollection.add(findViewById(R.id.btnMoveObject), new GraphAction.MoveObject());
-        buttonCollection.add(findViewById(R.id.btnMoveCanvas), new GraphAction.MoveCanvas());
-        buttonCollection.add(findViewById(R.id.btnRemoveObject), new GraphAction.RemoveObject());
+        buttonCollection.add(findViewById(R.id.btnVertex), new NewVertex());
+
+        //TODO implement asap
+//        buttonCollection.add(findViewById(R.id.btnEdge), new GraphAction.NewEdge());
+//        buttonCollection.add(findViewById(R.id.btnMoveObject), new GraphAction.MoveObject());
+//        buttonCollection.add(findViewById(R.id.btnMoveCanvas), new GraphAction.MoveCanvas());
+//        buttonCollection.add(findViewById(R.id.btnRemoveObject), new GraphAction.RemoveObject());
 
         for (Pair<String, GraphAction> it : GraphActionManagerImpl.getRegisteredActions()) {
             LinearLayout ll = findViewById(R.id.linearLayout);
@@ -240,7 +244,7 @@ public class DrawActivity extends AppCompatActivity {
         if(name == null) {
             new SavePopup().show(stack.getCurrent(), this, afterTask);
         } else {
-            GraphVisualization visualization = stack.getCurrent();
+            GraphVisualization<PropertySupportingGraph> visualization = stack.getCurrent();
             Saver.save(this, SerializationConstants.savesDirectory + name , (Serializable) visualization);
 
             Toast.makeText(this, "Graph saved", Toast.LENGTH_LONG).show();
@@ -309,7 +313,7 @@ public class DrawActivity extends AppCompatActivity {
         this.name = name;
     }
 
-    private final ObservableStack.Observer<GraphVisualization> stackObserver = visualization -> {
+    private final ObservableStack.Observer<GraphVisualization<PropertySupportingGraph>> stackObserver = visualization -> {
         stackChangedSinceLastSave = true;
     };
 }

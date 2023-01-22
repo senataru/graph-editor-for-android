@@ -27,6 +27,7 @@ import com.example.graph_editor.model.state.State;
 import graph_editor.geometry.Point;
 import graph_editor.graph.Graph;
 import graph_editor.graph.VersionStack.ObservableStack;
+import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.GraphVisualization;
 
 public class GraphView extends View implements GraphActionObserver {
@@ -42,7 +43,7 @@ public class GraphView extends View implements GraphActionObserver {
     private boolean interactive = false;
     private boolean isLazyInitialised = false;
     private CanvasManager canvasManager;
-    private ObservableStack<GraphVisualization> stack;
+    private ObservableStack<GraphVisualization<PropertySupportingGraph>> stack;
     private State state;
 
     public GraphView(Context context) {
@@ -78,7 +79,7 @@ public class GraphView extends View implements GraphActionObserver {
     }
 
     // !! this alone is not enough, all due to height being lazily calculated
-    public void initialize(CanvasManager canvasManager, ObservableStack<GraphVisualization> stack, State state, boolean interactive) {
+    public void initialize(CanvasManager canvasManager, ObservableStack<GraphVisualization<PropertySupportingGraph>> stack, State state, boolean interactive) {
         this.canvasManager = canvasManager;
         this.interactive = interactive;
         this.stack = stack;
@@ -110,7 +111,7 @@ public class GraphView extends View implements GraphActionObserver {
 
         fixedWidth = Settings.getFixedWidth(getContext());
         Rectangle rectangle = state.getRectangle();
-        GraphVisualization visualization = stack.getCurrent();
+        GraphVisualization<PropertySupportingGraph> visualization = stack.getCurrent();
         Graph graph = visualization.getGraph();
 
         vertexRadius = getDrawWidth(rectangle.getScale(), baseVertexRadius);
@@ -197,7 +198,7 @@ public class GraphView extends View implements GraphActionObserver {
         return new Point(point.getX()/getWidth(), point.getY()/getHeight());
     }
 
-    public GraphVisualization getVisualization() {
+    public GraphVisualization<PropertySupportingGraph> getVisualization() {
         return stack.getCurrent();
     }
     public State getState() {

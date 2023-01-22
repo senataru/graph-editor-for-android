@@ -33,6 +33,7 @@ import graph_editor.graph.Graph;
 import graph_editor.graph.ObservableStackImpl;
 import graph_editor.graph.VersionStack.ObservableStack;
 import graph_editor.graph.VersionStackImpl;
+import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.GraphVisualization;
 
 public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
@@ -69,9 +70,9 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
 //                .map(propertySave -> propertySave.property)
 //                .collect(Collectors.toList());
 
-        GraphVisualization visualization = Loader.load(browseActivity, SerializationConstants.savesDirectory + name);
+        GraphVisualization<PropertySupportingGraph> visualization = Loader.load(browseActivity, SerializationConstants.savesDirectory + name);
 
-        ObservableStack<GraphVisualization> stack = new ObservableStackImpl<>(new VersionStackImpl<>(visualization));
+        ObservableStack<GraphVisualization<PropertySupportingGraph>> stack = new ObservableStackImpl<>(new VersionStackImpl<>(visualization));
         State state = new State(
                 new Rectangle(new Point(0, 0), new Point(1, 1)),
                 new GraphAction.MoveCanvas()

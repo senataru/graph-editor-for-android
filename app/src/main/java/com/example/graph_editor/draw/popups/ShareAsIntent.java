@@ -5,13 +5,14 @@ import android.content.Intent;
 
 import java.io.Serializable;
 
+import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.GraphVisualization;
 
 public class ShareAsIntent {
     private final Context context;
-    private final GraphVisualization visualization;
+    private final GraphVisualization<PropertySupportingGraph> visualization;
 
-    public ShareAsIntent(Context context, GraphVisualization visualization) {
+    public ShareAsIntent(Context context, GraphVisualization<PropertySupportingGraph> visualization) {
         this.context = context;
         this.visualization = visualization;
     }
