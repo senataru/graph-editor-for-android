@@ -57,8 +57,8 @@ public class ScriptProxy implements ExtensionInvoker.ExtensionProxy {
 
     @Override
     public int registerGraphAction(String imageButtonPath, String functionCalled) {
-        return graphActionManager.registerAction(imageButtonPath, (v, event, stack, data, view) -> {
-            invoker.callFunction(functionCalled, v, event, stack, data);
+        return graphActionManager.registerAction(imageButtonPath, (view, event, stack, data) -> {
+            invoker.callFunction(functionCalled, view, event, stack, data);
             return true;
         });
     }

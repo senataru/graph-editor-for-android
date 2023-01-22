@@ -1,7 +1,6 @@
 package com.example.graph_editor.draw.graph_action;
 
 import android.view.MotionEvent;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 
@@ -21,14 +20,13 @@ import graph_editor.visual.GraphVisualization;
 
 public interface GraphAction {
     //TODO remove view parameter, because v == view
-    boolean perform(View v, @NonNull MotionEvent event, VersionStack<GraphVisualization> stack, GraphOnTouchListenerData data, GraphView view);
+    boolean perform(GraphView view, @NonNull MotionEvent event, VersionStack<GraphVisualization> stack, GraphOnTouchListenerData data);
 
     class NewVertex implements GraphAction {
         @Override
-        public boolean perform(View v, @NonNull MotionEvent event, VersionStack<GraphVisualization> stack, GraphOnTouchListenerData data, GraphView view) {
+        public boolean perform(GraphView view, @NonNull MotionEvent event, VersionStack<GraphVisualization> stack, GraphOnTouchListenerData data) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    stack.backup();
                     data.newVertex = data.graph.addVertex();
                     data.newVertex.setPoint(data.currentAbsolutePoint);
                     break;
@@ -46,7 +44,7 @@ public interface GraphAction {
     }
     class NewEdge implements GraphAction {
         @Override
-        public boolean perform(View v, @NonNull MotionEvent event, VersionStack<GraphVisualization> stack, GraphOnTouchListenerData data, GraphView view) {
+        public boolean perform(GraphView view, @NonNull MotionEvent event, VersionStack<GraphVisualization> stack, GraphOnTouchListenerData data) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     stack.backup();
@@ -105,7 +103,7 @@ public interface GraphAction {
     }
     class MoveObject implements GraphAction {
         @Override
-        public boolean perform(View v, @NonNull MotionEvent event, VersionStack<GraphVisualization> stack, GraphOnTouchListenerData data, GraphView view) {
+        public boolean perform(GraphView view, @NonNull MotionEvent event, VersionStack<GraphVisualization> stack, GraphOnTouchListenerData data) {
             Vertex nearest = DrawManager.getNearestVertex(data.graph, data.rectangle, data.currentRelativePoint, 0.1, Collections.emptySet());
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
@@ -126,7 +124,7 @@ public interface GraphAction {
     }
     class RemoveObject implements GraphAction {
         @Override
-        public boolean perform(View v, @NonNull MotionEvent event, VersionStack<GraphVisualization> stack, GraphOnTouchListenerData data, GraphView view) {
+        public boolean perform(GraphView view, @NonNull MotionEvent event, VersionStack<GraphVisualization> stack, GraphOnTouchListenerData data) {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 stack.backup();
             }
@@ -145,7 +143,7 @@ public interface GraphAction {
     }
     class MoveCanvas implements GraphAction {
         @Override
-        public boolean perform(View v, @NonNull MotionEvent event, VersionStack<GraphVisualization> stack, GraphOnTouchListenerData data, GraphView view) {
+        public boolean perform(GraphView view, @NonNull MotionEvent event, VersionStack<GraphVisualization> stack, GraphOnTouchListenerData data) {
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
                 case MotionEvent.ACTION_DOWN:
                     data.movePreviousX = event.getX();
@@ -173,13 +171,13 @@ public interface GraphAction {
                 case MotionEvent.ACTION_UP:
                     break;
             }
-            DrawManager.translate(data.rectangle, data.moveDeltaX/v.getWidth(), data.moveDeltaY/v.getWidth());
+            DrawManager.translate(data.rectangle, data.moveDeltaX/view.getWidth(), data.moveDeltaY/view.getWidth());
             return true;
         }
     }
     class ZoomCanvas implements GraphAction {
         @Override
-        public boolean perform(View v, @NonNull MotionEvent event, VersionStack<GraphVisualization> stack, GraphOnTouchListenerData data, GraphView view) {
+        public boolean perform(GraphView view, @NonNull MotionEvent event, VersionStack<GraphVisualization> stack, GraphOnTouchListenerData data) {
             int indexA = event.findPointerIndex(data.firstPointerId);
             int indexB = event.findPointerIndex(data.secondPointerId);
 
