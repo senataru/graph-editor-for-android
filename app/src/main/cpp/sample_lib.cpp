@@ -242,7 +242,6 @@ Java_com_example_graph_1editor_model_DrawManager_arrangePlanarGraph(__unused JNI
                                                               jintArray tab_edge_source,
                                                               jintArray tab_edge_target) {
 
-    ld W = 1, H = 1;
     std::vector<Vertex> V;
     jint *edge_source = (*env).GetIntArrayElements(tab_edge_source, 0);
     jint *edge_target = (*env).GetIntArrayElements(tab_edge_target, 0);
@@ -250,9 +249,18 @@ Java_com_example_graph_1editor_model_DrawManager_arrangePlanarGraph(__unused JNI
     jdouble *y = (*env).GetDoubleArrayElements(tab_y, 0);
     // TODO: solve for several connectivity component
     std::vector<std::vector<int>> E(n);
+
+    // normalize the vertex positions
+    ld max_x = 0, max_y = 0;
+    for (int i = 0; i < n; ++i) {
+        if (fabs(x[i]) > max_x) max_x = fabs(x[i]);
+        if (fabs(y[i]) > max_y) max_y = fabs(y[i]);
+    }
+    ld W = 2 * max_x, H = 2 * max_y;
+
     for (int i = 0; i < n; ++i) {
         V.emplace_back(i);
-        V[i].setPos(x[i] / 2, y[i] / 2);
+        V[i].setPos(x[i], y[i]);
     }
     for (int i = 0; i < m; ++i) {
         E[edge_source[i]].push_back(edge_target[i]);
@@ -262,8 +270,8 @@ Java_com_example_graph_1editor_model_DrawManager_arrangePlanarGraph(__unused JNI
     ld area = W * H;
     ld k = std::sqrt(area / n);
     ld t = W + H;
-    ld cooling = 1.001;
-    const int iterations = 100;
+    ld cooling = 1;
+    const int iterations = 200;
     for (int i = 0; i < iterations; ++i) {
         // calculate repulsive forces
         for (auto &v : V) {
@@ -299,13 +307,14 @@ Java_com_example_graph_1editor_model_DrawManager_arrangePlanarGraph(__unused JNI
         }
 
         ld epsilon = smallest_vertex_edge_distance(V, E);
+        ld safe_dist = 0.4 * epsilon;   // cannot be more than 0.5 * epsilon, should not be more than 0.45 * epsilon
 
         for (auto &v : V) {
             if (v.free) {
                 ld disp_module = v.disp.module();
-                if (disp_module > epsilon/2) {
-                    v.disp.x /= (disp_module/(epsilon/2));
-                    v.disp.y /= (disp_module/(epsilon/2));
+                if (disp_module > safe_dist) {
+                    v.disp.x /= (disp_module/safe_dist);
+                    v.disp.y /= (disp_module/safe_dist);
                 }
                 v.pos.x += v.disp.x;
                 v.pos.y += v.disp.y;
