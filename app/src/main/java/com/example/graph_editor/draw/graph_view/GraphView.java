@@ -197,8 +197,8 @@ public class GraphView extends View implements GraphActionObserver {
         return new Point(point.getX()/getWidth(), point.getY()/getHeight());
     }
 
-    public Graph getCurrentGraph() {
-        return stack.getCurrent().getGraph();
+    public GraphVisualization getVisualization() {
+        return stack.getCurrent();
     }
     public State getState() {
         return state;

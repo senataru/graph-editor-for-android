@@ -53,7 +53,7 @@ public class OptionsHandler {
             //more actions
             case R.id.options_btn_clear:
                 stack.backup();
-                stack.getCurrentState().getGraph().getVertices().clear();
+                stack.getCurrent().getGraph().getVertices().clear();
                 graphView.postInvalidate();
                 return true;
 //            case R.id.options_btn_normalize:
@@ -77,7 +77,7 @@ public class OptionsHandler {
                 new SavePopup().show(stack.getCurrent().getGraph(), context, ()->{});
                 return true;
             case R.id.options_btn_export_txt:
-                new ShareAsTxtIntent(context, stack.getCurrent().getGraph()).show();
+                new ShareAsTxtIntent(context, stack.getCurrent()).show();
                 return true;
             case R.id.options_btn_import_txt:
                 new ImportFromTxtPopup(context, stack, state).show();
@@ -106,7 +106,7 @@ public class OptionsHandler {
 //                new GeneratePopup(context, graphStack, new GraphGeneratorClique()).show();
 //                return true;
             case R.id.generate_btn_bipartite_clique:
-                new GeneratePopup(context, stack, new GraphGeneratorBipartiteClique()).show();
+                new GeneratePopup(context, stack, state, new GraphGeneratorBipartiteClique()).show();
                 return true;
 //            case R.id.generate_btn_full_binary_tree:
 //                new GeneratePopup(context, graphStack, new GraphGeneratorFullBinaryTree()).show();

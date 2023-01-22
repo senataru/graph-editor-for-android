@@ -99,7 +99,7 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
                     vertexPropertySaveStrings, edgePropertySaveStrings);
         });
         holder.deleteButton.setOnClickListener(v ->
-                new ConfirmPopup(context, holder.dataGraph.getCurrentGraph(), visualization, () -> {
+                new ConfirmPopup(context, holder.dataGraph.getVisualization(), () -> {
                     Save s = data.get(position);
                     data.remove(position);
                     notifyItemRemoved(position);
@@ -108,7 +108,7 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
                 }).show()
         );
         holder.shareButton.setOnClickListener(
-                v -> new ShareAsTxtIntent(context, holder.dataGraph.getCurrentGraph()).show());
+                v -> new ShareAsTxtIntent(context, holder.dataGraph.getVisualization()).show());
     }
 
     private void addAllProperties(Graph graph, List<String> vertexPropertySaveStrings, List<String> edgePropertySaveStrings)

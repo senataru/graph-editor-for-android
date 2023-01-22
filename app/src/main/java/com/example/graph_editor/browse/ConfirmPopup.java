@@ -22,15 +22,13 @@ import graph_editor.visual.GraphVisualization;
 
 public class ConfirmPopup {
     Context context;
-    Graph graph;
     private final GraphVisualization visualization;
     Runnable deleteFunction;
 
     AlertDialog dialog;
 
-    ConfirmPopup(Context context, Graph graph, GraphVisualization visualization, Runnable deleteFunction) {
+    ConfirmPopup(Context context, GraphVisualization visualization, Runnable deleteFunction) {
         this.context = context;
-        this.graph = graph;
         this.visualization = visualization;
         this.deleteFunction = deleteFunction;
     }
