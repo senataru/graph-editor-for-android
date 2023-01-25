@@ -55,6 +55,12 @@ public class OptionsHandler {
                 DrawManager.arrangePlanarGraphJava(state2.getGraph());
                 graphView.postInvalidate();
                 return true;
+            case R.id.options_btn_makePlanar:
+                stateStack.backup();
+                State state3 = stateStack.getCurrentState();
+                DrawManager.makePlanar(state3.getGraph());
+                graphView.postInvalidate();
+                return true;
             //more actions
             case R.id.options_btn_clear:
                 stateStack.backup();

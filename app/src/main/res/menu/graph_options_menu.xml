@@ -78,6 +78,11 @@
         app:showAsAction="never">
     </item>
 
+    <item android:id="@+id/options_btn_makePlanar"
+        android:title="Planar layout"
+        app:showAsAction="never">
+    </item>
+
     <item android:id="@+id/options_btn_generate_graph"
         android:title="@string/generate_graph"
         app:showAsAction="never" >
