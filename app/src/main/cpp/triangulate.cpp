@@ -100,16 +100,16 @@ std::vector<Face> triangulate_biconnected_component(std::vector<Face>& faces){
                 int j = 0;
                 while(f.V[j] != vj) j++;
                 for(int i = 2; i<j; i++){
-                    f.V[i]->add_edge(f.V[j+1]);
-                    f.V[j+1]->add_edge(f.V[i]);
-                    triangulated_faces.push_back(Face({f.V[i], f.V[i+1], f.V[j+1]}));
+                    f.V[i]->add_edge(f.V[(j+1)%f.V.size()]);
+                    f.V[(j+1)%f.V.size()]->add_edge(f.V[i]);
+                    triangulated_faces.push_back(Face({f.V[i], f.V[(i+1)%f.V.size()], f.V[(j+1)%f.V.size()]}));
                 }
                 for(int i = j+1; i<f.V.size(); i++){
                     f.V[i]->add_edge(f.V[1]);
                     f.V[1]->add_edge(f.V[i]);
                     triangulated_faces.push_back(Face({f.V[1], f.V[i], f.V[(i+1)%f.V.size()]}));
                 }
-                triangulated_faces.push_back(Face({f.V[1], f.V[2], f.V[j+1]}));
+                triangulated_faces.push_back(Face({f.V[1], f.V[2], f.V[(j+1)%f.V.size()]}));
             }
         }
         else{
