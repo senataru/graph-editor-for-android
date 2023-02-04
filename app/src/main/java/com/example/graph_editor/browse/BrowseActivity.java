@@ -1,10 +1,6 @@
 package com.example.graph_editor.browse;
 
-import static com.example.graph_editor.menu.SharedPrefNames.CURRENT_GRAPH;
-import static com.example.graph_editor.menu.SharedPrefNames.CURRENT_GRAPH_ID;
 import static com.example.graph_editor.menu.SharedPrefNames.CURRENT_GRAPH_NAME;
-import static com.example.graph_editor.menu.SharedPrefNames.EDGE_PROPERTIES;
-import static com.example.graph_editor.menu.SharedPrefNames.VERTEX_PROPERTIES;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,14 +13,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.graph_editor.R;
-import com.example.graph_editor.database.SavesDatabase;
 import com.example.graph_editor.draw.DrawActivity;
-import com.example.graph_editor.file_serialization.SerializationConstants;
+import com.example.graph_editor.fs.FSDirectories;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,7 +36,7 @@ public class BrowseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 //        SavesDatabase database = SavesDatabase.getDbInstance(getApplicationContext());
-        File savesDirectory = new File(SerializationConstants.savesDirectory);
+        File savesDirectory = new File(getFilesDir(), FSDirectories.graphsDirectory);
         List<String> names = savesDirectory.mkdirs() ?
                 List.of() :
                 Arrays.stream(savesDirectory.listFiles()).map(File::getName).collect(Collectors.toList());

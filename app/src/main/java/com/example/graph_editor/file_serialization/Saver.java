@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,16 +13,16 @@ import java.io.OutputStream;
 import java.io.Serializable;
 
 public class Saver {
-    public static void save(Context context, String filename, Serializable serialized) {
-        FileOutputStream fos;
+    public static void save(Context context, File directory, String filename, Serializable serialized) {
         try {
-            fos = context.openFileOutput(filename, Context.MODE_PRIVATE);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(serialized);
-            oos.close();
-            fos.close();
-        } catch (IOException e) {
-            Toast.makeText(context, "Serialization failed due to io", Toast.LENGTH_LONG).show();
+            directory.mkdirs();
+            try (FileOutputStream fos = new FileOutputStream(new File(directory, filename))) {
+                try (ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+                    oos.writeObject(serialized);
+                }
+            }
+        } catch (Exception e) {
+            Toast.makeText(context, "Serialization failed due to" + e.getClass(), Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
     }

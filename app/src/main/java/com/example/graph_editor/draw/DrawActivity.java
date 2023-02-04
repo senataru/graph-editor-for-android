@@ -36,11 +36,12 @@ import com.example.graph_editor.extensions.GraphMenuManager;
 import com.example.graph_editor.extensions.GraphMenuManagerImpl;
 import com.example.graph_editor.file_serialization.Loader;
 import com.example.graph_editor.file_serialization.Saver;
-import com.example.graph_editor.file_serialization.SerializationConstants;
+import com.example.graph_editor.fs.FSDirectories;
 import com.example.graph_editor.model.graph_storage.InvalidGraphStringException;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
@@ -130,7 +131,7 @@ public class DrawActivity extends AppCompatActivity {
 
         GraphVisualization<PropertySupportingGraph> visualization;
         if (name != null) {
-            visualization = Loader.load(this, SerializationConstants.savesDirectory + name);
+            visualization = Loader.load(new File(getFilesDir(), FSDirectories.graphsDirectory), name);
         } else  {
             visualization = new BuilderVisualizer().generateVisual(new PropertyGraphBuilder(new SimpleGraphBuilder(0).build()).build());
         }
@@ -244,7 +245,7 @@ public class DrawActivity extends AppCompatActivity {
             new SavePopup().show(stack.getCurrent(), this, afterTask);
         } else {
             GraphVisualization<PropertySupportingGraph> visualization = stack.getCurrent();
-            Saver.save(this, SerializationConstants.savesDirectory + name , (Serializable) visualization);
+            Saver.save(this, new File(getFilesDir(), FSDirectories.graphsDirectory), name , (Serializable) visualization);
 
             Toast.makeText(this, "Graph saved", Toast.LENGTH_LONG).show();
             afterTask.run();

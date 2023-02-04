@@ -10,12 +10,12 @@ import android.widget.Toast;
 import com.example.graph_editor.R;
 import com.example.graph_editor.database.EdgePropertySave;
 import com.example.graph_editor.database.VertexPropertySave;
-import com.example.graph_editor.database.Save;
 import com.example.graph_editor.database.SavesDatabase;
 import com.example.graph_editor.draw.DrawActivity;
 import com.example.graph_editor.file_serialization.Saver;
-import com.example.graph_editor.file_serialization.SerializationConstants;
+import com.example.graph_editor.fs.FSDirectories;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -39,7 +39,7 @@ public class SavePopup {
                 Toast.makeText(popupView.getContext(), "Please enter graph name", Toast.LENGTH_LONG).show();
                 return;
             }
-            Saver.save(context, SerializationConstants.savesDirectory + name, (Serializable) visualization);
+            Saver.save(context, new File(context.getFilesDir(), FSDirectories.graphsDirectory), name, (Serializable) visualization);
             context.setName(name);
 
             Toast.makeText(context.getApplicationContext(), "Graph saved", Toast.LENGTH_LONG).show();

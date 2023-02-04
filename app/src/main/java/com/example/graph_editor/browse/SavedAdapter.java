@@ -1,7 +1,5 @@
 package com.example.graph_editor.browse;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,21 +10,18 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.graph_editor.R;
-import com.example.graph_editor.database.EdgePropertySaveDao;
-import com.example.graph_editor.database.VertexPropertySaveDao;
 import com.example.graph_editor.database.Save;
-import com.example.graph_editor.database.SavesDatabase;
-import com.example.graph_editor.draw.graph_action.GraphAction;
 import com.example.graph_editor.draw.graph_action.NewVertex;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.ShareAsIntent;
 import com.example.graph_editor.extensions.CanvasManagerImpl;
 import com.example.graph_editor.file_serialization.Loader;
-import com.example.graph_editor.file_serialization.SerializationConstants;
+import com.example.graph_editor.fs.FSDirectories;
 import com.example.graph_editor.model.graph_storage.InvalidGraphStringException;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
 
+import java.io.File;
 import java.util.List;
 
 import graph_editor.geometry.Point;
@@ -71,7 +66,7 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
 //                .map(propertySave -> propertySave.property)
 //                .collect(Collectors.toList());
 
-        GraphVisualization<PropertySupportingGraph> visualization = Loader.load(browseActivity, SerializationConstants.savesDirectory + name);
+        GraphVisualization<PropertySupportingGraph> visualization = Loader.load(new File(browseActivity.getFilesDir(), FSDirectories.graphsDirectory), name);
 
         ObservableStack<GraphVisualization<PropertySupportingGraph>> stack = new ObservableStackImpl<>(new VersionStackImpl<>(visualization));
         State state = new State(
@@ -92,7 +87,8 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
                     data.remove(position);
                     notifyItemRemoved(position);
                     notifyItemRangeChanged(position, data.size());
-                    boolean deleted = browseActivity.deleteFile(SerializationConstants.savesDirectory + name);
+                    File graphsDirectory = new File(browseActivity.getFilesDir(), FSDirectories.graphsDirectory);
+                    boolean deleted = new File(graphsDirectory, name).delete();
                     if (!deleted) { throw new RuntimeException("worrisome: delete did not happen"); }
                 }).show()
         );
