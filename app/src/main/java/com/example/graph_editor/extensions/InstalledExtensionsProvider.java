@@ -28,6 +28,7 @@ public class InstalledExtensionsProvider implements ExtensionsRepository {
     }
 
     public static InstalledExtensionsProvider getInstance(File root) {
+        root.mkdirs();
         InstalledExtensionsProvider instance = new InstalledExtensionsProvider(root);
         instance.loadRepository();
         return instance;

@@ -7,7 +7,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.graph_editor.R;
+import com.example.graph_editor.fs.FSDirectories;
 
+import java.io.File;
 import java.util.List;
 
 import graph_editor.extensions.ExtensionsClient;
@@ -37,7 +39,7 @@ public class ExtensionsActivity extends AppCompatActivity implements OnExtension
     protected void onResume() {
         super.onResume();
         if(installedRepository == null) installedRepository =
-                InstalledExtensionsProvider.getInstance(this.getFilesDir());
+                InstalledExtensionsProvider.getInstance(new File(this.getFilesDir(), FSDirectories.pluginsDirectory));
         new Thread(() -> tryConnect("192.168.43.113")).start();
 
         installedView.setAdapter(new InstalledExtensionsRecyclerViewAdapter(
