@@ -17,14 +17,19 @@ public class PointMapperImpl implements PointMapper {
         this.rectangle = rectangle;
     }
 
-    //TODO implement
     @Override
     public ScreenPoint mapIntoView(Point point) {
-        return null;
+        double x = (point.getX() - rectangle.getLeft()) * view.getWidth() / rectangle.getWidth();
+        double y = (point.getY() - rectangle.getTop()) * view.getHeight() / rectangle.getHeight();
+
+        return new ScreenPoint((float) x, (float) y);
     }
 
     @Override
     public Point mapFromView(ScreenPoint screenPoint) {
-        return null;
+        double x = rectangle.getLeft() + screenPoint.getX() * rectangle.getWidth() / view.getWidth();
+        double y = rectangle.getTop() + screenPoint.getY() * rectangle.getHeight() / view.getHeight();
+
+        return new Point(x,y);
     }
 }
