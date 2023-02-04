@@ -53,7 +53,7 @@ public class AvailableExtensionsRecyclerViewAdapter
             enableButton(holder.install);
             holder.install.setOnClickListener(v -> {
                 blockButton(holder.install);
-                callback.onInstallClicked(extensionName);
+                callback.onInstallClicked(extensionName, position);
                 disableButton(holder.install);
             });
         }
