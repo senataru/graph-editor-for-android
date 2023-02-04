@@ -17,6 +17,7 @@ import com.example.graph_editor.database.VertexPropertySaveDao;
 import com.example.graph_editor.database.Save;
 import com.example.graph_editor.database.SavesDatabase;
 import com.example.graph_editor.draw.graph_action.GraphAction;
+import com.example.graph_editor.draw.graph_action.NewVertex;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.ShareAsIntent;
 import com.example.graph_editor.extensions.CanvasManagerImpl;
@@ -75,7 +76,7 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
         ObservableStack<GraphVisualization<PropertySupportingGraph>> stack = new ObservableStackImpl<>(new VersionStackImpl<>(visualization));
         State state = new State(
                 new Rectangle(new Point(0, 0), new Point(1, 1)),
-                new GraphAction.MoveCanvas()
+                new NewVertex()
         );
         holder.dataGraph.initialize(new CanvasManagerImpl(), stack, state,false);
 

@@ -21,6 +21,7 @@ import com.example.graph_editor.model.state.State;
 import java.util.Objects;
 
 import graph_editor.graph.Graph;
+import graph_editor.graph.SimpleGraphBuilder;
 import graph_editor.graph.VersionStack;
 import graph_editor.graph_generators.GraphGeneratorBipartiteClique;
 import graph_editor.properties.PropertyGraphBuilder;
@@ -55,7 +56,7 @@ public class OptionsHandler {
                 return true;
             //more actions
             case R.id.options_btn_clear:
-                PropertySupportingGraph emptyGraph = new PropertyGraphBuilder(0).build();
+                PropertySupportingGraph emptyGraph = new PropertyGraphBuilder(new SimpleGraphBuilder(0).build()).build();
                 visualization = new BuilderVisualizer().generateVisual(emptyGraph);
                 stack.push(visualization);
                 graphView.postInvalidate();

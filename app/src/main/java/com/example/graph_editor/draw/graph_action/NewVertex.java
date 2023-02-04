@@ -2,6 +2,8 @@ package com.example.graph_editor.draw.graph_action;
 
 import android.view.MotionEvent;
 import androidx.annotation.NonNull;
+
+import graph_editor.graph.SimpleGraphBuilder;
 import graph_editor.graph.VersionStack;
 import graph_editor.graph.Vertex;
 import graph_editor.point_mapping.PointMapper;
@@ -28,18 +30,19 @@ public class NewVertex extends GraphOnTouchMutation {
 
     @Override
     protected GraphVisualization<PropertySupportingGraph> execute(PointMapper mapper, GraphVisualization<PropertySupportingGraph> previous) {
-        //TODO this code will probably be redundant in other actions, so move it somewhere else?
-        //TODO maybe add remove vertex in builder?
         mapper.mapFromView(sp);
         PropertySupportingGraph graph = previous.getGraph();
-        var builder = new PropertyGraphBuilder(graph.getVertices().size());
+        var builder = new SimpleGraphBuilder(graph.getVertices().size());
+        Vertex addedVertex = builder.addVertex();
         graph.getEdges().forEach(edge -> builder.addEdge(edge.getSource().getIndex(), edge.getTarget().getIndex()));
-        graph.getExtendedElements().forEach(builder::addExtendedElement);
+
+        var propertyGraphBuilder = new PropertyGraphBuilder(builder.build());
+        graph.getExtendedElements().forEach(propertyGraphBuilder::addExtendedElement);
         graph.getPropertiesNames().forEach(propertyName -> {
-            builder.registerProperty(propertyName);
+            propertyGraphBuilder.registerProperty(propertyName);
             graph.getElementsWithProperty(propertyName)
                     .forEach(graphElement ->
-                            builder.addElementProperty(
+                            propertyGraphBuilder.addElementProperty(
                                     graphElement,
                                     propertyName,
                                     graph.getPropertyValue(propertyName, graphElement)
@@ -49,10 +52,7 @@ public class NewVertex extends GraphOnTouchMutation {
         BuilderVisualizer visualizer = new BuilderVisualizer();
         previous.getVisualization().forEach(visualizer::addCoordinates);
 
-
-        //real code
-        Vertex addedVertex = builder.addVertex();
         visualizer.addCoordinates(addedVertex, mapper.mapFromView(sp));
-        return visualizer.generateVisual(builder.build());
+        return visualizer.generateVisual(propertyGraphBuilder.build());
     }
 }

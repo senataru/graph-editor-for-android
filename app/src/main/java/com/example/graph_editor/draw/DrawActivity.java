@@ -51,6 +51,7 @@ import java.util.Set;
 import graph_editor.geometry.Point;
 import graph_editor.graph.Graph;
 import graph_editor.graph.ObservableStackImpl;
+import graph_editor.graph.SimpleGraphBuilder;
 import graph_editor.graph.VersionStack.ObservableStack;
 import graph_editor.graph.VersionStackImpl;
 import graph_editor.properties.PropertyGraphBuilder;
@@ -131,13 +132,12 @@ public class DrawActivity extends AppCompatActivity {
         if (name != null) {
             visualization = Loader.load(this, SerializationConstants.savesDirectory + name);
         } else  {
-            visualization = new BuilderVisualizer().generateVisual(new PropertyGraphBuilder(0).build());
+            visualization = new BuilderVisualizer().generateVisual(new PropertyGraphBuilder(new SimpleGraphBuilder(0).build()).build());
         }
 
         stack = new ObservableStackImpl<>(new VersionStackImpl<>(visualization));
         state = new State(new Rectangle(new Point(0, 0), new Point(1, 1)), new NewVertex());
         graphView.initialize(new CanvasManagerImpl(), stack, state, true);
-        state.addObserver(graphView);
         state.addObserver(actionObserver);
         stack.addObserver(stackObserver);
 
@@ -176,7 +176,6 @@ public class DrawActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        state.removeObserver(graphView);
         state.removeObserver(actionObserver);
         stack.removeObserver(stackObserver);
     }
@@ -305,8 +304,7 @@ public class DrawActivity extends AppCompatActivity {
     }
 
     private final GraphActionObserver actionObserver = action -> {
-        invalidateOptionsMenu();
-        graphView.update(action);
+        graphView.postInvalidate();
     };
 
     public void setName(String name) {
@@ -315,5 +313,7 @@ public class DrawActivity extends AppCompatActivity {
 
     private final ObservableStack.Observer<GraphVisualization<PropertySupportingGraph>> stackObserver = visualization -> {
         stackChangedSinceLastSave = true;
+        invalidateOptionsMenu();
+        graphView.postInvalidate();
     };
 }

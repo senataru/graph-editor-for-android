@@ -64,7 +64,7 @@ public class GraphOnTouchListener implements View.OnTouchListener {
             }
         }
 
-        boolean result = state.getGraphAction().perform(new PointMapperImpl(...), event, stack);
+        boolean result = state.getGraphAction().perform(new PointMapperImpl(graphView, state.getRectangle()), event, stack);
 
         if (stylusMode) {
             if (event.getToolType(0) == MotionEvent.TOOL_TYPE_FINGER) {

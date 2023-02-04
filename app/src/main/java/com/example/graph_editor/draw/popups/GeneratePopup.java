@@ -21,11 +21,17 @@ import com.example.graph_editor.model.state.State;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
+import graph_editor.geometry.Point;
+import graph_editor.graph.Graph;
 import graph_editor.graph.VersionStack;
+import graph_editor.graph.Vertex;
 import graph_editor.graph_generators.GraphGenerator;
 import graph_editor.graph_generators.Parameter;
+import graph_editor.properties.PropertyGraphBuilder;
 import graph_editor.properties.PropertySupportingGraph;
+import graph_editor.visual.BuilderVisualizer;
 import graph_editor.visual.GraphVisualization;
 
 public class GeneratePopup {
@@ -92,7 +98,11 @@ public class GeneratePopup {
                 parametersInteger.add(Integer.parseInt(str));
             }
 
-            GraphVisualization<PropertySupportingGraph> visualization = generator.generate(parametersInteger);
+            GraphVisualization<Graph> rawVisualization = generator.generate(parametersInteger);
+            BuilderVisualizer visualizer = new BuilderVisualizer();
+            rawVisualization.getVisualization().forEach(visualizer::addCoordinates);
+            PropertyGraphBuilder propertyGraphBuilder = new PropertyGraphBuilder(rawVisualization.getGraph());
+            GraphVisualization<PropertySupportingGraph> visualization = visualizer.generateVisual(propertyGraphBuilder.build());
             stack.push(visualization);
 
             Rectangle oldRec = state.getRectangle();

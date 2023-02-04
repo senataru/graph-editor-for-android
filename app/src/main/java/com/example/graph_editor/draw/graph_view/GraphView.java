@@ -30,7 +30,7 @@ import graph_editor.graph.VersionStack.ObservableStack;
 import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.GraphVisualization;
 
-public class GraphView extends View implements GraphActionObserver {
+public class GraphView extends View {
     private final int baseVertexRadius = 7;
     private final int baseEdgeWidth = 5;
 
@@ -187,11 +187,6 @@ public class GraphView extends View implements GraphActionObserver {
     private double getDrawWidth(double scale, double value) {
         double fun = fixedWidth ? 1 : scale;
         return value / fun * (getWidth()/1000.0);
-    }
-
-    @Override
-    public void update(GraphAction graphAction) {
-        postInvalidate();
     }
 
     public Point getRelative(Point point) {
