@@ -1,5 +1,6 @@
 package com.example.graph_editor.draw.graph_action;
 
+import java.util.Collection;
 import java.util.Map;
 
 import graph_editor.geometry.Point;
@@ -9,12 +10,12 @@ import graph_editor.properties.PropertyGraphBuilder;
 import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.GraphVisualizationBuilder;
 
-public abstract class GraphExpansion extends GraphOnTouchMutation {
+public abstract class GraphDebuilder extends GraphOnTouchMutation {
     protected PropertyGraphBuilder deBuild(
             PropertySupportingGraph graph,
             GraphBuilder builder,
             GraphVisualizationBuilder visualizer,
-            Map<Vertex, Point> coordinates
+            Collection<Map.Entry<Vertex, Point>> coordinates
     ) {
         graph.getEdges().forEach(edge -> builder.addEdge(edge.getSource().getIndex(), edge.getTarget().getIndex()));
 
@@ -31,7 +32,7 @@ public abstract class GraphExpansion extends GraphOnTouchMutation {
                             )
                     );
         });
-        coordinates.forEach(visualizer::addCoordinates);
+        coordinates.forEach(e -> visualizer.addCoordinates(e.getKey(), e.getValue()));
         return propertyGraphBuilder;
     }
 }

@@ -25,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.graph_editor.R;
 import com.example.graph_editor.draw.graph_action.GraphAction;
 import com.example.graph_editor.draw.graph_action.MoveCanvas;
+import com.example.graph_editor.draw.graph_action.MoveVertex;
 import com.example.graph_editor.draw.graph_action.NewEdge;
 import com.example.graph_editor.draw.graph_action.NewVertex;
 import com.example.graph_editor.draw.graph_view.GraphOnTouchListener;
@@ -93,10 +94,8 @@ public class DrawActivity extends AppCompatActivity {
 
         buttonCollection = new NavigationButtonCollection(this);
         buttonCollection.add(findViewById(R.id.btnVertex), new NewVertex());
-
         buttonCollection.add(findViewById(R.id.btnEdge), new NewEdge());
-        //TODO implement asap
-//        buttonCollection.add(findViewById(R.id.btnMoveObject), new ...());
+        buttonCollection.add(findViewById(R.id.btnMoveObject), new MoveVertex());
         buttonCollection.add(findViewById(R.id.btnMoveCanvas), new MoveCanvas());
 //        buttonCollection.add(findViewById(R.id.btnRemoveObject), new GraphAction.RemoveObject());
 

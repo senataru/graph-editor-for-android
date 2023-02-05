@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import com.example.graph_editor.point_mapping.PointMapper;
 import com.example.graph_editor.point_mapping.ScreenPoint;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -21,7 +20,7 @@ import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.BuilderVisualizer;
 import graph_editor.visual.GraphVisualization;
 
-public class NewEdge extends GraphExpansion {
+public class NewEdge extends GraphDebuilder {
     private ScreenPoint sp1;
     private ScreenPoint sp2;
     @Override
@@ -47,14 +46,14 @@ public class NewEdge extends GraphExpansion {
                 .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
         Point p1 = GeometryUtils.findClosestPoint(mapper.mapFromView(sp1), inverse.keySet());
         Point p2 = GeometryUtils.findClosestPoint(mapper.mapFromView(sp2), inverse.keySet());
-        if (p1 == null || p2 == null || p1 == p2) {
+        if (p1 == null || p2 == null || p1.equals(p2)) {
             return null;
         } else {
             PropertySupportingGraph graph = previous.getGraph();
             var builder = new SimpleGraphBuilder(graph.getVertices().size());
             builder.addEdge(inverse.get(p1).getIndex(), inverse.get(p2).getIndex());
             BuilderVisualizer visualizer = new BuilderVisualizer();
-            PropertyGraphBuilder propertyGraphBuilder = deBuild(graph, builder, visualizer, previous.getVisualization());
+            PropertyGraphBuilder propertyGraphBuilder = deBuild(graph, builder, visualizer, previous.getVisualization().entrySet());
             return visualizer.generateVisual(propertyGraphBuilder.build());
         }
     }

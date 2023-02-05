@@ -14,7 +14,7 @@ import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.BuilderVisualizer;
 import graph_editor.visual.GraphVisualization;
 
-public class NewVertex extends GraphExpansion {
+public class NewVertex extends GraphDebuilder {
     private ScreenPoint sp;
     @Override
     public boolean perform(PointMapper mapper, @NonNull MotionEvent event, VersionStack<GraphVisualization<PropertySupportingGraph>> stack) {
@@ -38,7 +38,7 @@ public class NewVertex extends GraphExpansion {
 
         BuilderVisualizer visualizer = new BuilderVisualizer();
         visualizer.addCoordinates(addedVertex, mapper.mapFromView(sp));
-        PropertyGraphBuilder propertyGraphBuilder = deBuild(graph, builder, visualizer, previous.getVisualization());
+        PropertyGraphBuilder propertyGraphBuilder = deBuild(graph, builder, visualizer, previous.getVisualization().entrySet());
         return visualizer.generateVisual(propertyGraphBuilder.build());
     }
 }

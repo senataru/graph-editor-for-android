@@ -10,27 +10,7 @@ import graph_editor.visual.GraphVisualization;
 
 public interface GraphAction {
     boolean perform(PointMapper mapper, @NonNull MotionEvent event, VersionStack<GraphVisualization<PropertySupportingGraph>> stack);
-//    class MoveObject implements GraphAction {
-//        @Override
-//        public boolean perform(GraphView view, @NonNull MotionEvent event, VersionStack<GraphVisualization<PropertySupportingGraph>> stack, GraphOnTouchMutation mutation) {
-//            Vertex nearest = DrawManager.getNearestVertex(data.graph, data.rectangle, data.currentRelativePoint, 0.1, Collections.emptySet());
-//            switch (event.getAction()) {
-//                case MotionEvent.ACTION_DOWN:
-//                    stack.backup();
-//                    if (data.movedVertex == null && nearest != null)       // select a vertex
-//                        data.movedVertex = nearest;
-//                case MotionEvent.ACTION_MOVE:
-//                    if (data.movedVertex != null) {
-//                        data.movedVertex.setPoint(DrawManager.getAbsolute(data.rectangle, data.currentRelativePoint));
-//                    }
-//                    break;
-//                case MotionEvent.ACTION_UP:
-//                    data.movedVertex = null;
-//                    break;
-//            }
-//            return true;
-//        }
-//    }
+
 //    class RemoveObject implements GraphAction {
 //        @Override
 //        public boolean perform(GraphView view, @NonNull MotionEvent event, VersionStack<GraphVisualization<PropertySupportingGraph>> stack, GraphOnTouchMutation mutation) {
