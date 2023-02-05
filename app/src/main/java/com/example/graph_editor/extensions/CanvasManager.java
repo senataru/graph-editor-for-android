@@ -3,6 +3,7 @@ package com.example.graph_editor.extensions;
 import android.graphics.Canvas;
 
 import com.example.graph_editor.model.mathematics.Rectangle;
+import com.example.graph_editor.point_mapping.PointMapper;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -12,13 +13,13 @@ import graph_editor.graph.Vertex;
 
 public interface CanvasManager {
     interface VertexDrawer {
-        void drawVertex(Vertex vertex, Rectangle rectangle, Canvas canvas);
+        void drawVertex(Vertex vertex, PointMapper mapper, Canvas canvas);
     }
     interface EdgeDrawer {
-        void drawEdge(Edge edge, Rectangle rectangle, Canvas canvas);
+        void drawEdge(Edge edge, PointMapper mapper, Canvas canvas);
     }
     interface ExtendedElementsDrawer {
-         void drawElements(Rectangle rectangle, Canvas canvas);
+         void drawElements(PointMapper mapper, Canvas canvas);
     }
     Optional<VertexDrawer> getVertexDrawer();
     void setVertexDrawer(VertexDrawer drawer);

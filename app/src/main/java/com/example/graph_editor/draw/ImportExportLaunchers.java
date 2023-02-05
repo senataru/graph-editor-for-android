@@ -33,9 +33,9 @@ public class ImportExportLaunchers {
         var visualization = Loader.<GraphVisualization<PropertySupportingGraph>>load(context, uri);
 
         stack.push(visualization);
-        Rectangle oldRec = state.getRectangle();
-        Rectangle optimalRec = DrawManager.getOptimalRectangle(visualization.getVisualization(), visualization.getGraph(), 0.1, oldRec);
-        state.setRectangle(optimalRec);
+//        Rectangle oldRec = state.getRectangle();
+//        Rectangle optimalRec = DrawManager.getOptimalRectangle(visualization.getVisualization(), visualization.getGraph(), 0.1, oldRec);
+//        state.setRectangle(optimalRec);
 
         Toast.makeText(context, "Import complete", Toast.LENGTH_SHORT).show();
     }

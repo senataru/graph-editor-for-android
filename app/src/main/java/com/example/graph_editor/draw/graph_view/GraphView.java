@@ -23,6 +23,8 @@ import com.example.graph_editor.extensions.CanvasManager;
 import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
+import com.example.graph_editor.point_mapping.PointMapper;
+import com.example.graph_editor.point_mapping.ScreenPoint;
 
 import graph_editor.geometry.Point;
 import graph_editor.graph.Graph;
@@ -38,9 +40,8 @@ public class GraphView extends View {
     private double vertexRadius = baseVertexRadius;
     private Paint edgePaint;
     private boolean fixedWidth;
-
-
     private boolean interactive = false;
+    private PointMapper mapper;
     private boolean isLazyInitialised = false;
     private CanvasManager canvasManager;
     private ObservableStack<GraphVisualization<PropertySupportingGraph>> stack;
@@ -79,23 +80,23 @@ public class GraphView extends View {
     }
 
     // !! this alone is not enough, all due to height being lazily calculated
-    public void initialize(CanvasManager canvasManager, ObservableStack<GraphVisualization<PropertySupportingGraph>> stack, State state, boolean interactive) {
+    public void initialize(CanvasManager canvasManager, ObservableStack<GraphVisualization<PropertySupportingGraph>> stack, State state, boolean interactive, PointMapper mapper) {
         this.canvasManager = canvasManager;
         this.interactive = interactive;
         this.stack = stack;
         this.state = state;
+        this.mapper = mapper;
         isLazyInitialised = false;
-
         postInvalidate();
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private void lazyInitialize() {
-        Rectangle rec = new Rectangle(new Point(0, 0), new Point(1.0, 1.0 * getHeight() / getWidth()));
-        Rectangle optimalRec = DrawManager.getOptimalRectangle(stack.getCurrent().getVisualization(), stack.getCurrent().getGraph(),0.1, rec);
-        state.setRectangle(optimalRec);
+//        Rectangle rec = new Rectangle(new Point(0, 0), new Point(1.0, 1.0 * getHeight() / getWidth()));
+//        Rectangle optimalRec = DrawManager.getOptimalRectangle(stack.getCurrent().getVisualization(), stack.getCurrent().getGraph(),0.1, rec);
+//        state.setRectangle(optimalRec);
         if (interactive) {
-            GraphOnTouchListener onTouchListener = new GraphOnTouchListener(getContext(), this, stack, state);
+            GraphOnTouchListener onTouchListener = new GraphOnTouchListener(getContext(), this, stack, state, mapper);
             this.setOnTouchListener(onTouchListener);
         }
         isLazyInitialised = true;
@@ -110,63 +111,50 @@ public class GraphView extends View {
         }
 
         fixedWidth = Settings.getFixedWidth(getContext());
-        Rectangle rectangle = state.getRectangle();
         GraphVisualization<PropertySupportingGraph> visualization = stack.getCurrent();
         Graph graph = visualization.getGraph();
 
-        vertexRadius = getDrawWidth(rectangle.getScale(), baseVertexRadius);
-        edgePaint.setStrokeWidth((float)getDrawWidth(rectangle.getScale(), baseEdgeWidth));
-//        System.out.println((float)getDrawWidth(rectangle.getScale(), baseEdgeWidth) + "<- should be");
+//        vertexRadius = getDrawWidth(rectangle.getScale(), baseVertexRadius);
+//        edgePaint.setStrokeWidth((float)getDrawWidth(rectangle.getScale(), baseEdgeWidth));
+        edgePaint.setStrokeWidth(baseEdgeWidth);
 
         CanvasManager.EdgeDrawer edgeDrawer =
                 canvasManager.getEdgeDrawer().orElse((edge, r, canvas1) ->
                         drawEdge(
                                 canvas1,
-                                DrawManager.getRelative(rectangle, visualization.getVertexPoint(edge.getSource())),
-                                DrawManager.getRelative(rectangle, visualization.getVertexPoint(edge.getTarget()))
+                                mapper.mapIntoView(visualization.getVertexPoint(edge.getSource())),
+                                mapper.mapIntoView(visualization.getVertexPoint(edge.getTarget()))
 //TODO use graphType?           graph.getType()
                         )
                 );
         graph.getEdges().forEach(e -> edgeDrawer.drawEdge(
                 e,
-                rectangle,
-                //DebugCanvas.INSTANCE.own(canvas)
+                mapper,
                 canvas)
         );
 
         CanvasManager.VertexDrawer vertexDrawer =
                 canvasManager.getVertexDrawer().orElse((v, r, canvas1) ->
-                        drawVertex(canvas1, DrawManager.getRelative(rectangle, visualization.getVertexPoint(v))));
-        graph.getVertices().forEach(v -> vertexDrawer.drawVertex(v, rectangle, canvas));
+                        drawVertex(canvas1, mapper.mapIntoView(visualization.getVertexPoint(v))));
+        graph.getVertices().forEach(v -> vertexDrawer.drawVertex(v, mapper, canvas));
 
-        canvasManager.getExtendedDrawers().forEach(drawer -> drawer.drawElements(rectangle, canvas));
+        canvasManager.getExtendedDrawers().forEach(drawer -> drawer.drawElements(mapper, canvas));
     }
 
-    private void drawVertex(Canvas canvas, Point point) {
-        float x = (float)point.getX()*getWidth();
-        float y = (float)point.getY()*getHeight();
-
-        canvas.drawCircle(x, y, (float)vertexRadius, vertexPaint);
+    private void drawVertex(Canvas canvas, ScreenPoint point) {
+        canvas.drawCircle(point.getX(), point.getY(), (float)vertexRadius, vertexPaint);
     }
 
-    private void drawEdge(Canvas canvas, Point start, Point end /*, GraphType type*/) {
-        float x1 = (float) start.getX() * getWidth();
-        float y1 = (float) start.getY() * getHeight();
-        float x2 = (float) end.getX() * getWidth();
-        float y2 = (float) end.getY() * getHeight();
-
-        float dx = x2-x1;
-        float dy = y2-y1;
-        if (dx*dx + dy*dy < 0.1*0.1) return;
-
-        canvas.drawLine(x1, y1, x2, y2, edgePaint);
+    private void drawEdge(Canvas canvas, ScreenPoint start, ScreenPoint end /*, GraphType type*/) {
+        canvas.drawLine(start.getX(), start.getY(), end.getX(), end.getY(), edgePaint);
 //        if (type == GraphType.DIRECTED) {
 //            drawArrow(edgePaint, canvas, x1, y1, x2, y2);
 //        }
     }
 
     private void drawArrow(Paint paint, Canvas canvas, float x1, float y1, float x2, float y2) {
-        float radius = (float)getDrawWidth(state.getRectangle().getScale(), 50);
+//        float radius = (float)getDrawWidth(state.getRectangle().getScale(), 50);
+        float radius = baseEdgeWidth * 10;
         float angle = 30;
 
         float angleRad= (float) (PI*angle/180.0f);

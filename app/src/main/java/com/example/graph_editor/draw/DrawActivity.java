@@ -26,6 +26,7 @@ import com.example.graph_editor.R;
 import com.example.graph_editor.database.SavesDatabase;
 import com.example.graph_editor.draw.graph_action.GraphAction;
 import com.example.graph_editor.draw.graph_action.GraphActionObserver;
+import com.example.graph_editor.draw.graph_action.MoveCanvas;
 import com.example.graph_editor.draw.graph_action.NewVertex;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.DiscardPopup;
@@ -40,6 +41,7 @@ import com.example.graph_editor.fs.FSDirectories;
 import com.example.graph_editor.model.graph_storage.InvalidGraphStringException;
 import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
+import com.example.graph_editor.point_mapping.PointMapperImpl;
 
 import java.io.File;
 import java.io.Serializable;
@@ -137,8 +139,8 @@ public class DrawActivity extends AppCompatActivity {
         }
 
         stack = new ObservableStackImpl<>(new VersionStackImpl<>(visualization));
-        state = new State(new Rectangle(new Point(0, 0), new Point(1, 1)), new NewVertex());
-        graphView.initialize(new CanvasManagerImpl(), stack, state, true);
+        state = new State(new NewVertex());
+        graphView.initialize(new CanvasManagerImpl(), stack, state, true, new PointMapperImpl(graphView, new Point(0,0)));
         state.addObserver(actionObserver);
         stack.addObserver(stackObserver);
 
@@ -147,8 +149,8 @@ public class DrawActivity extends AppCompatActivity {
 
         //TODO implement asap
 //        buttonCollection.add(findViewById(R.id.btnEdge), new GraphAction.NewEdge());
-//        buttonCollection.add(findViewById(R.id.btnMoveObject), new GraphAction.MoveObject());
-//        buttonCollection.add(findViewById(R.id.btnMoveCanvas), new GraphAction.MoveCanvas());
+//        buttonCollection.add(findViewById(R.id.btnMoveObject), new ...());
+        buttonCollection.add(findViewById(R.id.btnMoveCanvas), new MoveCanvas());
 //        buttonCollection.add(findViewById(R.id.btnRemoveObject), new GraphAction.RemoveObject());
 
         for (Pair<String, GraphAction> it : GraphActionManagerImpl.getRegisteredActions()) {

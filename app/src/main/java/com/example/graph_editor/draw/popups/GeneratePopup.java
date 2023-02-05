@@ -105,9 +105,9 @@ public class GeneratePopup {
             GraphVisualization<PropertySupportingGraph> visualization = visualizer.generateVisual(propertyGraphBuilder.build());
             stack.push(visualization);
 
-            Rectangle oldRec = state.getRectangle();
-            Rectangle optimalRec = DrawManager.getOptimalRectangle(visualization.getVisualization(), visualization.getGraph(), 0.1, oldRec);
-            state.setRectangle(optimalRec);
+//            Rectangle oldRec = state.getRectangle();
+//            Rectangle optimalRec = DrawManager.getOptimalRectangle(visualization.getVisualization(), visualization.getGraph(), 0.1, oldRec);
+//            state.setRectangle(optimalRec);
 
             dialog.dismiss();
         });

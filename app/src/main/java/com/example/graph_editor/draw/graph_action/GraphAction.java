@@ -3,19 +3,8 @@ package com.example.graph_editor.draw.graph_action;
 import android.view.MotionEvent;
 
 import androidx.annotation.NonNull;
-
-import com.example.graph_editor.draw.graph_view.GraphView;
-import com.example.graph_editor.model.DrawManager;
-import com.example.graph_editor.model.mathematics.Rectangle;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-import graph_editor.geometry.Point;
+import com.example.graph_editor.point_mapping.PointMapper;
 import graph_editor.graph.VersionStack;
-import graph_editor.graph.Vertex;
-import graph_editor.point_mapping.PointMapper;
 import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.GraphVisualization;
 

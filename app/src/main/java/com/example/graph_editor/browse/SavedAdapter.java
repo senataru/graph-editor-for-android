@@ -18,8 +18,8 @@ import com.example.graph_editor.extensions.CanvasManagerImpl;
 import com.example.graph_editor.file_serialization.Loader;
 import com.example.graph_editor.fs.FSDirectories;
 import com.example.graph_editor.model.graph_storage.InvalidGraphStringException;
-import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
+import com.example.graph_editor.point_mapping.PointMapperImpl;
 
 import java.io.File;
 import java.util.List;
@@ -70,10 +70,9 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
 
         ObservableStack<GraphVisualization<PropertySupportingGraph>> stack = new ObservableStackImpl<>(new VersionStackImpl<>(visualization));
         State state = new State(
-                new Rectangle(new Point(0, 0), new Point(1, 1)),
                 new NewVertex()
         );
-        holder.dataGraph.initialize(new CanvasManagerImpl(), stack, state,false);
+        holder.dataGraph.initialize(new CanvasManagerImpl(), stack, state,false, new PointMapperImpl(holder.dataGraph, new Point(0,0)));
 
         holder.editButton.setOnClickListener(v -> {
 //            Save newSave = data.get(position);

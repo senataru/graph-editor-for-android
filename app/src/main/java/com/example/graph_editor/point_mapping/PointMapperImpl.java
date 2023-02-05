@@ -2,34 +2,47 @@ package com.example.graph_editor.point_mapping;
 
 import android.view.View;
 
-import com.example.graph_editor.model.mathematics.Rectangle;
-
 import graph_editor.geometry.Point;
-import graph_editor.point_mapping.PointMapper;
-import graph_editor.point_mapping.ScreenPoint;
 
 public class PointMapperImpl implements PointMapper {
     private final View view;
-    private final Rectangle rectangle;
+    private Point offset;
+    private double zoom;
 
-    public PointMapperImpl(View view, Rectangle rectangle) {
+    public PointMapperImpl(View view, Point offset) {
         this.view = view;
-        this.rectangle = rectangle;
+        this.offset = offset;
+        this.zoom = 1.0;
     }
 
     @Override
     public ScreenPoint mapIntoView(Point point) {
-        double x = (point.getX() - rectangle.getLeft()) * view.getWidth() / rectangle.getWidth();
-        double y = (point.getY() - rectangle.getTop()) * view.getHeight() / rectangle.getHeight();
+        double x = (point.getX() - offset.getX()) * view.getWidth() * zoom;
+        double y = (point.getY() - offset.getY()) * view.getHeight() * zoom;
 
         return new ScreenPoint((float) x, (float) y);
     }
 
     @Override
     public Point mapFromView(ScreenPoint screenPoint) {
-        double x = rectangle.getLeft() + screenPoint.getX() * rectangle.getWidth() / view.getWidth();
-        double y = rectangle.getTop() + screenPoint.getY() * rectangle.getHeight() / view.getHeight();
+        double x = offset.getX() + screenPoint.getX() / (view.getWidth() * zoom);
+        double y = offset.getY() + screenPoint.getY() / (view.getHeight() * zoom);
 
         return new Point(x,y);
+    }
+
+    @Override
+    public Point getOffset() {
+        return offset;
+    }
+
+    @Override
+    public void setOffset(Point offset) {
+        this.offset = offset;
+    }
+
+    @Override
+    public void zoomBy(double factor) {
+        zoom *= factor;
     }
 }

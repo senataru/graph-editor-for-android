@@ -69,12 +69,15 @@ public class OptionsHandler {
 //                state.setRectangle(new Rectangle(newRectangle, 1.2));
 //                graphView.postInvalidate();
 //                return true;
-            case R.id.options_btn_recenter:
-                visualization = stack.getCurrent();
-                Rectangle newRectangle1 = DrawManager.getOptimalRectangle(visualization.getVisualization(), visualization.getGraph(), 0.1, state.getRectangle());
-                state.setRectangle(newRectangle1);
-                graphView.postInvalidate();
-                return true;
+
+            //TODO reimplement
+//            case R.id.options_btn_recenter:
+//                visualization = stack.getCurrent();
+//                Rectangle newRectangle1 = DrawManager.getOptimalRectangle(visualization.getVisualization(), visualization.getGraph(), 0.1, state.getRectangle());
+//                state.setRectangle(newRectangle1);
+//                graphView.postInvalidate();
+//                return true;
+
             case R.id.options_btn_settings:
                 new SettingsPopup(context, graphView::postInvalidate).show();
                 return true;

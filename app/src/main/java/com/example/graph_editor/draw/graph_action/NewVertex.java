@@ -3,11 +3,12 @@ package com.example.graph_editor.draw.graph_action;
 import android.view.MotionEvent;
 import androidx.annotation.NonNull;
 
+import com.example.graph_editor.point_mapping.PointMapper;
+import com.example.graph_editor.point_mapping.ScreenPoint;
+
 import graph_editor.graph.SimpleGraphBuilder;
 import graph_editor.graph.VersionStack;
 import graph_editor.graph.Vertex;
-import graph_editor.point_mapping.PointMapper;
-import graph_editor.point_mapping.ScreenPoint;
 import graph_editor.properties.PropertyGraphBuilder;
 import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.BuilderVisualizer;

@@ -6,12 +6,10 @@ import android.view.View;
 
 import com.example.graph_editor.draw.Settings;
 import com.example.graph_editor.draw.graph_action.GraphAction;
+import com.example.graph_editor.draw.graph_action.MoveCanvas;
 import com.example.graph_editor.draw.graph_action.NewVertex;
-import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.state.State;
-import com.example.graph_editor.point_mapping.PointMapperImpl;
-
-import graph_editor.geometry.Point;
+import com.example.graph_editor.point_mapping.PointMapper;
 import graph_editor.graph.VersionStack;
 import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.GraphVisualization;
@@ -21,14 +19,16 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     private final GraphView graphView;
     private final VersionStack<GraphVisualization<PropertySupportingGraph>> stack;
     private final State state;
+    private final PointMapper mapper;
 
     GraphOnTouchListenerData data;
 
-    public GraphOnTouchListener(Context context, GraphView graphView, VersionStack<GraphVisualization<PropertySupportingGraph>> stack, State state) {
+    public GraphOnTouchListener(Context context, GraphView graphView, VersionStack<GraphVisualization<PropertySupportingGraph>> stack, State state, PointMapper mapper) {
         this.context = context;
         this.graphView = graphView;
         this.stack = stack;
         this.state = state;
+        this.mapper = mapper;
 
         this.data = new GraphOnTouchListenerData();
     }
@@ -37,40 +37,28 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     public boolean onTouch(View v, MotionEvent event) {
         v.performClick();
 
-        data.rectangle = state.getRectangle();
-//        data.graph = graphStack.getCurrentGraph();
-
-        data.currentRelativePoint = graphView.getRelative(new Point(event.getX(), event.getY()));
-        data.currentAbsolutePoint = DrawManager.getAbsolute(data.rectangle, data.currentRelativePoint);
-
-//        if (event.getAction() == MotionEvent.ACTION_POINTER_DOWN) {
-//            Toast.makeText(context, "Multitouch detected", Toast.LENGTH_SHORT).show();
-//        }
-
         boolean stylusMode = Settings.getStylus(context);
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            data.firstPointerId = event.getPointerId(event.getActionIndex());
             state.setCurrentlyModified(true);
         }
 
-
+        GraphAction oldAction= null;
         if (stylusMode) {
             if (event.getToolType(0) == MotionEvent.TOOL_TYPE_FINGER) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    data.stylusActionMode = state.getGraphAction();
-                    state.setGraphAction(new NewVertex());
+                    oldAction = state.getGraphAction();
+                    state.setGraphAction(new MoveCanvas());
                 }
             }
         }
 
-        boolean result = state.getGraphAction().perform(new PointMapperImpl(graphView, state.getRectangle()), event, stack);
+        boolean result = state.getGraphAction().perform(mapper, event, stack);
 
         if (stylusMode) {
             if (event.getToolType(0) == MotionEvent.TOOL_TYPE_FINGER) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
-                    state.setGraphAction(data.stylusActionMode);
-                    data.stylusActionMode = null;
+                    state.setGraphAction(oldAction);
                 }
             }
         }

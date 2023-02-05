@@ -58,10 +58,10 @@
 <!--        app:showAsAction="never" >-->
 <!--    </item>-->
 
-    <item android:id="@+id/options_btn_recenter"
-        android:title="@string/recenter_graph"
-        app:showAsAction="never" >
-    </item>
+<!--    <item android:id="@+id/options_btn_recenter"-->
+<!--        android:title="@string/recenter_graph"-->
+<!--        app:showAsAction="never" >-->
+<!--    </item>-->
 
     <item android:id="@+id/options_btn_settings"
         android:title="@string/settings"

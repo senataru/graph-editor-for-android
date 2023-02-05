@@ -7,12 +7,11 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.graph_editor.R;
-import com.example.graph_editor.draw.graph_action.GraphAction;
 import com.example.graph_editor.draw.graph_action.NewVertex;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.extensions.CanvasManagerImpl;
-import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
+import com.example.graph_editor.point_mapping.PointMapperImpl;
 
 import graph_editor.geometry.Point;
 import graph_editor.graph.ObservableStackImpl;
@@ -45,10 +44,9 @@ public class ConfirmPopup {
 
         ObservableStack<GraphVisualization<PropertySupportingGraph>> stack = new ObservableStackImpl<>(new VersionStackImpl<>(visualization));
         State state = new State(
-                new Rectangle(new Point(0, 0), new Point(1, 1)),
                 new NewVertex()
         );
-        graphView.initialize(new CanvasManagerImpl(), stack, state,false);
+        graphView.initialize(new CanvasManagerImpl(), stack, state,false, new PointMapperImpl(graphView, new Point(0,0)));
 
         btnYes.setOnClickListener(v -> {
             deleteFunction.run();
