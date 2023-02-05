@@ -28,6 +28,7 @@ import com.example.graph_editor.draw.graph_action.MoveCanvas;
 import com.example.graph_editor.draw.graph_action.MoveVertex;
 import com.example.graph_editor.draw.graph_action.NewEdge;
 import com.example.graph_editor.draw.graph_action.NewVertex;
+import com.example.graph_editor.draw.graph_action.ZoomCanvas;
 import com.example.graph_editor.draw.graph_view.GraphOnTouchListener;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.DiscardPopup;
@@ -97,6 +98,9 @@ public class DrawActivity extends AppCompatActivity {
         buttonCollection.add(findViewById(R.id.btnEdge), new NewEdge());
         buttonCollection.add(findViewById(R.id.btnMoveObject), new MoveVertex());
         buttonCollection.add(findViewById(R.id.btnMoveCanvas), new MoveCanvas());
+//        buttonCollection.add(findViewById(R.id.btnRotateCanvas), new RotateCanvas());
+        buttonCollection.add(findViewById(R.id.btnZoomCanvas), new ZoomCanvas());
+        //TODO reimplement
 //        buttonCollection.add(findViewById(R.id.btnRemoveObject), new GraphAction.RemoveObject());
 
         for (Pair<String, GraphAction> it : GraphActionManagerImpl.getRegisteredActions()) {

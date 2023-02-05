@@ -71,7 +71,24 @@
                     android:padding="20dp"
                     android:scaleType="fitCenter"
                     android:src="@drawable/move_canvas" />
-
+                <ImageButton
+                    android:id="@+id/btnRotateCanvas"
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/lt_grey"
+                    android:contentDescription="@string/rotate_canvas"
+                    android:padding="20dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/rotate_canvas" />
+                <ImageButton
+                    android:id="@+id/btnZoomCanvas"
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/lt_grey"
+                    android:contentDescription="@string/zoom_canvas"
+                    android:padding="20dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/zoom_canvas" />
                 <ImageButton
                     android:id="@+id/btnRemoveObject"
                     android:layout_width="80dp"
