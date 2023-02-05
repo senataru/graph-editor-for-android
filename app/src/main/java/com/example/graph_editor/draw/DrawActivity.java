@@ -24,8 +24,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.graph_editor.R;
 import com.example.graph_editor.draw.graph_action.GraphAction;
-import com.example.graph_editor.draw.graph_action.GraphActionObserver;
 import com.example.graph_editor.draw.graph_action.MoveCanvas;
+import com.example.graph_editor.draw.graph_action.NewEdge;
 import com.example.graph_editor.draw.graph_action.NewVertex;
 import com.example.graph_editor.draw.graph_view.GraphOnTouchListener;
 import com.example.graph_editor.draw.graph_view.GraphView;
@@ -66,7 +66,7 @@ public class DrawActivity extends AppCompatActivity {
     private boolean stackChangedSinceLastSave;
     private boolean locked;
     public boolean isLocked() { return locked; }
-    public void setLocked(boolean value) { this.locked = value; System.out.println("lock = " + value); }
+    public void setLocked(boolean value) { this.locked = value; }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,8 +94,8 @@ public class DrawActivity extends AppCompatActivity {
         buttonCollection = new NavigationButtonCollection(this);
         buttonCollection.add(findViewById(R.id.btnVertex), new NewVertex());
 
+        buttonCollection.add(findViewById(R.id.btnEdge), new NewEdge());
         //TODO implement asap
-//        buttonCollection.add(findViewById(R.id.btnEdge), new GraphAction.NewEdge());
 //        buttonCollection.add(findViewById(R.id.btnMoveObject), new ...());
         buttonCollection.add(findViewById(R.id.btnMoveCanvas), new MoveCanvas());
 //        buttonCollection.add(findViewById(R.id.btnRemoveObject), new GraphAction.RemoveObject());
@@ -104,7 +104,6 @@ public class DrawActivity extends AppCompatActivity {
             LinearLayout ll = findViewById(R.id.linearLayout);
             ImageButton imageButton = (ImageButton) getLayoutInflater().inflate(R.layout.action_button, ll, false);
             ll.addView(imageButton);
-            System.out.println(getFilesDir().getAbsolutePath());
             imageButton.setImageResource(R.drawable.app_icon);
             buttonCollection.add(imageButton, it.second);
         }
