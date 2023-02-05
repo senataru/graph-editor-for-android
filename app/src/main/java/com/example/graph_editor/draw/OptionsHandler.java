@@ -14,7 +14,6 @@ import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.GeneratePopup;
 import com.example.graph_editor.draw.popups.SavePopup;
 import com.example.graph_editor.draw.popups.SettingsPopup;
-import com.example.graph_editor.model.state.State;
 
 import java.util.Objects;
 import graph_editor.graph.SimpleGraphBuilder;
@@ -28,7 +27,7 @@ import graph_editor.visual.GraphVisualization;
 public class OptionsHandler {
     @SuppressLint("NonConstantResourceId")
     public static boolean handle(@NonNull MenuItem item, DrawActivity context, VersionStack<GraphVisualization<PropertySupportingGraph>> stack,
-                                 State state, GraphView graphView, Runnable makeSave,
+                                 GraphView graphView, Runnable makeSave,
                                  ActivityResultLauncher<Intent> importActivityResultLauncher,
                                  ActivityResultLauncher<Intent> exportActivityResultLauncher) {
         if (extensionsOptions.containsKey(item.getItemId())) {

@@ -180,7 +180,4 @@ public class GraphView extends View {
     public GraphVisualization<PropertySupportingGraph> getVisualization() {
         return stack.getCurrent();
     }
-    public State getState() {
-        return state;
-    }
 }

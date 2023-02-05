@@ -9,7 +9,6 @@ import androidx.activity.result.ActivityResult;
 
 import com.example.graph_editor.file_serialization.Loader;
 import com.example.graph_editor.file_serialization.Saver;
-import com.example.graph_editor.model.state.State;
 
 import java.io.Serializable;
 
@@ -18,13 +17,13 @@ import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.GraphVisualization;
 
 public class ImportExportLaunchers {
-    public static void importCommand(ActivityResult result, Context context, VersionStack<GraphVisualization<PropertySupportingGraph>> stack, State state) {
+    public static void importCommand(ActivityResult result, Context context, VersionStack<GraphVisualization<PropertySupportingGraph>> stack) {
         if( result.getResultCode() != Activity.RESULT_OK || result.getData() == null)
             return;
         Uri uri = result.getData().getData();
         Saver.save(context, uri, (Serializable) stack.getCurrent());
     }
-    public static void exportCommand(ActivityResult result, Context context, VersionStack<GraphVisualization<PropertySupportingGraph>> stack, State state) {
+    public static void exportCommand(ActivityResult result, Context context, VersionStack<GraphVisualization<PropertySupportingGraph>> stack) {
         if( result.getResultCode() != Activity.RESULT_OK || result.getData() == null)
             return;
         Uri uri = result.getData().getData();

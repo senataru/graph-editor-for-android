@@ -27,6 +27,7 @@ import com.example.graph_editor.draw.graph_action.GraphAction;
 import com.example.graph_editor.draw.graph_action.GraphActionObserver;
 import com.example.graph_editor.draw.graph_action.MoveCanvas;
 import com.example.graph_editor.draw.graph_action.NewVertex;
+import com.example.graph_editor.draw.graph_view.GraphOnTouchListener;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.DiscardPopup;
 import com.example.graph_editor.draw.popups.SavePopup;
@@ -44,10 +45,8 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Set;
 
 import graph_editor.geometry.Point;
-import graph_editor.graph.Graph;
 import graph_editor.graph.ObservableStackImpl;
 import graph_editor.graph.SimpleGraphBuilder;
 import graph_editor.graph.VersionStack.ObservableStack;
@@ -111,7 +110,6 @@ public class DrawActivity extends AppCompatActivity {
             ImageButton imageButton = (ImageButton) getLayoutInflater().inflate(R.layout.action_button, ll, false);
             ll.addView(imageButton);
             System.out.println(getFilesDir().getAbsolutePath());
-            //TODO when server implemented, change to use app filesystem and it.first
             imageButton.setImageResource(R.drawable.app_icon);
             buttonCollection.add(imageButton, it.second);
         }
@@ -165,17 +163,17 @@ public class DrawActivity extends AppCompatActivity {
     }
     ActivityResultLauncher<Intent> importActivityResultLauncher = registerForActivityResult(
         new ActivityResultContracts.StartActivityForResult(),
-        (ActivityResult result) -> ImportExportLaunchers.exportCommand(result, this, stack, state));
+        (ActivityResult result) -> ImportExportLaunchers.exportCommand(result, this, stack));
 
     ActivityResultLauncher<Intent> exportActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            result -> ImportExportLaunchers.importCommand(result, this, stack, state));
+            result -> ImportExportLaunchers.importCommand(result, this, stack));
 
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (state.isCurrentlyModified()) return false;
-        if(!OptionsHandler.handle(item, this, stack, state, graphView,
+        if(!OptionsHandler.handle(item, this, stack, graphView,
                 ()->makeSave(()->{}), importActivityResultLauncher, exportActivityResultLauncher))
             return super.onOptionsItemSelected(item);
         return true;
