@@ -1,9 +1,7 @@
 package com.example.graph_editor.menu;
 
 import android.os.Bundle;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.graph_editor.R;
 
 public class CreatorsActivity extends AppCompatActivity {

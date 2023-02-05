@@ -7,7 +7,6 @@ import android.view.View;
 import com.example.graph_editor.draw.Settings;
 import com.example.graph_editor.draw.graph_action.GraphAction;
 import com.example.graph_editor.draw.graph_action.MoveCanvas;
-import com.example.graph_editor.draw.graph_action.NewVertex;
 import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.point_mapping.PointMapper;
 import graph_editor.graph.VersionStack;
@@ -21,16 +20,12 @@ public class GraphOnTouchListener implements View.OnTouchListener {
     private final State state;
     private final PointMapper mapper;
 
-    GraphOnTouchListenerData data;
-
     public GraphOnTouchListener(Context context, GraphView graphView, VersionStack<GraphVisualization<PropertySupportingGraph>> stack, State state, PointMapper mapper) {
         this.context = context;
         this.graphView = graphView;
         this.stack = stack;
         this.state = state;
         this.mapper = mapper;
-
-        this.data = new GraphOnTouchListenerData();
     }
 
     @Override
@@ -66,8 +61,6 @@ public class GraphOnTouchListener implements View.OnTouchListener {
         if (event.getAction() == MotionEvent.ACTION_UP) {
             state.setCurrentlyModified(false);
         }
-
-        data.previousAbsolutePoint = data.currentAbsolutePoint;
 
         graphView.postInvalidate();
         return result;
