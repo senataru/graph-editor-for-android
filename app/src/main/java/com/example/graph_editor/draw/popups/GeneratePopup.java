@@ -13,7 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.graph_editor.R;
-import com.example.graph_editor.model.InputSanitizer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,5 +105,17 @@ public class GeneratePopup {
         builder.setView(popupView);
         dialog = builder.create();
         dialog.show();
+    }
+
+    public static class InputSanitizer {
+        public static boolean isInteger(String text, int minVal, int maxVal) {
+            int result;
+            try {
+                result = Integer.parseInt(text);
+            } catch (NumberFormatException e) {
+                return false;
+            }
+            return minVal <= result && result <= maxVal;
+        }
     }
 }
