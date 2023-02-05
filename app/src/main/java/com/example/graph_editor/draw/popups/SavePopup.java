@@ -8,18 +8,13 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.graph_editor.R;
-import com.example.graph_editor.database.EdgePropertySave;
-import com.example.graph_editor.database.VertexPropertySave;
-import com.example.graph_editor.database.SavesDatabase;
 import com.example.graph_editor.draw.DrawActivity;
 import com.example.graph_editor.file_serialization.Saver;
 import com.example.graph_editor.fs.FSDirectories;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.Map;
 
-import graph_editor.graph.Graph;
 import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.GraphVisualization;
 
@@ -50,33 +45,5 @@ public class SavePopup {
         builder.setView(popupView);
         dialog = builder.create();
         dialog.show();
-    }
-
-    //do not use: disabled functionality, if you want to retrieve it, remember to remove all '//' marks
-    private void saveAllProperties(Graph graph, long graphSaveId, DrawActivity context, SavesDatabase database) {
-        saveAllVertexProperties(graph, graphSaveId, context, database);
-        saveAllEdgeProperties(graph, graphSaveId, context, database);
-    }
-    //do not use: disabled functionality, if you want to retrieve it, remember to remove all '//' marks
-    private void saveAllVertexProperties(Graph graph, long graphSaveId, DrawActivity context, SavesDatabase database) {
-        Map<String, String> newPropertyStrings = null; //GraphWriter.getAllVertexPropertyStrings(graph);
-
-        for (String propertyName : newPropertyStrings.keySet()) {
-            VertexPropertySave vertexPropertySave = new VertexPropertySave(graphSaveId,
-                    propertyName, newPropertyStrings.get(propertyName), System.currentTimeMillis());
-            database.vertexPropertySaveDao().insertPropertySave(vertexPropertySave);
-        }
-        context.updateGraphVertexProperties(newPropertyStrings);
-    }
-    //do not use: disabled functionality, if you want to retrieve it, remember to remove all '//' marks
-    private void saveAllEdgeProperties(Graph graph, long graphSaveId, DrawActivity context, SavesDatabase database) {
-        Map<String, String> newPropertyStrings = null; //GraphWriter.getAllEdgePropertyStrings(graph);
-
-        for (String propertyName : newPropertyStrings.keySet()) {
-            EdgePropertySave edgePropertySave = new EdgePropertySave(graphSaveId,
-                    propertyName, newPropertyStrings.get(propertyName), System.currentTimeMillis());
-            database.edgePropertySaveDao().insertPropertySave(edgePropertySave);
-        }
-//        context.updateGraphEdgeProperties(newPropertyStrings);
     }
 }

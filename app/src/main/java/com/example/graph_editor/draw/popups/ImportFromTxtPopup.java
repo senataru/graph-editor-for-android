@@ -12,12 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.graph_editor.R;
-import com.example.graph_editor.model.graph_storage.InvalidGraphStringException;
-import com.example.graph_editor.model.DrawManager;
-import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
-
-import graph_editor.graph.Graph;
 import graph_editor.graph.VersionStack;
 import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.GraphVisualization;

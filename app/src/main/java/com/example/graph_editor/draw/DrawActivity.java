@@ -23,7 +23,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.graph_editor.R;
-import com.example.graph_editor.database.SavesDatabase;
 import com.example.graph_editor.draw.graph_action.GraphAction;
 import com.example.graph_editor.draw.graph_action.GraphActionObserver;
 import com.example.graph_editor.draw.graph_action.MoveCanvas;
@@ -38,8 +37,6 @@ import com.example.graph_editor.extensions.GraphMenuManagerImpl;
 import com.example.graph_editor.file_serialization.Loader;
 import com.example.graph_editor.file_serialization.Saver;
 import com.example.graph_editor.fs.FSDirectories;
-import com.example.graph_editor.model.graph_storage.InvalidGraphStringException;
-import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.point_mapping.PointMapperImpl;
 
@@ -47,8 +44,6 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import graph_editor.geometry.Point;
@@ -168,7 +163,7 @@ public class DrawActivity extends AppCompatActivity {
 
     //do not use: disabled functionality, if you want to retrieve it, remember to remove all '/' marks
     private void addAllProperties(Graph graph, Set<String> vertexPropertyStrings,
-                                  Set<String> edgePropertyStrings) throws InvalidGraphStringException {
+                                  Set<String> edgePropertyStrings) {
         for (String vertexPropertyString : vertexPropertyStrings) {
 //            GraphScanner.addVertexProperty(graph, vertexPropertyString);
         }
@@ -209,39 +204,6 @@ public class DrawActivity extends AppCompatActivity {
         return true;
     }
 
-    //do not use: disabled functionality, if you want to retrieve it, remember to remove all '/' marks
-    private void updateGraph(long id, String string) {
-//        currentGraphId = id;
-//        graphString = string;
-    }
-
-    public void updateGraphVertexProperties(Map<String, String> propertyStrings) {
-        for(String propertyName : propertyStrings.keySet()) {
-            updateGraphVertexProperty(propertyName, propertyStrings.get(propertyName));
-        }
-    }
-
-    //do not use: disabled functionality, if you want to retrieve it, remember to remove all '/' marks
-    private void updateGraphVertexProperty(String name, String value) {
-        Objects.requireNonNull(name, "Property name can not be null");
-        Objects.requireNonNull(value, "Property value can not be null");
-//        graphVertexPropertyStrings.put(name, value);
-    }
-
-    //do not use: disabled functionality, if you want to retrieve it, remember to remove all '/' marks
-    private void updateGraphEdgeProperties(Map<String, String> propertyStrings) {
-        for(String propertyName : propertyStrings.keySet()) {
-            updateGraphEdgeProperty(propertyName, propertyStrings.get(propertyName));
-        }
-    }
-
-    //do not use: disabled functionality, if you want to retrieve it, remember to remove all '/' marks
-    private void updateGraphEdgeProperty(String name, String value) {
-        Objects.requireNonNull(name, "Property name can not be null");
-        Objects.requireNonNull(value, "Property value can not be null");
-//        graphEdgePropertyStrings.put(name, value);
-    }
-
     public void makeSave(Runnable afterTask) {
         if(name == null) {
             new SavePopup().show(stack.getCurrent(), this, afterTask);
@@ -254,19 +216,6 @@ public class DrawActivity extends AppCompatActivity {
         }
         stackChangedSinceLastSave = false;
     }
-
-    //do not use: disabled functionality, if you want to retrieve it, remember to remove all '/' marks
-    private void saveAllProperties(SavesDatabase database) {
-//        for (String propertyString : graphVertexPropertyStrings.values()) {
-//            database.vertexPropertySaveDao().updateProperty(currentGraphId, propertyString,
-//                    System.currentTimeMillis());
-//        }
-//        for (String propertyString : graphEdgePropertyStrings.values()) {
-//            database.edgePropertySaveDao().updateProperty(currentGraphId, propertyString,
-//                    System.currentTimeMillis());
-//        }
-    }
-
     ActivityResultLauncher<Intent> importActivityResultLauncher = registerForActivityResult(
         new ActivityResultContracts.StartActivityForResult(),
         (ActivityResult result) -> ImportExportLaunchers.exportCommand(result, this, stack, state));

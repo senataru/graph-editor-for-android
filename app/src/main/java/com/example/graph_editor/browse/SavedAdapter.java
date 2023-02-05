@@ -10,14 +10,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.graph_editor.R;
-import com.example.graph_editor.database.Save;
 import com.example.graph_editor.draw.graph_action.NewVertex;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.ShareAsIntent;
 import com.example.graph_editor.extensions.CanvasManagerImpl;
 import com.example.graph_editor.file_serialization.Loader;
 import com.example.graph_editor.fs.FSDirectories;
-import com.example.graph_editor.model.graph_storage.InvalidGraphStringException;
 import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.point_mapping.PointMapperImpl;
 
@@ -94,43 +92,10 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
         holder.shareButton.setOnClickListener(
                 v -> new ShareAsIntent(browseActivity, holder.dataGraph.getVisualization()).show());
     }
-
-    //do not use: disabled functionality, if you want to retrieve it, remember to remove all '/' marks
-    private void addAllProperties(Graph graph, List<String> vertexPropertySaveStrings, List<String> edgePropertySaveStrings)
-            throws InvalidGraphStringException {
-        for (String vertexPropertyString: vertexPropertySaveStrings) {
-//            GraphScanner.addVertexProperty(graph, vertexPropertyString);
-        }
-        for (String edgePropertyString: edgePropertySaveStrings) {
-//            GraphScanner.addEdgeProperty(graph, edgePropertyString);
-        }
-    }
-    //do not use: disabled functionality, if you want to retrieve it, remember to remove all '/' marks
-    private void updateAllProperties(Save newSave) {
-//        VertexPropertySaveDao vertexPropertyDao = SavesDatabase.getDbInstance(context).vertexPropertySaveDao();
-//        EdgePropertySaveDao edgePropertyDao = SavesDatabase.getDbInstance(context).edgePropertySaveDao();
-//        vertexPropertySaves.stream()
-//                .filter(save -> save.graphSaveUid == newSave.uid)
-//                .forEach(save -> vertexPropertyDao.updateProperty(
-//                        save.uid, save.property, System.currentTimeMillis()));
-//        edgePropertySaves.stream()
-//                .filter(save -> save.graphSaveUid == newSave.uid)
-//                .forEach(save -> edgePropertyDao.updateProperty(
-//                        save.uid, save.property, System.currentTimeMillis()));
-    }
-
     @Override
     public int getItemCount() {
         return data.size();
     }
-
-    //do not use: disabled functionality, if you want to retrieve it, remember to remove all '/' marks
-//    @SuppressLint("NotifyDataSetChanged")
-//    public void update(List<Save> data) {
-//        this.data = data;
-//        notifyDataSetChanged();
-//    }
-//
     public List<String> getData() {
         return data;
     }
