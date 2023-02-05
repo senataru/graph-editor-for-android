@@ -2,15 +2,8 @@ package com.example.graph_editor.model.state;
 
 import com.example.graph_editor.draw.graph_action.GraphActionObserver;
 import com.example.graph_editor.draw.graph_action.GraphAction;
-import com.example.graph_editor.model.mathematics.Rectangle;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import graph_editor.geometry.Point;
 
 public class State {
     private GraphAction graphAction;

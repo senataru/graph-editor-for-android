@@ -17,11 +17,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 
 import com.example.graph_editor.draw.Settings;
-import com.example.graph_editor.draw.graph_action.GraphActionObserver;
-import com.example.graph_editor.draw.graph_action.GraphAction;
 import com.example.graph_editor.extensions.CanvasManager;
-import com.example.graph_editor.model.DrawManager;
-import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.point_mapping.PointMapper;
 import com.example.graph_editor.point_mapping.ScreenPoint;

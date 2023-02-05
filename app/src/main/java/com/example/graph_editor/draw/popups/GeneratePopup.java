@@ -13,20 +13,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.graph_editor.R;
-import com.example.graph_editor.model.DrawManager;
 import com.example.graph_editor.model.InputSanitizer;
-import com.example.graph_editor.model.mathematics.Rectangle;
-import com.example.graph_editor.model.state.State;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-
-import graph_editor.geometry.Point;
 import graph_editor.graph.Graph;
 import graph_editor.graph.VersionStack;
-import graph_editor.graph.Vertex;
 import graph_editor.graph_generators.GraphGenerator;
 import graph_editor.graph_generators.Parameter;
 import graph_editor.properties.PropertyGraphBuilder;
@@ -38,14 +31,12 @@ public class GeneratePopup {
     private final Context context;
     private final VersionStack<GraphVisualization<PropertySupportingGraph>> stack;
     private final GraphGenerator generator;
-    private final State state;
 
     private AlertDialog dialog;
 
-    public GeneratePopup(Context context, VersionStack<GraphVisualization<PropertySupportingGraph>> stack, State state, GraphGenerator generator) {
+    public GeneratePopup(Context context, VersionStack<GraphVisualization<PropertySupportingGraph>> stack, GraphGenerator generator) {
         this.context = context;
         this.stack = stack;
-        this.state = state;
         this.generator = generator;
     }
 

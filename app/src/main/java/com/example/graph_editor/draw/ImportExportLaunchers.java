@@ -9,8 +9,6 @@ import androidx.activity.result.ActivityResult;
 
 import com.example.graph_editor.file_serialization.Loader;
 import com.example.graph_editor.file_serialization.Saver;
-import com.example.graph_editor.model.DrawManager;
-import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
 
 import java.io.Serializable;

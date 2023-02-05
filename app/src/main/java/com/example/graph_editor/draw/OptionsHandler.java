@@ -14,13 +14,9 @@ import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.GeneratePopup;
 import com.example.graph_editor.draw.popups.SavePopup;
 import com.example.graph_editor.draw.popups.SettingsPopup;
-import com.example.graph_editor.model.DrawManager;
-import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.model.state.State;
 
 import java.util.Objects;
-
-import graph_editor.graph.Graph;
 import graph_editor.graph.SimpleGraphBuilder;
 import graph_editor.graph.VersionStack;
 import graph_editor.graph_generators.GraphGeneratorBipartiteClique;
@@ -114,7 +110,7 @@ public class OptionsHandler {
 //                new GeneratePopup(context, graphStack, new GraphGeneratorClique()).show();
 //                return true;
             case R.id.generate_btn_bipartite_clique:
-                new GeneratePopup(context, stack, state, new GraphGeneratorBipartiteClique()).show();
+                new GeneratePopup(context, stack, new GraphGeneratorBipartiteClique()).show();
                 return true;
 //            case R.id.generate_btn_full_binary_tree:
 //                new GeneratePopup(context, graphStack, new GraphGeneratorFullBinaryTree()).show();

@@ -2,7 +2,6 @@ package com.example.graph_editor.extensions;
 
 import android.graphics.Canvas;
 
-import com.example.graph_editor.model.mathematics.Rectangle;
 import com.example.graph_editor.point_mapping.PointMapper;
 
 import java.util.Collection;

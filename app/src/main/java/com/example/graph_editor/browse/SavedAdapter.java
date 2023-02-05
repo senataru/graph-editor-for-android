@@ -23,7 +23,6 @@ import java.io.File;
 import java.util.List;
 
 import graph_editor.geometry.Point;
-import graph_editor.graph.Graph;
 import graph_editor.graph.ObservableStackImpl;
 import graph_editor.graph.VersionStack.ObservableStack;
 import graph_editor.graph.VersionStackImpl;
@@ -31,9 +30,7 @@ import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.GraphVisualization;
 
 public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
-    private List<String> data;
-//    private final List<VertexPropertySave> vertexPropertySaves;
-//    private final List<EdgePropertySave> edgePropertySaves;
+    private final List<String> data;
     private final BrowseActivity browseActivity;
 
     SavedAdapter(BrowseActivity browseActivity, List<String> data) {
@@ -53,16 +50,6 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
     public void onBindViewHolder(@NonNull Holder holder, int position) {
         String name = data.get(position);
         holder.txtName.setText(name);
-//        String graphString = data.get(position).graph;
-//        long saveUid = data.get(position).uid;
-//        List<String> vertexPropertySaveStrings = vertexPropertySaves.stream()
-//                .filter(propertySave -> propertySave.graphSaveUid == saveUid)
-//                .map(propertySave -> propertySave.property)
-//                .collect(Collectors.toList());
-//        List<String> edgePropertySaveStrings = edgePropertySaves.stream()
-//                .filter(propertySave -> propertySave.graphSaveUid == saveUid)
-//                .map(propertySave -> propertySave.property)
-//                .collect(Collectors.toList());
 
         GraphVisualization<PropertySupportingGraph> visualization = Loader.load(new File(browseActivity.getFilesDir(), FSDirectories.graphsDirectory), name);
 
@@ -73,10 +60,6 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
         holder.dataGraph.initialize(new CanvasManagerImpl(), stack, state,false, new PointMapperImpl(holder.dataGraph, new Point(0,0)));
 
         holder.editButton.setOnClickListener(v -> {
-//            Save newSave = data.get(position);
-//            SaveDao dao = SavesDatabase.getDbInstance(context).saveDao();
-//            dao.updateGraph(newSave.uid, newSave.graph, System.currentTimeMillis());
-//            updateAllProperties(newSave);
             browseActivity.changeActivity(name);
         });
         holder.deleteButton.setOnClickListener(v ->
