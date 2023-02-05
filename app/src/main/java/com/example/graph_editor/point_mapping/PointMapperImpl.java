@@ -21,13 +21,14 @@ public class PointMapperImpl implements PointMapper {
         double x = (point.getX() - offset.getX()) * (view.getWidth() * zoom) + view.getWidth() / 2.0;
         double y = (point.getY() - offset.getY()) * (view.getHeight() * zoom) + view.getHeight() / 2.0;
 
-        return new ScreenPoint((float) x, (float) y);
+        return rotatePoint(new ScreenPoint((float) x, (float) y), rotation);
     }
 
     @Override
     public Point mapFromView(ScreenPoint screenPoint) {
-        double x = offset.getX() + (screenPoint.getX() - view.getWidth() / 2.0) / (view.getWidth() * zoom);
-        double y = offset.getY() + (screenPoint.getY() - view.getHeight() / 2.0) / (view.getHeight() * zoom);
+        var rotated = rotatePoint(screenPoint, -rotation);
+        double x = offset.getX() + (rotated.getX() - view.getWidth() / 2.0) / (view.getWidth() * zoom);
+        double y = offset.getY() + (rotated.getY() - view.getHeight() / 2.0) / (view.getHeight() * zoom);
 
         return new Point(x,y);
     }
@@ -46,7 +47,21 @@ public class PointMapperImpl implements PointMapper {
         zoom *= Math.exp(heightPixels / view.getHeight());
     }
     @Override
-    public void rotate(ScreenPoint start, ScreenPoint end) {
+    public void rotate(float heightPixels, float screenX) {
+        rotation += (screenX <= view.getWidth() / 2.0 ? 1 : -1) * Math.PI * heightPixels / view.getHeight();
+        if (rotation > 2 * Math.PI) {
+            rotation -= 2 * Math.PI;
+        } else if (rotation < 0.0) {
+            rotation += 2 * Math.PI;
+        }
+    }
 
+    private ScreenPoint rotatePoint(ScreenPoint point, double angle) {
+        float dx = point.getX() - view.getWidth() / 2.0f;
+        float dy = point.getY() - view.getHeight() / 2.0f;
+        return new ScreenPoint(
+                (float) (dx * Math.cos(angle) - dy * Math.sin(angle)) + view.getWidth() / 2.0f,
+                (float) (dx * Math.sin(angle) + dy * Math.cos(angle)) + view.getHeight() / 2.0f
+        );
     }
 }
