@@ -120,17 +120,7 @@ public class DrawActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         stack.removeObserver(stackObserver);
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-//        String s = GraphWriter.toExactList(stack.getStack());
-//        outState.putString("GraphStack", s);
-//        outState.putInt("Pointer", graphStack.getPointer());
-//        outState.putString("ActionType", stateStack.getCurrentState().getGraphAction().name());
-//        outState.putLong("currentGraphId", currentGraphId);
+        stack.removeObserver(graphView);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
