@@ -5,7 +5,6 @@ import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -18,7 +17,6 @@ import androidx.annotation.Nullable;
 
 import com.example.graph_editor.draw.Settings;
 import com.example.graph_editor.extensions.CanvasManager;
-import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.point_mapping.PointMapper;
 import com.example.graph_editor.point_mapping.ScreenPoint;
 
@@ -36,12 +34,9 @@ public class GraphView extends View {
     private double vertexRadius = baseVertexRadius;
     private Paint edgePaint;
     private boolean fixedWidth;
-    private boolean interactive = false;
     private PointMapper mapper;
-    private boolean isLazyInitialised = false;
     private CanvasManager canvasManager;
     private ObservableStack<GraphVisualization<PropertySupportingGraph>> stack;
-    private State state;
 
     public GraphView(Context context) {
         super(context);
@@ -76,35 +71,16 @@ public class GraphView extends View {
     }
 
     // !! this alone is not enough, all due to height being lazily calculated
-    public void initialize(CanvasManager canvasManager, ObservableStack<GraphVisualization<PropertySupportingGraph>> stack, State state, boolean interactive, PointMapper mapper) {
+    public void initialize(CanvasManager canvasManager, ObservableStack<GraphVisualization<PropertySupportingGraph>> stack, PointMapper mapper) {
         this.canvasManager = canvasManager;
-        this.interactive = interactive;
         this.stack = stack;
-        this.state = state;
         this.mapper = mapper;
-        isLazyInitialised = false;
         postInvalidate();
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    private void lazyInitialize() {
-//        Rectangle rec = new Rectangle(new Point(0, 0), new Point(1.0, 1.0 * getHeight() / getWidth()));
-//        Rectangle optimalRec = DrawManager.getOptimalRectangle(stack.getCurrent().getVisualization(), stack.getCurrent().getGraph(),0.1, rec);
-//        state.setRectangle(optimalRec);
-        if (interactive) {
-            GraphOnTouchListener onTouchListener = new GraphOnTouchListener(getContext(), this, stack, state, mapper);
-            this.setOnTouchListener(onTouchListener);
-        }
-        isLazyInitialised = true;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
-        if (!isLazyInitialised) {   //has to be done here instead of in init or initializeGraph since height is lazily calculated
-            lazyInitialize();
-        }
 
         fixedWidth = Settings.getFixedWidth(getContext());
         GraphVisualization<PropertySupportingGraph> visualization = stack.getCurrent();

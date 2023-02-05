@@ -10,13 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.graph_editor.R;
-import com.example.graph_editor.draw.graph_action.NewVertex;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.ShareAsIntent;
 import com.example.graph_editor.extensions.CanvasManagerImpl;
 import com.example.graph_editor.file_serialization.Loader;
 import com.example.graph_editor.fs.FSDirectories;
-import com.example.graph_editor.model.state.State;
 import com.example.graph_editor.point_mapping.PointMapperImpl;
 
 import java.io.File;
@@ -54,10 +52,7 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
         GraphVisualization<PropertySupportingGraph> visualization = Loader.load(new File(browseActivity.getFilesDir(), FSDirectories.graphsDirectory), name);
 
         ObservableStack<GraphVisualization<PropertySupportingGraph>> stack = new ObservableStackImpl<>(new VersionStackImpl<>(visualization));
-        State state = new State(
-                new NewVertex()
-        );
-        holder.dataGraph.initialize(new CanvasManagerImpl(), stack, state,false, new PointMapperImpl(holder.dataGraph, new Point(0,0)));
+        holder.dataGraph.initialize(new CanvasManagerImpl(), stack, new PointMapperImpl(holder.dataGraph, new Point(0,0)));
 
         holder.editButton.setOnClickListener(v -> {
             browseActivity.changeActivity(name);

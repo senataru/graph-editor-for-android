@@ -38,7 +38,7 @@ import com.example.graph_editor.extensions.GraphMenuManagerImpl;
 import com.example.graph_editor.file_serialization.Loader;
 import com.example.graph_editor.file_serialization.Saver;
 import com.example.graph_editor.fs.FSDirectories;
-import com.example.graph_editor.model.state.State;
+import com.example.graph_editor.point_mapping.PointMapper;
 import com.example.graph_editor.point_mapping.PointMapperImpl;
 
 import java.io.File;
@@ -61,10 +61,12 @@ public class DrawActivity extends AppCompatActivity {
     private GraphView graphView;
     private ObservableStack<GraphVisualization<PropertySupportingGraph>> stack;
 
-    private State state;
-
+    private NavigationButtonCollection buttonCollection;
     private String name;
     private boolean stackChangedSinceLastSave;
+    private boolean locked;
+    public boolean isLocked() { return locked; }
+    public void setLocked(boolean value) { this.locked = value; System.out.println("lock = " + value); }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +83,6 @@ public class DrawActivity extends AppCompatActivity {
         editor.apply();
 
         graphView = findViewById(R.id.viewGraph);
-        GraphAction modeType = new NewVertex();
 
         GraphVisualization<PropertySupportingGraph> visualization;
         if (name != null) {
@@ -90,13 +91,7 @@ public class DrawActivity extends AppCompatActivity {
             visualization = new BuilderVisualizer().generateVisual(new PropertyGraphBuilder(new SimpleGraphBuilder(0).build()).build());
         }
 
-        stack = new ObservableStackImpl<>(new VersionStackImpl<>(visualization));
-        state = new State(new NewVertex());
-        graphView.initialize(new CanvasManagerImpl(), stack, state, true, new PointMapperImpl(graphView, new Point(0,0)));
-        state.addObserver(actionObserver);
-        stack.addObserver(stackObserver);
-
-        NavigationButtonCollection buttonCollection = new NavigationButtonCollection(this, state);
+        buttonCollection = new NavigationButtonCollection(this);
         buttonCollection.add(findViewById(R.id.btnVertex), new NewVertex());
 
         //TODO implement asap
@@ -113,13 +108,18 @@ public class DrawActivity extends AppCompatActivity {
             imageButton.setImageResource(R.drawable.app_icon);
             buttonCollection.add(imageButton, it.second);
         }
-        buttonCollection.setCurrent(modeType);
-        state.setGraphAction(modeType);
+
+        stack = new ObservableStackImpl<>(new VersionStackImpl<>(visualization));
+        PointMapper mapper = new PointMapperImpl(graphView, new Point(0,0));
+        graphView.initialize(new CanvasManagerImpl(), stack, mapper);
+        GraphOnTouchListener onTouchListener = new GraphOnTouchListener(this, graphView, stack, buttonCollection, mapper);
+        graphView.setOnTouchListener(onTouchListener);
+
+        stack.addObserver(stackObserver);
     }
     @Override
     public void onDestroy() {
         super.onDestroy();
-        state.removeObserver(actionObserver);
         stack.removeObserver(stackObserver);
     }
 
@@ -172,7 +172,7 @@ public class DrawActivity extends AppCompatActivity {
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (state.isCurrentlyModified()) return false;
+        if (isLocked()) return false;
         if(!OptionsHandler.handle(item, this, stack, graphView,
                 ()->makeSave(()->{}), importActivityResultLauncher, exportActivityResultLauncher))
             return super.onOptionsItemSelected(item);
@@ -199,10 +199,6 @@ public class DrawActivity extends AppCompatActivity {
         undo.getIcon().setAlpha(stack.isUndoPossible() ? 255 : 128);
         return true;
     }
-
-    private final GraphActionObserver actionObserver = action -> {
-        graphView.postInvalidate();
-    };
 
     public void setName(String name) {
         this.name = name;
