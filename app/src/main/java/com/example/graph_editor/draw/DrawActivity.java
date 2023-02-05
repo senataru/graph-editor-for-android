@@ -64,11 +64,6 @@ public class DrawActivity extends AppCompatActivity {
 
     private State state;
 
-//    private long currentGraphId = -1;
-//    private String graphString;
-//    private Map<String, String> graphVertexPropertyStrings = new HashMap<>();
-//    private Map<String, String> graphEdgePropertyStrings = new HashMap<>();
-
     private String name;
     private boolean stackChangedSinceLastSave;
 
@@ -81,50 +76,13 @@ public class DrawActivity extends AppCompatActivity {
 
         name = sharedPref.getString(CURRENT_GRAPH_NAME, null);
 
-//        currentGraphId = sharedPref.getLong(CURRENT_GRAPH_ID, -1);
-//        graphString = sharedPref.getString(CURRENT_GRAPH, null);
-//        int choiceOrd = sharedPref.getInt(GRAPH_TYPE, 0);
-//        Set<String> vertexPropertyStrings = sharedPref.getStringSet(VERTEX_PROPERTIES, Collections.emptySet());
-//        Set<String> edgePropertyStrings = sharedPref.getStringSet(EDGE_PROPERTIES, Collections.emptySet());
-
         SharedPreferences.Editor editor = sharedPref.edit();
-//        editor.remove(CURRENT_GRAPH_ID);
-//        editor.remove(CURRENT_GRAPH);
-//        editor.remove(GRAPH_TYPE);
-//        editor.remove(VERTEX_PROPERTIES);
-//        editor.remove(EDGE_PROPERTIES);
         editor.remove(CURRENT_GRAPH_NAME);
 
         editor.apply();
 
         graphView = findViewById(R.id.viewGraph);
         GraphAction modeType = new NewVertex();
-//        if (savedInstanceState != null) { // re-initialize
-//            try {
-//                stack = GraphScanner.fromExactList(savedInstanceState.getString("GraphStack"));
-//            } catch (InvalidGraphStringException e) {
-//                e.printStackTrace();
-//                throw new RuntimeException("Failed graph list scanning");
-//            }
-//            pointer = savedInstanceState.getInt("Pointer");
-//            graph = stack.get(pointer);
-////            modeType = ActionModeType.valueOf(savedInstanceState.getString("ActionType"));
-//            currentGraphId = savedInstanceState.getLong(CURRENT_GRAPH_ID, -1);
-//        } else { // either from browse or new graph
-//            if (graphString != null) {  // from browse
-//                try {
-//                    graph = GraphScanner.fromExact(graphString);
-//                    addAllProperties(graph, vertexPropertyStrings, edgePropertyStrings);
-//                } catch (InvalidGraphStringException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//            if (graph == null) {
-//                GraphType choice = GraphType.values()[choiceOrd];
-//                graph = new GraphFactory(choice).produce();
-//            }
-//        }
-//        assert graph != null;
 
         GraphVisualization<PropertySupportingGraph> visualization;
         if (name != null) {
@@ -159,17 +117,6 @@ public class DrawActivity extends AppCompatActivity {
         }
         buttonCollection.setCurrent(modeType);
         state.setGraphAction(modeType);
-    }
-
-    //do not use: disabled functionality, if you want to retrieve it, remember to remove all '/' marks
-    private void addAllProperties(Graph graph, Set<String> vertexPropertyStrings,
-                                  Set<String> edgePropertyStrings) {
-        for (String vertexPropertyString : vertexPropertyStrings) {
-//            GraphScanner.addVertexProperty(graph, vertexPropertyString);
-        }
-        for (String edgePropertyString : edgePropertyStrings) {
-//            GraphScanner.addEdgeProperty(graph, edgePropertyString);
-        }
     }
     @Override
     public void onDestroy() {
