@@ -21,9 +21,6 @@ import java.io.File;
 import java.util.List;
 
 import graph_editor.geometry.Point;
-import graph_editor.graph.ObservableStackImpl;
-import graph_editor.graph.VersionStack.ObservableStack;
-import graph_editor.graph.VersionStackImpl;
 import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.GraphVisualization;
 
@@ -51,8 +48,7 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
 
         GraphVisualization<PropertySupportingGraph> visualization = Loader.load(new File(browseActivity.getFilesDir(), FSDirectories.graphsDirectory), name);
 
-        ObservableStack<GraphVisualization<PropertySupportingGraph>> stack = new ObservableStackImpl<>(new VersionStackImpl<>(visualization));
-        holder.dataGraph.initialize(new CanvasManagerImpl(), stack, new PointMapperImpl(holder.dataGraph, new Point(0,0)));
+        holder.dataGraph.initialize(new CanvasManagerImpl(), new PointMapperImpl(holder.dataGraph, new Point(0,0)), visualization);
 
         holder.editButton.setOnClickListener(v -> {
             browseActivity.changeActivity(name);

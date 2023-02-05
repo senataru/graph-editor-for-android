@@ -17,7 +17,7 @@ public class MoveCanvas implements GraphAction {
     private ScreenPoint downPoint;
     private Point offset;
     @Override
-    public boolean perform(PointMapper mapper, @NonNull MotionEvent event, VersionStack<GraphVisualization<PropertySupportingGraph>> stack) {
+    public GraphVisualization<PropertySupportingGraph> perform(PointMapper mapper, @NonNull MotionEvent event, VersionStack<GraphVisualization<PropertySupportingGraph>> stack) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN -> {
                 downPoint = new ScreenPoint(event.getX(), event.getY());
@@ -32,6 +32,6 @@ public class MoveCanvas implements GraphAction {
             }
             default -> { }
         }
-        return true;
+        return stack.getCurrent();
     }
 }

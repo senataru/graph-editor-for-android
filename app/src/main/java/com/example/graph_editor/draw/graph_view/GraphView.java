@@ -22,11 +22,11 @@ import com.example.graph_editor.point_mapping.ScreenPoint;
 
 import graph_editor.geometry.Point;
 import graph_editor.graph.Graph;
-import graph_editor.graph.VersionStack.ObservableStack;
+import graph_editor.graph.VersionStack;
 import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.GraphVisualization;
 
-public class GraphView extends View {
+public class GraphView extends View implements VersionStack.ObservableStack.Observer<GraphVisualization<PropertySupportingGraph>> {
     private final int baseVertexRadius = 7;
     private final int baseEdgeWidth = 5;
 
@@ -36,7 +36,7 @@ public class GraphView extends View {
     private boolean fixedWidth;
     private PointMapper mapper;
     private CanvasManager canvasManager;
-    private ObservableStack<GraphVisualization<PropertySupportingGraph>> stack;
+    private GraphVisualization<PropertySupportingGraph> visualization;
 
     public GraphView(Context context) {
         super(context);
@@ -71,10 +71,13 @@ public class GraphView extends View {
     }
 
     // !! this alone is not enough, all due to height being lazily calculated
-    public void initialize(CanvasManager canvasManager, ObservableStack<GraphVisualization<PropertySupportingGraph>> stack, PointMapper mapper) {
+    public void initialize(
+            CanvasManager canvasManager,
+            PointMapper mapper,
+            GraphVisualization<PropertySupportingGraph> visualization) {
         this.canvasManager = canvasManager;
-        this.stack = stack;
         this.mapper = mapper;
+        this.visualization = visualization;
         postInvalidate();
     }
 
@@ -83,7 +86,6 @@ public class GraphView extends View {
         super.onDraw(canvas);
 
         fixedWidth = Settings.getFixedWidth(getContext());
-        GraphVisualization<PropertySupportingGraph> visualization = stack.getCurrent();
         Graph graph = visualization.getGraph();
 
 //        vertexRadius = getDrawWidth(rectangle.getScale(), baseVertexRadius);
@@ -111,6 +113,12 @@ public class GraphView extends View {
         graph.getVertices().forEach(v -> vertexDrawer.drawVertex(v, mapper, canvas));
 
         canvasManager.getExtendedDrawers().forEach(drawer -> drawer.drawElements(mapper, canvas));
+    }
+
+    @Override
+    public void notifyChange(GraphVisualization<PropertySupportingGraph> visualization) {
+        this.visualization = visualization;
+        postInvalidate();
     }
 
     private void drawVertex(Canvas canvas, ScreenPoint point) {
@@ -152,8 +160,7 @@ public class GraphView extends View {
     public Point getRelative(Point point) {
         return new Point(point.getX()/getWidth(), point.getY()/getHeight());
     }
-
     public GraphVisualization<PropertySupportingGraph> getVisualization() {
-        return stack.getCurrent();
+        return visualization;
     }
 }

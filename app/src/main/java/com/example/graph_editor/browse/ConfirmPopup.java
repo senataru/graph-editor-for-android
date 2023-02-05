@@ -12,9 +12,6 @@ import com.example.graph_editor.extensions.CanvasManagerImpl;
 import com.example.graph_editor.point_mapping.PointMapperImpl;
 
 import graph_editor.geometry.Point;
-import graph_editor.graph.ObservableStackImpl;
-import graph_editor.graph.VersionStack.ObservableStack;
-import graph_editor.graph.VersionStackImpl;
 import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.GraphVisualization;
 
@@ -40,8 +37,7 @@ public class ConfirmPopup {
         Button btnYes = popupView.findViewById(R.id.btn_yes);
         Button btnNo = popupView.findViewById(R.id.btn_no);
 
-        ObservableStack<GraphVisualization<PropertySupportingGraph>> stack = new ObservableStackImpl<>(new VersionStackImpl<>(visualization));
-        graphView.initialize(new CanvasManagerImpl(), stack, new PointMapperImpl(graphView, new Point(0,0)));
+        graphView.initialize(new CanvasManagerImpl(), new PointMapperImpl(graphView, new Point(0,0)), visualization);
 
         btnYes.setOnClickListener(v -> {
             deleteFunction.run();

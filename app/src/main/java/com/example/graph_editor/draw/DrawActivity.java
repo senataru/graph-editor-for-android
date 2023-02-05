@@ -109,11 +109,12 @@ public class DrawActivity extends AppCompatActivity {
 
         stack = new ObservableStackImpl<>(new VersionStackImpl<>(visualization));
         PointMapper mapper = new PointMapperImpl(graphView, new Point(0,0));
-        graphView.initialize(new CanvasManagerImpl(), stack, mapper);
+        graphView.initialize(new CanvasManagerImpl(), mapper, visualization);
         GraphOnTouchListener onTouchListener = new GraphOnTouchListener(this, graphView, stack, buttonCollection, mapper);
         graphView.setOnTouchListener(onTouchListener);
 
         stack.addObserver(stackObserver);
+        stack.addObserver(graphView);
     }
     @Override
     public void onDestroy() {
@@ -205,6 +206,5 @@ public class DrawActivity extends AppCompatActivity {
     private final ObservableStack.Observer<GraphVisualization<PropertySupportingGraph>> stackObserver = visualization -> {
         stackChangedSinceLastSave = true;
         invalidateOptionsMenu();
-        graphView.postInvalidate();
     };
 }

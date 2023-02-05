@@ -20,7 +20,7 @@ public class NavigationButtonCollection {
     public NavigationButtonCollection(DrawActivity activity) {
         this.activity = activity;
         this.buttons = new HashMap<>();
-        this.graphAction = (mapper, event, stack) -> true;
+        this.graphAction = (mapper, event, stack) -> stack.getCurrent();
         ACTIVE = ContextCompat.getColor(activity, R.color.grey);
         NOT_ACTIVE = ContextCompat.getColor(activity, R.color.lt_grey);
     }

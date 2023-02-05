@@ -9,27 +9,7 @@ import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.GraphVisualization;
 
 public interface GraphAction {
-    boolean perform(PointMapper mapper, @NonNull MotionEvent event, VersionStack<GraphVisualization<PropertySupportingGraph>> stack);
-
-//    class RemoveObject implements GraphAction {
-//        @Override
-//        public boolean perform(GraphView view, @NonNull MotionEvent event, VersionStack<GraphVisualization<PropertySupportingGraph>> stack, GraphOnTouchMutation mutation) {
-//            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-//                stack.backup();
-//            }
-//
-//            Vertex nearestVertex;
-//            while (null != (nearestVertex = DrawManager.getNearestVertex(data.graph, data.rectangle, data.currentRelativePoint, 0.03, Collections.emptySet()))) {
-//                data.graph.removeVertex(nearestVertex);
-//            }
-//            Edge nearestEdge;
-//            while (null != (nearestEdge = DrawManager.getNearestEdge(data.graph, data.rectangle, data.currentRelativePoint, 0.03))) {
-//                data.graph.removeEdge(nearestEdge);
-//            }
-//
-//            return true;
-//        }
-//    }
+    GraphVisualization<PropertySupportingGraph> perform(PointMapper mapper, @NonNull MotionEvent event, VersionStack<GraphVisualization<PropertySupportingGraph>> stack);
 
 //    class ZoomCanvas implements GraphAction {
 //        @Override

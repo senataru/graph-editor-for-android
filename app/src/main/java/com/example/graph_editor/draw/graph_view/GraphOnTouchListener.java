@@ -48,13 +48,12 @@ public class GraphOnTouchListener implements GraphView.OnTouchListener {
             }
         }
 
-        boolean result = action.perform(mapper, event, stack);
+        GraphVisualization<PropertySupportingGraph> visualization = action.perform(mapper, event, stack);
+        graphView.notifyChange(visualization);
 
         if (event.getAction() == MotionEvent.ACTION_UP) {
             activity.setLocked(false);
         }
-
-        graphView.postInvalidate();
-        return result;
+        return true;
     }
 }

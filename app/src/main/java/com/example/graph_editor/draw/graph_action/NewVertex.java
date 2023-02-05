@@ -17,16 +17,19 @@ import graph_editor.visual.GraphVisualization;
 public class NewVertex extends GraphDebuilder {
     private ScreenPoint sp;
     @Override
-    public boolean perform(PointMapper mapper, @NonNull MotionEvent event, VersionStack<GraphVisualization<PropertySupportingGraph>> stack) {
+    public GraphVisualization<PropertySupportingGraph> perform(PointMapper mapper, @NonNull MotionEvent event, VersionStack<GraphVisualization<PropertySupportingGraph>> stack) {
         switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> sp = new ScreenPoint(event.getX(), event.getY());
+            case MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
+                sp = new ScreenPoint(event.getX(), event.getY());
+                return execute(mapper, stack.getCurrent());
+            }
             case MotionEvent.ACTION_UP -> {
                 GraphVisualization<PropertySupportingGraph> visualization = execute(mapper, stack.getCurrent());
                 stack.push(visualization);
             }
             default -> { }
         }
-        return true;
+        return stack.getCurrent();
     }
 
     @Override

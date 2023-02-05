@@ -24,17 +24,21 @@ public class MoveVertex extends GraphDebuilder {
     private ScreenPoint sp1;
     private ScreenPoint sp2;
     @Override
-    public boolean perform(PointMapper mapper, @NonNull MotionEvent event, VersionStack<GraphVisualization<PropertySupportingGraph>> stack) {
+    public GraphVisualization<PropertySupportingGraph> perform(PointMapper mapper, @NonNull MotionEvent event, VersionStack<GraphVisualization<PropertySupportingGraph>> stack) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN -> sp1 = new ScreenPoint(event.getX(), event.getY());
-            case MotionEvent.ACTION_MOVE -> sp2 = new ScreenPoint(event.getX(), event.getY());
+            case MotionEvent.ACTION_MOVE -> {
+                sp2 = new ScreenPoint(event.getX(), event.getY());
+                var visualization = execute(mapper, stack.getCurrent());
+                return visualization != null ? visualization : stack.getCurrent();
+            }
             case MotionEvent.ACTION_UP -> {
                 GraphVisualization<PropertySupportingGraph> visualization = execute(mapper, stack.getCurrent());
                 if (visualization != null) { stack.push(visualization); }
             }
             default -> { }
         }
-        return true;
+        return stack.getCurrent();
     }
 
     @Override

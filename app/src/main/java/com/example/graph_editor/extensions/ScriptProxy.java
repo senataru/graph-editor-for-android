@@ -55,12 +55,14 @@ public class ScriptProxy implements ExtensionInvoker.ExtensionProxy {
         canvasManager.setEdgeDrawer(null);
     }
 
+    //TODO reimplement
     @Override
     public int registerGraphAction(String imageButtonPath, String functionCalled) {
-        return graphActionManager.registerAction(imageButtonPath, (mapper, event, stack) -> {
-            invoker.callFunction(functionCalled, mapper, event, stack);
-            return true;
-        });
+        throw new UnsupportedOperationException();
+//        return graphActionManager.registerAction(imageButtonPath, (mapper, event, stack) -> {
+//            invoker.callFunction(functionCalled, mapper, event, stack);
+//            return null;
+//        });
     }
 
     @Override
