@@ -56,6 +56,11 @@ public class PointMapperImpl implements PointMapper {
         }
     }
 
+    @Override
+    public double getZoom() {
+        return zoom;
+    }
+
     private ScreenPoint rotatePoint(ScreenPoint point, double angle) {
         float dx = point.getX() - view.getWidth() / 2.0f;
         float dy = point.getY() - view.getHeight() / 2.0f;

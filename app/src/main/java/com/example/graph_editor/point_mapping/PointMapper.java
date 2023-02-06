@@ -9,4 +9,5 @@ public interface PointMapper {
     void setOffset(Point offset);
     void zoomBy(float heightPixels);
     void rotate(float heightPixels, float screenX);
+    double getZoom();
 }
