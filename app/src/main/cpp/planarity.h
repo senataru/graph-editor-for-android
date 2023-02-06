@@ -28,5 +28,8 @@ public:
 };
 
 std::vector<Vertex*> findCanonicalOrder(std::vector <Face> faces);
+std::set<Vertex*> compressFaces(const std::vector<Face> &faces);
+std::vector<ShiftVertex*> shiftMethod(const std::vector<Vertex*> &VInp) ;
+std::vector<std::pair<Vertex*, PairXY>> extractCoordinates(std::vector<Vertex*> vertices, const std::vector<ShiftVertex*> v);
 
 #endif //UNTITLED1_PLANARITY_H

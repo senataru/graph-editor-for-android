@@ -3,11 +3,10 @@
 //
 #include <vector>
 #include "planarity.h"
-#include "triangulate.cpp"
+#include "triangulate.h"
 #include <algorithm>
 #include <iostream>
 #include <set>
-
 
 std::vector<std::pair<Vertex*, PairXY>> extractCoordinates(std::vector<Vertex*> vertices, const std::vector<ShiftVertex*> v) {
     std::vector<std::pair<Vertex*, PairXY>> res;
@@ -29,7 +28,6 @@ std::set<Vertex*> compressFaces(const std::vector<Face> &faces) {
             res.insert(v);
     return res;
 }
-
 
 std::vector<Vertex*> findOuterVertices(Vertex* chosenVer, Vertex* orig_pred, Vertex* next, std::vector<Face> &faces, std::vector<Vertex*> toAdd) {
     Vertex* pred = orig_pred;
@@ -84,7 +82,7 @@ std::vector<Vertex*> findOuterVertices(Vertex* chosenVer, Vertex* orig_pred, Ver
     return orderToAdd;
 }
 
-std::vector<Vertex*> findCanonicalOrder2(std::vector<Face> faces) {
+std::vector<Vertex*> findCanonicalOrder(std::vector<Face> faces) {
     int outerID = 0;
     auto listOfAllVertices = compressFaces(faces);
     for (auto &v : listOfAllVertices)
@@ -151,97 +149,7 @@ std::vector<Vertex*> findCanonicalOrder2(std::vector<Face> faces) {
     return res;
 }
 
-std::vector<Vertex*> findCanonicalOrder(std::vector<Face> faces) {
-    // TODO: change faces to be set? perfornace idk
-    std::set<Vertex*> listOfAllVertices = compressFaces(faces);
-    if (faces.empty())
-        throw "Faces size is 0";
-    int outerID = 0;
-    //TODO: uncomment
-    //if (faces[0].V.size() != 3)
-    //throw "Illegal triangulation";
-    Vertex *a, *b;
-    auto &outerVertixes = faces[outerID].V;
-    a = outerVertixes[0];
-    b = outerVertixes[outerVertixes.size() - 1];
-    std::vector<Vertex*> res;
-    a->visited = true;
-    b->visited = true;
-    while(faces.size() > 1 || faces[0].V.size() > 3) {
-        auto &outerVertixes = faces[outerID].V;
-        int faceSize = outerVertixes.size(), minLength = faceSize + 1, verID = -1;
-        for (int i1 = 0; i1 < faceSize; ++i1) {
-            for (auto &_to: outerVertixes[i1]->edges) {
-                auto to = _to.first;
-                int i2 = std::find(outerVertixes.begin(), outerVertixes.end(), to) - outerVertixes.begin();
-                if (i2 != faceSize && i2 > i1 && i1 + 1 < i2 && minLength > i2 - i1) {
-                    minLength = i2 - i1;
-                    verID = i1 + 1;
-                }
-            }
-        }
-        if (verID == -1)
-            throw "Internal bug, not found an edge";
-        auto &chosenVer = outerVertixes[verID];
-        //std::cout << (chosenVer == faces[outerID].V[verID]) << '\n';
-        chosenVer->visited = true;
-        res.push_back(chosenVer);
-        //std::cout << "START: " << a->id << " " << b->id << " " << chosenVer->id << '\n';
-        std::vector<Vertex*> newOuterFace;
-        for (auto &ver: outerVertixes) {
-            if (ver != outerVertixes[verID]) {
-                newOuterFace.push_back(ver);
-            } else {
-                for (auto &to : chosenVer->edges)
-                    if (!to.first->visited && !faces[outerID].contain(to.first))
-                        newOuterFace.push_back(to.first);
-            }
-        }
-        /*std::cout << "outer: ";
-        for (auto x : newOuterFace)
-            std::cout << x->id << " ";
-        std::cout << '\n';*/
-        bool shouldInsert = true;
-        auto f = Face(newOuterFace);
-        std::vector<int> toErase;
-        for (int i = 0; i < faces.size(); ++i) {
-            if (faces[i].contain(chosenVer)) {
-                toErase.push_back(i);
-            } else
-            if (faces[i].V == f.V) {
-                shouldInsert = false;
-            }
-        }
-        std::vector<Face> swapVec;
-        int pnt = 0;
-        for (int i = 0; i < faces.size(); ++i) {
-            if (pnt < toErase.size() && toErase[pnt] == i) {
-                ++pnt;
-            } else {
-                swapVec.emplace_back(std::move(faces[i]));
-            }
-        }
-        std::swap(swapVec, faces);
-        if (shouldInsert) {
-            faces.emplace_back(f);
-        }
-        outerID = faces.size() - 1;
-    }
-    for (auto &x : faces[0].V)
-        if (x != a && x != b) {
-            res.push_back(x);
-            break;
-        }
-    res.push_back(b);
-    res.push_back(a);
-    std::reverse(res.begin(), res.end());
-    for (auto &v : listOfAllVertices)
-        v->visited = false;
-    return res;
-}
-
 // the order is already shuffled
-
 std::vector<ShiftVertex*> convertToShiftVertex(const std::vector<Vertex*> &V) {
     std::vector<ShiftVertex*> ans;
     for (int i = 0; i < V.size(); ++i) {
@@ -276,8 +184,8 @@ PairXY calculatePos(ShiftVertex *ver1, ShiftVertex *ver2) {
     return PairXY(resX, resY);
 }
 
-std::vector<ShiftVertex*> shiftMethod(const std::vector<Vertex*> &_V) {
-    auto V = convertToShiftVertex(_V);
+std::vector<ShiftVertex*> shiftMethod(const std::vector<Vertex*> &VInp) {
+    auto V = convertToShiftVertex(VInp);
     for (int i = 0; i < V.size(); ++i)
         V[i]->L = {V[i]};
     V[0]->pos = {0, 0};

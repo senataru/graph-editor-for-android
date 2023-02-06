@@ -9,6 +9,8 @@
 #include <queue>
 #include <algorithm>
 
+#include "planarity.h"
+
 const int N = 2002;
 
 typedef long double ld;
@@ -362,7 +364,7 @@ Java_com_example_graph_1editor_model_DrawManager_arrangePlanarGraph(__unused JNI
 
 
 // THIRD FUNCTION
-#include "planarity.cpp"
+
 extern "C"
 JNIEXPORT jdoubleArray JNICALL
 Java_com_example_graph_1editor_model_DrawManager_makePlanar(__unused JNIEnv *env, jclass clazz,
@@ -387,7 +389,7 @@ Java_com_example_graph_1editor_model_DrawManager_makePlanar(__unused JNIEnv *env
     auto faces = triangulate(G);
     auto orig_order_set = compressFaces(faces);
     auto orig_order = std::vector<Vertex*>(orig_order_set.begin(), orig_order_set.end());
-    auto res1 = findCanonicalOrder2(faces);
+    auto res1 = findCanonicalOrder(faces);
     auto res2 = shiftMethod(res1);
     auto res3 = extractCoordinates(orig_order, res2);
 
