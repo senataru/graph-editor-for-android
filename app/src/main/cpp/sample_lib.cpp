@@ -44,39 +44,7 @@ Java_com_example_graph_1editor_model_DrawManager_arrangeGraph(__unused JNIEnv *e
     const int iterations = 200;
     for (int i = 0; i < iterations; ++i) {
         ld max_diff = 0;
-        // calculate repulsive forces
-        for (auto &v : V) {
-            // each Vertex has two vectors: .pos and .disp
-            for (auto &u : V) {
-                if (u.id != v.id) {
-                    auto delta = v.pos - u.pos;
-                    v.disp = v.disp + (delta / delta.module()) * fr(delta.module(), k, n);
-
-                }
-            }
-        }
-        // calculate repulsive forces between vertices and edges
-        for (auto &p : V) {
-            // each Vertex has two vectors: .pos and .disp
-            for (auto &v : V) {
-                for (auto &e: E[v.id]) {
-                    auto &u = V[e];
-                    if (p.id == v.id || p.id == u.id) continue;
-                    auto delta = (p.pos - p.pos.shortestPointFromSegment(v.pos, u.pos));
-                    p.disp = p.disp + (delta / delta.module()) * fr(delta.module(), k, n);
-                }
-            }
-        }
-        // calculate attractive forces
-        for (int v_id = 0; v_id < V.size(); ++v_id) {
-            for (auto &e: E[v_id]) {
-                auto &v = V[v_id];
-                auto &u = V[e];
-                auto delta = v.pos - u.pos;
-                v.disp = v.disp - (delta / delta.module()) * fa(std::max(delta.module(), (ld)0.001), k, n);
-            }
-        }
-
+        forcesIteration(V, E, k, n);
         for (auto &v : V) {
             if (v.free) {
                 auto delta = ((v.disp.module() > t) ? v.disp / v.disp.module() * t : v.disp);
@@ -166,38 +134,7 @@ Java_com_example_graph_1editor_model_DrawManager_arrangePlanarGraph(__unused JNI
     const int iterations = 200;
     for (int i = 0; i < iterations; ++i) {
         // calculate repulsive forces
-        for (auto &v : V) {
-            // each Vertex has two vectors: .pos and .disp
-            for (auto &u : V) {
-                if (u.id != v.id) {
-                    auto delta = v.pos - u.pos;
-                    v.disp = v.disp + (delta / delta.module()) * fr(delta.module(), k, n);
-
-                }
-            }
-        }
-        // calculate repulsive forces between vertices and edges
-        for (auto &p : V) {
-            // each Vertex has two vectors: .pos and .disp
-            for (auto &v : V) {
-                for (auto &e: E[v.id]) {
-                    auto &u = V[e];
-                    if (p.id == v.id || p.id == u.id) continue;
-                    auto delta = (p.pos - p.pos.shortestPointFromSegment(v.pos, u.pos));
-                    p.disp = p.disp + (delta / delta.module()) * fr(delta.module(), k, n);
-                }
-            }
-        }
-        // calculate attractive forces
-        for (int v_id = 0; v_id < V.size(); ++v_id) {
-            for (auto &e: E[v_id]) {
-                auto &v = V[v_id];
-                auto &u = V[e];
-                auto delta = v.pos - u.pos;
-                v.disp = v.disp - (delta / delta.module()) * fa(std::max(delta.module(), (ld)0.001), k, n);
-            }
-        }
-
+        forcesIteration(V, E, k, n);
         ld epsilon = smallest_vertex_edge_distance(V, E);
         ld safe_dist = 0.4 * epsilon;   // cannot be more than 0.5 * epsilon, should not be more than 0.45 * epsilon
 

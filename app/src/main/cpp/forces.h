@@ -27,31 +27,28 @@ namespace NamespaceForVertex {
         void clear() {
             x = y = 0;
         }
-        PairXY operator-(const PairXY &another) {
+        PairXY operator-(const PairXY &another) const {
             return {x - another.x, y - another.y};
         }
-        PairXY operator+(const PairXY &another) {
+        PairXY operator+(const PairXY &another) const {
             return {x + another.x, y + another.y};
         }
-        PairXY operator/(const PairXY &another) {
+        PairXY operator/(const PairXY &another) const {
             return {x / another.x, y / another.y};
         }
-        PairXY operator/(const ld another) {
+        PairXY operator/(const ld another) const {
             return {x / another, y / another};
         }
-        PairXY operator*(const PairXY &another) {
+        PairXY operator*(const PairXY &another) const {
             return {x * another.x, y * another.y};
         }
-        PairXY operator*(const ld another) {
+        PairXY operator*(const ld another) const {
             return {x * another, y * another};
-        }
-        friend PairXY min(const PairXY &one, const PairXY &another) {
-            return {std::min(one.x, another.x), std::min(one.y, another.y)};
         }
         static ld sqr(const ld &x)  {
             return x * x;
         }
-        friend ld dist2(const PairXY &v, const PairXY &w)  {
+        friend ld dist2(const PairXY &v, const PairXY &w) {
             return sqr(v.x - w.x) + sqr(v.y - w.y);
         }
         PairXY shortestPointFromSegment(const PairXY &v, const PairXY &w) const {
@@ -69,10 +66,6 @@ namespace NamespaceForVertex {
         bool free;
 
         explicit Vertex(int _id) : id(_id), disp(), free(true), pos(0, 0) {}
-
-        void setNotFree() {
-            free = false;
-        }
 
         void setPos(double x, double y) {
             pos.x = x;
@@ -113,5 +106,38 @@ ld smallest_vertex_edge_distance(const std::vector<NamespaceForVertex::Vertex>& 
     return result;
 }
 
+void forcesIteration(std::vector<NamespaceForVertex::Vertex> &V, const std::vector<std::vector<int>> &E, ld k, int n) {
+    // calculate repulsive forces
+    for (auto &v : V) {
+        // each Vertex has two vectors: .pos and .disp
+        for (auto &u : V) {
+            if (u.id != v.id) {
+                auto delta = v.pos - u.pos;
+                v.disp = v.disp + (delta / delta.module()) * fr(delta.module(), k, n);
+            }
+        }
+    }
+    // calculate repulsive forces between vertices and edges
+    for (auto &p : V) {
+        // each Vertex has two vectors: .pos and .disp
+        for (auto &v : V) {
+            for (auto &e: E[v.id]) {
+                auto &u = V[e];
+                if (p.id == v.id || p.id == u.id) continue;
+                auto delta = (p.pos - p.pos.shortestPointFromSegment(v.pos, u.pos));
+                p.disp = p.disp + (delta / delta.module()) * fr(delta.module(), k, n);
+            }
+        }
+    }
+    // calculate attractive forces
+    for (int v_id = 0; v_id < V.size(); ++v_id) {
+        for (auto &e: E[v_id]) {
+            auto &v = V[v_id];
+            auto &u = V[e];
+            auto delta = v.pos - u.pos;
+            v.disp = v.disp - (delta / delta.module()) * fa(std::max(delta.module(), (ld)0.001), k, n);
+        }
+    }
+}
 
 #endif //GRAPH_EDITOR_FORCES_H
