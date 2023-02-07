@@ -8,12 +8,12 @@
 #include <iostream>
 #include <set>
 
-std::vector<std::pair<Vertex*, PairXY>> extractCoordinates(std::vector<Vertex*> vertices, const std::vector<ShiftVertex*> v) {
+std::vector<std::pair<Vertex*, PairXY>> extractCoordinates(const std::vector<Vertex*>& vertices, const std::vector<ShiftVertex*>& v) {
     std::vector<std::pair<Vertex*, PairXY>> res;
     for (auto &x : vertices) {
         for (auto &i : v) {
             if (i->id == x->id) {
-                res.push_back({x, i->pos});
+                res.emplace_back(x, i->pos);
                 break;
             }
         }
@@ -29,7 +29,7 @@ std::set<Vertex*> compressFaces(const std::vector<Face> &faces) {
     return res;
 }
 
-std::vector<Vertex*> findOuterVertices(Vertex* chosenVer, Vertex* orig_pred, Vertex* next, std::vector<Face> &faces, std::vector<Vertex*> toAdd) {
+std::vector<Vertex*> findOuterVertices(Vertex* chosenVer, Vertex* orig_pred, Vertex* next, std::vector<Face> &faces, const std::vector<Vertex*>& toAdd) {
     Vertex* pred = orig_pred;
     std::vector<Vertex*> orderToAdd({pred});
     bool end = false;
@@ -86,7 +86,7 @@ std::vector<Vertex*> findCanonicalOrder(std::vector<Face> faces) {
     int outerID = 0;
     auto listOfAllVertices = compressFaces(faces);
     for (auto &v : listOfAllVertices)
-        v->visited = v->out = v->chords = v->temp = 0;
+        v->visited = v->out = v->chords = v->temp = false;
     int n = listOfAllVertices.size();
     Vertex *a, *b, *t;
     a = faces[outerID].V[0];
@@ -121,7 +121,7 @@ std::vector<Vertex*> findCanonicalOrder(std::vector<Face> faces) {
             }
         }
         outer.erase(outer.begin() + id);
-        if (toAdd.size()) {
+        if (!toAdd.empty()) {
             auto orderToAdd = findOuterVertices(chosenVer, outer[id - 1], outer[id], faces, toAdd);
             outer.insert(outer.begin() + id, orderToAdd.begin(), orderToAdd.end());
         }
@@ -152,8 +152,8 @@ std::vector<Vertex*> findCanonicalOrder(std::vector<Face> faces) {
 // the order is already shuffled
 std::vector<ShiftVertex*> convertToShiftVertex(const std::vector<Vertex*> &V) {
     std::vector<ShiftVertex*> ans;
-    for (int i = 0; i < V.size(); ++i) {
-        ans.push_back(new ShiftVertex(V[i]->id));
+    for (auto i : V) {
+        ans.push_back(new ShiftVertex(i->id));
     }
     for (int i = 0; i < ans.size(); ++i) {
         for (auto &to : V[i]->edges) {
@@ -181,13 +181,13 @@ PairXY calculatePos(ShiftVertex *ver1, ShiftVertex *ver2) {
     }
     if (difx % 2)
         throw "Internal error";
-    return PairXY(resX, resY);
+    return {resX, resY};
 }
 
 std::vector<ShiftVertex*> shiftMethod(const std::vector<Vertex*> &VInp) {
     auto V = convertToShiftVertex(VInp);
-    for (int i = 0; i < V.size(); ++i)
-        V[i]->L = {V[i]};
+    for (auto & i : V)
+        i->L = {i};
     V[0]->pos = {0, 0};
     V[1]->pos = {2, 0};
     V[2]->pos = {1, 1};

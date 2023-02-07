@@ -10,117 +10,7 @@
 #include <algorithm>
 
 #include "planarity.h"
-
-const int N = 2002;
-
-typedef long double ld;
-
-ld fa(ld x, ld k, int n) {
-    return x * x / k / n;
-}
-
-ld fr(ld x, ld k, int n) {
-    return k * k / x / n / 100.0;
-}
-
-namespace NamespaceForVertex {
-    class PairXY {
-    public:
-        ld x, y;
-        PairXY() : x(0), y(0) {}
-        PairXY(ld _x, ld _y) : x(_x), y(_y) {}
-        ld module() {
-            return std::fmax(0.001, std::sqrt(x * x + y * y));
-        }
-        void clear() {
-            x = y = 0;
-        }
-        PairXY operator-(const PairXY &another) {
-            return {x - another.x, y - another.y};
-        }
-        PairXY operator+(const PairXY &another) {
-            return {x + another.x, y + another.y};
-        }
-        PairXY operator/(const PairXY &another) {
-            return {x / another.x, y / another.y};
-        }
-        PairXY operator/(const ld another) {
-            return {x / another, y / another};
-        }
-        PairXY operator*(const PairXY &another) {
-            return {x * another.x, y * another.y};
-        }
-        PairXY operator*(const ld another) {
-            return {x * another, y * another};
-        }
-        friend PairXY min(const PairXY &one, const PairXY &another) {
-            return {std::min(one.x, another.x), std::min(one.y, another.y)};
-        }
-        static ld sqr(const ld &x)  {
-            return x * x;
-        }
-        friend ld dist2(const PairXY &v, const PairXY &w)  {
-            return sqr(v.x - w.x) + sqr(v.y - w.y);
-        }
-        PairXY shortestPointFromSegment(const PairXY &v, const PairXY &w) const {
-            ld l2 = dist2(v, w);
-            if (l2 == 0) return v;
-            auto t = ((x - v.x) * (w.x - v.x) + (y - v.y) * (w.y - v.y)) / l2;
-            t = std::max((ld)0, std::min((ld)1, t));
-            return {v.x + t * (w.x - v.x), v.y + t * (w.y - v.y)};
-        }
-    };
-    class Vertex {
-    public:
-        int id;
-        PairXY pos, disp;
-        bool free;
-
-        explicit Vertex(int _id) : id(_id), disp(), free(true), pos(0, 0) {}
-
-        void setNotFree() {
-            free = false;
-        }
-
-        void setPos(double x, double y) {
-            pos.x = x;
-            pos.y = y;
-        }
-    };
-}
-
-ld distance_between_points(ld x_0, ld y_0, ld x_1, ld y_1) {
-    return sqrt((x_0 - x_1) * (x_0 - x_1) + (y_0 - y_1) * (y_0 - y_1));
-}
-
-ld vertex_edge_distance(NamespaceForVertex::Vertex& v, NamespaceForVertex::Vertex& e1, NamespaceForVertex::Vertex& e2) {    // first one is a vertex, two next are ends of an edge
-    NamespaceForVertex::PairXY v_coords = v.pos;
-    NamespaceForVertex::PairXY ort_proj = v_coords.shortestPointFromSegment(e1.pos, e2.pos);
-    return distance_between_points(v_coords.x, v_coords.y, ort_proj.x, ort_proj.y);
-}
-
-ld smallest_vertex_edge_distance(const std::vector<NamespaceForVertex::Vertex>& V, const std::vector<std::vector<int>>& E) {
-    ld result = 1e18;
-    for (int w_id = 0; w_id < V.size(); ++w_id) {
-        for (int e1 = 0; e1 < V.size(); ++e1) {
-            if (e1 == w_id) continue;
-            for (auto &e2: E[e1]) {
-                if (e2 == w_id) continue;
-                if (e1 < e2) continue;
-
-                auto v = V[e1];
-                auto u = V[e2];
-                auto w = V[w_id];
-                ld dist = vertex_edge_distance(w, v, u);
-
-                if (dist < result) result = dist;
-            }
-        }
-    }
-
-    return result;
-}
-
+#include "forces.h"
 
 extern "C"
 JNIEXPORT jdoubleArray JNICALL
@@ -131,19 +21,15 @@ Java_com_example_graph_1editor_model_DrawManager_arrangeGraph(__unused JNIEnv *e
                                                               jdoubleArray tab_y,
                                                               jintArray tab_edge_source,
                                                               jintArray tab_edge_target) {
-
     ld W = 1, H = 1;
     std::vector<NamespaceForVertex::Vertex> V;
-    jint *edge_source = (*env).GetIntArrayElements(tab_edge_source, 0);
-    jint *edge_target = (*env).GetIntArrayElements(tab_edge_target, 0);
-    jdouble *x = (*env).GetDoubleArrayElements(tab_x, 0);
-    jdouble *y = (*env).GetDoubleArrayElements(tab_y, 0);
-    // TODO: solve for several connectivity component
+    jint *edge_source = (*env).GetIntArrayElements(tab_edge_source, nullptr);
+    jint *edge_target = (*env).GetIntArrayElements(tab_edge_target, nullptr);
+    jdouble *x = (*env).GetDoubleArrayElements(tab_x, nullptr);
+    jdouble *y = (*env).GetDoubleArrayElements(tab_y, nullptr);
     std::vector<std::vector<int>> E(n);
     for (int i = 0; i < n; ++i) {
         V.emplace_back(i);
-        //V[i].setPos(x[i]*1000, y[i]*1000);
-        //V[i].setPos(float(rand())/RAND_MAX-0.5, float(rand())/RAND_MAX-0.5);
         V[i].setPos(x[i] / 2, y[i] / 2);
     }
     for (int i = 0; i < m; ++i) {
@@ -205,33 +91,33 @@ Java_com_example_graph_1editor_model_DrawManager_arrangeGraph(__unused JNIEnv *e
         t = t / cooling;
         if (max_diff <= 0.001) break;
     }
-    jdoubleArray res = env->NewDoubleArray(n*2);
-    jdouble res_tab[n*2];
-    int j=0;
-    double mnx = (*std::min_element(V.begin(), V.end(), [](auto a, auto b) {
+    auto mnx = (*std::min_element(V.begin(), V.end(), [](auto a, auto b) {
         return a.pos.x < b.pos.x;
     })).pos.x;
-    double mny = (*std::min_element(V.begin(), V.end(), [](auto a, auto b) {
+    auto mny = (*std::min_element(V.begin(), V.end(), [](auto a, auto b) {
         return a.pos.y < b.pos.y;
     })).pos.y;
-    double mxx = (*std::min_element(V.begin(), V.end(), [](auto a, auto b) {
+    auto mxx = (*std::min_element(V.begin(), V.end(), [](auto a, auto b) {
         return a.pos.x > b.pos.x;
     })).pos.x;
-    double mxy = (*std::min_element(V.begin(), V.end(), [](auto a, auto b) {
+    auto mxy = (*std::min_element(V.begin(), V.end(), [](auto a, auto b) {
         return a.pos.y > b.pos.y;
     })).pos.y;
-    for (NamespaceForVertex::Vertex &v : V) {
+    for (auto &v : V) {
         v.pos.x -= mnx;
         v.pos.y -= mny;
         v.pos.x /= (mxx - mnx);
         v.pos.y /= (mxy - mny);
     }
 
-    for (NamespaceForVertex::Vertex &v : V) {
+    jdoubleArray res = env->NewDoubleArray(n*2);
+    jdouble res_tab[n*2];
+    int j=0;
+    for (auto &v : V) {
         res_tab[j] = v.pos.x;
         res_tab[j+n] = v.pos.y;
         ++j;
-    };
+    }
     env->SetDoubleArrayRegion(res, (jsize)0, (jsize)n*2, res_tab);
     return res;
 }
@@ -249,10 +135,10 @@ Java_com_example_graph_1editor_model_DrawManager_arrangePlanarGraph(__unused JNI
                                                               jintArray tab_edge_target) {
 
     std::vector<NamespaceForVertex::Vertex> V;
-    jint *edge_source = (*env).GetIntArrayElements(tab_edge_source, 0);
-    jint *edge_target = (*env).GetIntArrayElements(tab_edge_target, 0);
-    jdouble *x = (*env).GetDoubleArrayElements(tab_x, 0);
-    jdouble *y = (*env).GetDoubleArrayElements(tab_y, 0);
+    jint *edge_source = (*env).GetIntArrayElements(tab_edge_source, nullptr);
+    jint *edge_target = (*env).GetIntArrayElements(tab_edge_target, nullptr);
+    jdouble *x = (*env).GetDoubleArrayElements(tab_x, nullptr);
+    jdouble *y = (*env).GetDoubleArrayElements(tab_y, nullptr);
     // TODO: solve for several connectivity component
     std::vector<std::vector<int>> E(n);
 
@@ -357,7 +243,7 @@ Java_com_example_graph_1editor_model_DrawManager_arrangePlanarGraph(__unused JNI
         res_tab[j] = v.pos.x;
         res_tab[j+n] = v.pos.y;
         ++j;
-    };
+    }
     env->SetDoubleArrayRegion(res, (jsize)0, (jsize)n*2, res_tab);
     return res;
 }
@@ -374,13 +260,14 @@ Java_com_example_graph_1editor_model_DrawManager_makePlanar(__unused JNIEnv *env
                                                                     jdoubleArray tab_y,
                                                                     jintArray tab_edge_source,
                                                                     jintArray tab_edge_target) {
-    jint *edge_source = (*env).GetIntArrayElements(tab_edge_source, 0);
-    jint *edge_target = (*env).GetIntArrayElements(tab_edge_target, 0);
-    jdouble *x = (*env).GetDoubleArrayElements(tab_x, 0);
-    jdouble *y = (*env).GetDoubleArrayElements(tab_y, 0);
+    jint *edge_source = (*env).GetIntArrayElements(tab_edge_source, nullptr);
+    jint *edge_target = (*env).GetIntArrayElements(tab_edge_target, nullptr);
+    jdouble *x = (*env).GetDoubleArrayElements(tab_x, nullptr);
+    jdouble *y = (*env).GetDoubleArrayElements(tab_y, nullptr);
     // TODO: solve for several connectivity component
     std::vector<std::vector<int>> E(n);
     std::vector<std::pair<int, int>> edges_input;
+    edges_input.reserve(m);
     for (int i = 0; i < m; ++i) {
         edges_input.emplace_back(edge_target[i], edge_source[i]);
     }
@@ -420,7 +307,7 @@ Java_com_example_graph_1editor_model_DrawManager_makePlanar(__unused JNIEnv *env
         res_tab[j] = v.second.x;
         res_tab[j+n] = v.second.y;
         ++j;
-    };
+    }
     env->SetDoubleArrayRegion(res, (jsize)0, (jsize)n*2, res_tab);
     return res;
 }
