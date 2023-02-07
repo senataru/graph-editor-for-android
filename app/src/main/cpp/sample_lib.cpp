@@ -201,7 +201,6 @@ Java_com_example_graph_1editor_model_DrawManager_makePlanar(__unused JNIEnv *env
     jint *edge_target = (*env).GetIntArrayElements(tab_edge_target, nullptr);
     jdouble *x = (*env).GetDoubleArrayElements(tab_x, nullptr);
     jdouble *y = (*env).GetDoubleArrayElements(tab_y, nullptr);
-    // TODO: solve for several connectivity component
     std::vector<std::vector<int>> E(n);
     std::vector<std::pair<int, int>> edges_input;
     edges_input.reserve(m);

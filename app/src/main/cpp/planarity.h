@@ -17,6 +17,7 @@ public:
     PairXY(const double &_x, const double &_y) : x(_x), y(_y) {}
 };
 
+// well this code was written at night, and I couldn't understand why inheritance doesn't work, so I just copied it from Vertex.....
 class ShiftVertex {
 public:
     std::set<ShiftVertex*> L;
@@ -26,6 +27,7 @@ public:
     std::vector<ShiftVertex*> edges;
     explicit ShiftVertex(int _id): id(_id), visited(false) {}
 };
+
 
 std::vector<Vertex*> findCanonicalOrder(std::vector <Face> faces);
 std::set<Vertex*> compressFaces(const std::vector<Face> &faces);

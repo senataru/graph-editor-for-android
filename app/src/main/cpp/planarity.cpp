@@ -140,10 +140,6 @@ std::vector<Vertex*> findCanonicalOrder(std::vector<Face> faces) {
                 }
             }
         }
-        //std::cout << "outer: ";
-        //for (auto &x : outer)
-        //std::cout << x->id << " ";
-        //std::cout << std::endl;
         res[k] = chosenVer;
     }
     return res;
@@ -196,12 +192,10 @@ std::vector<ShiftVertex*> shiftMethod(const std::vector<Vertex*> &VInp) {
     V[2]->visited = true;
     std::vector<ShiftVertex*> outer({V[0], V[2], V[1]});
     for (int i = 3; i < V.size(); ++i) {
-        //if (i == 8) break;
         std::vector<ShiftVertex*> neighbours;
         int mn = 1e9, mx = -1e9;
         ShiftVertex *ver1, *ver2;
         for (auto &to : V[i]->edges) {
-            //std::cout << to->id << " " <<
             int x = to->pos.x;
             int id = std::find(outer.begin(), outer.end(), to) - outer.begin();
             if (id != outer.size()) {
@@ -219,7 +213,6 @@ std::vector<ShiftVertex*> shiftMethod(const std::vector<Vertex*> &VInp) {
         int id1 = std::find(outer.begin(), outer.end(), ver1) - outer.begin();
         int id2 = std::find(outer.begin(), outer.end(), ver2) - outer.begin();
 
-        //std::cout << "DEBUG: " << id1 << " " << id2 << " " << outer.size() << '\n';
         std::set<ShiftVertex*> unionL1, unionL2;
         for (int j = id1 + 1; j < id2; ++j) {
             unionL1.insert(outer[j]->L.begin(), outer[j]->L.end());
@@ -228,19 +221,11 @@ std::vector<ShiftVertex*> shiftMethod(const std::vector<Vertex*> &VInp) {
             unionL2.insert(outer[j]->L.begin(), outer[j]->L.end());
         }
 
-        //std::cout << "L1: ";
-        for (auto x : unionL1) std::cout << x->pos.x << "|" << x->pos.y << " ";
-        //std::cout << '\n';
-        //std::cout << "L2: ";
-        for (auto x : unionL2) std::cout << x->pos.x << "|" << x->pos.y << " ";
-        //std::cout << '\n';
-
         for (auto &x : unionL1)
             x->pos.x += 1;
         for (auto &x : unionL2)
             x->pos.x += 2;
         V[i]->pos = calculatePos(ver1, ver2);
-        //std::cout << V[i]->pos.x << "|||" << V[i]->pos.y << "\n\n";
         for (int j = id2 - 1; j > id1; --j) {
             outer.erase(outer.begin() + j);
         }
@@ -258,13 +243,7 @@ std::vector<ShiftVertex*> shiftMethod(const std::vector<Vertex*> &VInp) {
     std::sort(outer.begin(), outer.end(), [&](auto &f, auto &s) {
         return f->pos.x < s->pos.x;
     });
-    //std::vector<PairXY> answer;
-    //for (auto &v : outer) answer.push_back(v->pos); // TODO: change with some stl function
-    //for (auto &v : outer) std::cout << v->id << " ";
-    // TODO: mark not visited
-    //std::cout << '\n';
-    //for (auto &v : outer)
-    //    delete v;
-    //return answer;
+    for (auto &v : V)
+        delete v;
     return outer;
 }
