@@ -6,24 +6,30 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import graph_editor.extensions.OnOptionSelection;
+
 public class GraphMenuManagerImpl implements GraphMenuManager {
-    //TODO change to nonstatic
-    private static final Map<Integer, Pair<String, MenuOptionHandler>> registeredOptions = new HashMap<>();
-    public static Collection<Pair<String, MenuOptionHandler>> getRegisteredOptions() {
-        return registeredOptions.values();
+    //TODO change
+    private static final GraphMenuManagerImpl instance = new GraphMenuManagerImpl();
+    //TODO change
+    public static GraphMenuManager getInstance() {
+        return instance;
     }
 
-    private static int id = 0;
-
+    private int id = 0;
+    private final Map<Integer, Pair<String, OnOptionSelection>> registeredOptions = new HashMap<>();
     @Override
-    public int registerOption(String name, MenuOptionHandler handler) {
+    public int registerOption(String name, OnOptionSelection handler) {
         registeredOptions.put(id, Pair.create(name, handler));
         return id++;
     }
 
-    //TODO allow only access to ids extension registered previously?
     @Override
     public void deregisterOption(int id) {
         registeredOptions.remove(id);
+    }
+    @Override
+    public Collection<Pair<String, OnOptionSelection>> getRegisteredOptions() {
+        return registeredOptions.values();
     }
 }

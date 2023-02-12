@@ -1,7 +1,5 @@
 package com.example.graph_editor.draw;
 
-import static com.example.graph_editor.draw.ExtensionsMenuOptions.extensionsOptions;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.view.MenuItem;
@@ -15,7 +13,10 @@ import com.example.graph_editor.draw.popups.GeneratePopup;
 import com.example.graph_editor.draw.popups.SavePopup;
 import com.example.graph_editor.draw.popups.SettingsPopup;
 
+import java.util.Map;
 import java.util.Objects;
+
+import graph_editor.extensions.OnOptionSelection;
 import graph_editor.graph.SimpleGraphBuilder;
 import graph_editor.graph.VersionStack;
 import graph_editor.graph_generators.GraphGeneratorBipartiteClique;
@@ -29,11 +30,12 @@ public class OptionsHandler {
     public static boolean handle(@NonNull MenuItem item, DrawActivity context, VersionStack<GraphVisualization<PropertySupportingGraph>> stack,
                                  GraphView graphView, Runnable makeSave,
                                  ActivityResultLauncher<Intent> importActivityResultLauncher,
-                                 ActivityResultLauncher<Intent> exportActivityResultLauncher) {
+                                 ActivityResultLauncher<Intent> exportActivityResultLauncher,
+                                 Map<Integer, OnOptionSelection> extensionsOptions) {
         if (extensionsOptions.containsKey(item.getItemId())) {
             Objects
                     .requireNonNull(extensionsOptions.get(item.getItemId()))
-                    .handle(stack, stack.getCurrent().getGraph(), graphView);
+                    .handle(stack);
             return true;
         }
         GraphVisualization<PropertySupportingGraph> visualization;

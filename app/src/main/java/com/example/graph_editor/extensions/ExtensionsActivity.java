@@ -59,7 +59,14 @@ public class ExtensionsActivity extends AppCompatActivity implements OnExtension
     protected void onResume() {
         super.onResume();
         if(installedRepository == null) installedRepository =
-                InstalledExtensionsProvider.getInstance(new File(this.getFilesDir(), FSDirectories.pluginsDirectory));
+                InstalledExtensionsProvider
+                        .getInstance(
+                                new PluginsProxyImpl(
+                                        GraphMenuManagerImpl.getInstance(),
+                                        new CanvasManagerImpl(),
+                                        new GraphActionManagerImpl()),
+                                new File(this.getFilesDir(), FSDirectories.pluginsDirectory)
+                        );
 
         installedView.setAdapter(new InstalledExtensionsRecyclerViewAdapter(
                 this,

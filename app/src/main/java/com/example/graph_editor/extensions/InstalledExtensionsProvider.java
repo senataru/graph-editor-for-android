@@ -1,35 +1,31 @@
 package com.example.graph_editor.extensions;
 
-import com.example.graph_editor.draw.graph_action.GraphActionManager;
+import com.example.graph_editor.file_serialization.Loader;
 
 import java.io.File;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import graph_editor.extensions.Extension;
-import graph_editor.extensions.ExtensionInvoker;
 import graph_editor.extensions.ExtensionsRepository;
-import graph_editor.extensions.js.RhinoJSInvoker;
+import graph_editor.extensions.Plugin;
 
 public class InstalledExtensionsProvider implements ExtensionsRepository {
-    private static final GraphMenuManager graphMenuManager = new GraphMenuManagerImpl();
-    private static final CanvasManager canvasManager = new CanvasManagerImpl();
-    private static final GraphActionManager graphActionManager = new GraphActionManagerImpl();
-
-    private final File root;
+    private final Plugin.Proxy proxy;
+    private final File pluginsDirectory;
     private final List<Extension> extensions = new ArrayList<>();
     private final Map<String, Extension> extensionsMap = new HashMap<>();
 
-    private InstalledExtensionsProvider(File root) {
-        this.root = root;
+    private InstalledExtensionsProvider(Plugin.Proxy proxy, File pluginsDirectory) {
+        this.proxy = proxy;
+        this.pluginsDirectory = pluginsDirectory;
     }
 
-    public static InstalledExtensionsProvider getInstance(File root) {
-        root.mkdirs();
-        InstalledExtensionsProvider instance = new InstalledExtensionsProvider(root);
+    public static InstalledExtensionsProvider getInstance(Plugin.Proxy proxy, File pluginsDirectory) {
+        pluginsDirectory.mkdirs();
+        InstalledExtensionsProvider instance = new InstalledExtensionsProvider(proxy, pluginsDirectory);
         instance.loadRepository();
         return instance;
     }
@@ -46,7 +42,7 @@ public class InstalledExtensionsProvider implements ExtensionsRepository {
 
     @Override
     public boolean add(String extensionsName) {
-        return loadExtension(new File(root, extensionsName));
+        return loadExtension(new File(pluginsDirectory, extensionsName));
     }
 
 
@@ -62,17 +58,12 @@ public class InstalledExtensionsProvider implements ExtensionsRepository {
 
     private boolean loadExtension(File extensionsDirectory) {
         try {
-            File script = new File(extensionsDirectory, "main_script.js");
-            ExtensionInvoker invoker = RhinoJSInvoker.createInstance(new FileReader(script));
             Extension e = new Extension(
                     extensionsDirectory.getName(),
-                    invoker,
-                    new ScriptProxy(
-                            invoker,
-                            graphMenuManager,
-                            canvasManager,
-                            graphActionManager
-                    ));
+                    //TODO consider adding support to different plugins languages
+                    Loader.load(extensionsDirectory, "serializedPlugin"),
+                    proxy
+            );
             extensions.add(e);
             extensionsMap.put(extensionsDirectory.getName(), e);
             return true;
@@ -83,9 +74,9 @@ public class InstalledExtensionsProvider implements ExtensionsRepository {
     }
 
     private void loadRepository() {
-        File[] pluginsDirectories = root.listFiles();
+        File[] pluginsDirectories = pluginsDirectory.listFiles();
         if (pluginsDirectories == null) {
-            throw new RuntimeException("root directory does not exist");
+            throw new RuntimeException("directory does not exist");
         }
         for (File pluginDirectory : pluginsDirectories) {
             loadExtension(pluginDirectory);

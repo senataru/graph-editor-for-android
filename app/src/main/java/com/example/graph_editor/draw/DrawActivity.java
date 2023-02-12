@@ -1,6 +1,5 @@
 package com.example.graph_editor.draw;
 
-import static com.example.graph_editor.draw.ExtensionsMenuOptions.extensionsOptions;
 import static com.example.graph_editor.menu.SharedPrefNames.CURRENT_GRAPH_NAME;
 
 import android.annotation.SuppressLint;
@@ -37,7 +36,6 @@ import com.example.graph_editor.draw.popups.DiscardPopup;
 import com.example.graph_editor.draw.popups.SavePopup;
 import com.example.graph_editor.extensions.CanvasManagerImpl;
 import com.example.graph_editor.extensions.GraphActionManagerImpl;
-import com.example.graph_editor.extensions.GraphMenuManager;
 import com.example.graph_editor.extensions.GraphMenuManagerImpl;
 import com.example.graph_editor.file_serialization.Loader;
 import com.example.graph_editor.file_serialization.Saver;
@@ -49,7 +47,9 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
+import graph_editor.extensions.OnOptionSelection;
 import graph_editor.geometry.Point;
 import graph_editor.graph.ObservableStackImpl;
 import graph_editor.graph.SimpleGraphBuilder;
@@ -59,7 +59,6 @@ import graph_editor.properties.PropertyGraphBuilder;
 import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.BuilderVisualizer;
 import graph_editor.visual.GraphVisualization;
-
 public class DrawActivity extends AppCompatActivity {
     private final static int extensions_start = 1;
     private GraphView graphView;
@@ -69,6 +68,8 @@ public class DrawActivity extends AppCompatActivity {
     private String name;
     private boolean stackChangedSinceLastSave;
     private boolean locked;
+    private Map<Integer, OnOptionSelection> extensionsOptions;
+
     public boolean isLocked() { return locked; }
     public void setLocked(boolean value) { this.locked = value; }
 
@@ -132,11 +133,10 @@ public class DrawActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.graph_options_menu, menu);
 
-        //TODO change
         int id = extensions_start;
-        Collection<Pair<String, GraphMenuManager.MenuOptionHandler>> options = GraphMenuManagerImpl.getRegisteredOptions();
+        Collection<Pair<String, OnOptionSelection>> options = GraphMenuManagerImpl.getInstance().getRegisteredOptions();
         extensionsOptions = new HashMap<>();
-        for (Pair<String, GraphMenuManager.MenuOptionHandler> it : options) {
+        for (Pair<String, OnOptionSelection> it : options) {
             extensionsOptions.put(id, it.second);
             menu.add(0, id++, 0, it.first);
         }
@@ -168,7 +168,7 @@ public class DrawActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (isLocked()) return false;
         if(!OptionsHandler.handle(item, this, stack, graphView,
-                ()->makeSave(()->{}), importActivityResultLauncher, exportActivityResultLauncher))
+                ()->makeSave(()->{}), importActivityResultLauncher, exportActivityResultLauncher, extensionsOptions))
             return super.onOptionsItemSelected(item);
         return true;
     }
