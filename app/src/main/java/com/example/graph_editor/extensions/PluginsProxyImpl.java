@@ -60,12 +60,12 @@ public class PluginsProxyImpl implements Plugin.Proxy {
     }
 
     @Override
-    public boolean acquireDrawingBehaviour(Plugin.DrawingPlugin drawingPlugin, GraphDrawer graphDrawer) {
+    public boolean acquireDrawingBehaviour(Plugin drawingPlugin, GraphDrawer graphDrawer) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void releaseDrawingBehaviour(Plugin.DrawingPlugin drawingPlugin) {
+    public void releaseDrawingBehaviour(Plugin drawingPlugin) {
         throw new UnsupportedOperationException();
     }
 }

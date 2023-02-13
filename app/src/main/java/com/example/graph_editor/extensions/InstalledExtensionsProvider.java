@@ -1,7 +1,5 @@
 package com.example.graph_editor.extensions;
 
-import com.example.graph_editor.file_serialization.Loader;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,16 +54,15 @@ public class InstalledExtensionsProvider implements ExtensionsRepository {
         return false;
     }
 
-    private boolean loadExtension(File extensionsDirectory) {
+    private boolean loadExtension(File extensionDirectory) {
         try {
             Extension e = new Extension(
-                    extensionsDirectory.getName(),
-                    //TODO consider adding support to different plugins languages
-                    Loader.load(extensionsDirectory, "serializedPlugin"),
+                    extensionDirectory.getName(),
+                    PluginLoader.loadPlugin(extensionDirectory),
                     proxy
             );
             extensions.add(e);
-            extensionsMap.put(extensionsDirectory.getName(), e);
+            extensionsMap.put(extensionDirectory.getName(), e);
             return true;
         } catch (Exception e) {
             e.printStackTrace();

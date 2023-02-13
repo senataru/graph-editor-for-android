@@ -57,6 +57,7 @@ dependencies {
 
     implementation 'io.apisense:rhino-android:1.0'
     implementation 'commons-io:commons-io:2.4'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
 
-    implementation 'com.example:graph_editor_core:1.0.0'
+    implementation 'com.example:graph_editor_core:1.0.1'
 }
