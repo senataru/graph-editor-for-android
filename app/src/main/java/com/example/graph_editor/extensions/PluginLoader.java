@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dalvik.system.DexClassLoader;
 import graph_editor.extensions.Plugin;
+import graph_editor.extensions.PluginConfigDto;
 
 public class PluginLoader {
 

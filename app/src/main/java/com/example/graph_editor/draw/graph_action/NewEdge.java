@@ -1,5 +1,7 @@
 package com.example.graph_editor.draw.graph_action;
 
+import static graph_editor.properties.GraphDebuilder.deBuild;
+
 import android.view.MotionEvent;
 
 import androidx.annotation.NonNull;
@@ -20,7 +22,7 @@ import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.BuilderVisualizer;
 import graph_editor.visual.GraphVisualization;
 
-public class NewEdge extends GraphDebuilder {
+public class NewEdge extends GraphOnTouchMutation {
     private ScreenPoint sp1;
     private ScreenPoint sp2;
     @Override

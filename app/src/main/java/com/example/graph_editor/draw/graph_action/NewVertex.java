@@ -1,5 +1,7 @@
 package com.example.graph_editor.draw.graph_action;
 
+import static graph_editor.properties.GraphDebuilder.deBuild;
+
 import android.view.MotionEvent;
 import androidx.annotation.NonNull;
 
@@ -14,7 +16,7 @@ import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.BuilderVisualizer;
 import graph_editor.visual.GraphVisualization;
 
-public class NewVertex extends GraphDebuilder {
+public class NewVertex extends GraphOnTouchMutation {
     private ScreenPoint sp;
     @Override
     public GraphVisualization<PropertySupportingGraph> perform(PointMapper mapper, @NonNull MotionEvent event, VersionStack<GraphVisualization<PropertySupportingGraph>> stack) {
