@@ -1,10 +1,7 @@
 package com.example.graph_editor.extensions;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import graph_editor.extensions.Extension;
 import graph_editor.extensions.ExtensionsRepository;
@@ -44,14 +41,35 @@ public class InstalledExtensionsProvider implements ExtensionsRepository {
     }
 
 
+    // I don't know if it is used somewhere else, but I use this changed function in remove extension call
     @Override
     public boolean remove(String extensionsName) {
         if(isPresent(extensionsName)) {
             extensions.removeIf(e -> e.getName().equals(extensionsName));
             extensionsMap.remove(extensionsName);
+            File[] pluginsDirectories = pluginsDirectory.listFiles();
+            if(pluginsDirectories!=null) {
+                for (File plugin: pluginsDirectories) {
+                    if(plugin.getName().equals(extensionsName)){
+                        deleteDirectory(plugin);
+                        break;
+                    }
+                }
+            }
             return true;
         }
         return false;
+    }
+
+    private void deleteDirectory(File file){
+        File[] list = file.listFiles();
+        if (list != null) {
+            for (File temp : list) {
+                deleteDirectory(temp);
+            }
+        }
+
+        file.delete();
     }
 
     private boolean loadExtension(File extensionDirectory) {

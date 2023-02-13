@@ -17,6 +17,7 @@ import com.example.graph_editor.R;
 import com.example.graph_editor.fs.FSDirectories;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import graph_editor.extensions.ExtensionsClient;
@@ -27,7 +28,11 @@ interface OnExtensionInstallClicked {
     void onInstallClicked(String extensionName, int position);
 }
 
-public class ExtensionsActivity extends AppCompatActivity implements OnExtensionInstallClicked {
+interface OnExtensionDeleteClicked{
+    void onDeleteClicked(String extensionName);
+}
+
+public class ExtensionsActivity extends AppCompatActivity implements OnExtensionInstallClicked, OnExtensionDeleteClicked {
     RecyclerView installedView;
     RecyclerView availableView;
     EditText ipTextEdit;
@@ -70,7 +75,8 @@ public class ExtensionsActivity extends AppCompatActivity implements OnExtension
 
         installedView.setAdapter(new InstalledExtensionsRecyclerViewAdapter(
                 this,
-                installedRepository.getExtensions()
+                new ArrayList<>(installedRepository.getExtensions()),
+                this
         ));
     }
 
@@ -81,12 +87,33 @@ public class ExtensionsActivity extends AppCompatActivity implements OnExtension
             try {
                 client.downloadExtension(new File(getFilesDir(), FSDirectories.pluginsDirectory), extensionName);
                 installedRepository.add(extensionName);
-                installedView.post(() -> installedView.getAdapter().notifyItemChanged(position));
+                InstalledExtensionsRecyclerViewAdapter adapter = (InstalledExtensionsRecyclerViewAdapter) installedView.getAdapter();
+                int pos = adapter.getExtensionPos(extensionName);
+                if (pos != -1) {
+                    installedView.post(()->adapter.notifyItemChanged(pos));
+                } else {
+                    int extPos = installedRepository.getExtensions().size()-1;
+                    adapter.addExtension(installedRepository.getExtensions().get(extPos));
+                    installedView.post(()->adapter.notifyItemChanged(position));
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }).start();
     }
+
+    @Override
+    public void onDeleteClicked(String extensionName){
+        installedRepository.remove(extensionName);
+        AvailableExtensionsRecyclerViewAdapter adapter = ((AvailableExtensionsRecyclerViewAdapter)availableView.getAdapter());
+        if(adapter!=null){
+            int pos = adapter.getExtensionPos(extensionName);
+            if(pos!=-1){
+                availableView.getAdapter().notifyItemChanged(pos);
+            }
+        }
+    }
+
     private void tryConnectAsync(String ip) {
         new Thread(() -> {
             try {

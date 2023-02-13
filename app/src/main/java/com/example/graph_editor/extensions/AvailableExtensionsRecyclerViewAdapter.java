@@ -18,7 +18,7 @@ import java.util.List;
 import graph_editor.extensions.ExtensionsRepository;
 
 public class AvailableExtensionsRecyclerViewAdapter
-        extends RecyclerView.Adapter<AvailableExtensionsRecyclerViewAdapter.Holder> {
+        extends RecyclerView.Adapter<AvailableExtensionsRecyclerViewAdapter.Holder> implements ExtensionPositionGetter{
     private final Context context;
     private final List<String> availableExtensions;
     private final OnExtensionInstallClicked callback;
@@ -78,6 +78,10 @@ public class AvailableExtensionsRecyclerViewAdapter
         b.setText(R.string.installed);
         b.setEnabled(false);
         b.setBackgroundColor(Color.DKGRAY);
+    }
+
+    public int getExtensionPos(String extensionName){
+        return availableExtensions.indexOf(extensionName);
     }
 
     public final static class Holder extends RecyclerView.ViewHolder {
