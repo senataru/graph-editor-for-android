@@ -1,9 +1,20 @@
 package com.example.graph_editor.model;
 
-public enum GraphType {
-    DIRECTED("directed"), UNDIRECTED("undirected");
+import java.util.Map;
+import java.util.function.IntFunction;
 
-    private String type;
+import graph_editor.graph.DirectedGraph;
+import graph_editor.graph.GenericGraphBuilder;
+import graph_editor.graph.Graph;
+import graph_editor.graph.UndirectedGraph;
+
+public enum GraphType {
+    DIRECTED("directed"),
+    UNDIRECTED("undirected");
+
+    static final Map<GraphType, IntFunction<GenericGraphBuilder<? extends Graph>>> graphBuilderFactoryMap =
+            Map.of(DIRECTED, DirectedGraph.Builder::new, UNDIRECTED, UndirectedGraph.Builder::new);
+    private final String type;
 
     GraphType(String type) {
         this.type = type;
@@ -22,5 +33,9 @@ public enum GraphType {
         } else {
             throw new IllegalArgumentException("Unknown graph type: " + type);
         }
+    }
+
+    public IntFunction<GenericGraphBuilder<? extends Graph>> getGraphBuilderFactory() {
+        return graphBuilderFactoryMap.get(this);
     }
 }

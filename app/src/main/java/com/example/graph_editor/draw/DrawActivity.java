@@ -49,6 +49,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.IntFunction;
 
 import graph_editor.draw.point_mapping.PointMapper;
 import graph_editor.draw.point_mapping.PointMapperImpl;
@@ -74,7 +75,6 @@ public class DrawActivity extends AppCompatActivity {
 
     private NavigationButtonCollection buttonCollection;
     private String name;
-    private GraphType graphType;
     private boolean stackChangedSinceLastSave;
     private boolean locked;
     private Map<Integer, OnOptionSelection> extensionsOptions;
@@ -89,7 +89,7 @@ public class DrawActivity extends AppCompatActivity {
 
         SharedPreferences sharedPref = this.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
 
-        graphType = GraphType.getFromString(sharedPref.getString(GRAPH_TYPE, null));
+        GraphType graphType = GraphType.getFromString(sharedPref.getString(GRAPH_TYPE, null));
         name = sharedPref.getString(CURRENT_GRAPH_NAME, null);
 
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -100,27 +100,15 @@ public class DrawActivity extends AppCompatActivity {
         graphView = findViewById(R.id.viewGraph);
 
         GraphVisualization<PropertySupportingGraph> visualization;
+        IntFunction<GenericGraphBuilder<? extends Graph>> graphBuilderFactory = graphType.getGraphBuilderFactory();
         if (name != null) {
             visualization = Loader.load(new File(getFilesDir(), FSDirectories.graphsDirectory), name);
         } else  {
-            Graph graph;
-            if (graphType.equals(GraphType.UNDIRECTED)) {
-                graph = new UndirectedGraph.Builder().build();
-            } else {
-                graph = new DirectedGraph.Builder().build();
-            }
-            PropertyGraphBuilder<? extends Graph> builder = new PropertyGraphBuilder<>(graph);
-            visualization = new BuilderVisualizer().generateVisual(builder.build());
+            visualization = new BuilderVisualizer().generateVisual(
+                    new PropertyGraphBuilder(graphBuilderFactory.apply(0).build()).build());
         }
 
-        buttonCollection = new NavigationButtonCollection(this);
-        buttonCollection.add(findViewById(R.id.btnVertex), new NewVertex());
-        buttonCollection.add(findViewById(R.id.btnEdge), new NewEdge());
-        buttonCollection.add(findViewById(R.id.btnMoveObject), new MoveVertex());
-        buttonCollection.add(findViewById(R.id.btnMoveCanvas), new MoveCanvas());
-        buttonCollection.add(findViewById(R.id.btnRotateCanvas), new RotateCanvas());
-        buttonCollection.add(findViewById(R.id.btnZoomCanvas), new ZoomCanvas());
-        buttonCollection.add(findViewById(R.id.btnRemoveObject), new RemoveElements());
+        initializeButtonConnection(graphBuilderFactory);
 
         for (Pair<String, GraphAction> it : GraphActionManagerImpl.getRegisteredActions()) {
             LinearLayout ll = findViewById(R.id.linearLayout);
@@ -139,6 +127,18 @@ public class DrawActivity extends AppCompatActivity {
         stack.addObserver(stackObserver);
         stack.addObserver(graphView);
     }
+
+    private void initializeButtonConnection(IntFunction<GenericGraphBuilder<? extends Graph>> graphBuilderFactory) {
+        buttonCollection = new NavigationButtonCollection(this);
+        buttonCollection.add(findViewById(R.id.btnVertex), new NewVertex(graphBuilderFactory));
+        buttonCollection.add(findViewById(R.id.btnEdge), new NewEdge(graphBuilderFactory));
+        buttonCollection.add(findViewById(R.id.btnMoveObject), new MoveVertex(graphBuilderFactory));
+        buttonCollection.add(findViewById(R.id.btnMoveCanvas), new MoveCanvas());
+        buttonCollection.add(findViewById(R.id.btnRotateCanvas), new RotateCanvas());
+        buttonCollection.add(findViewById(R.id.btnZoomCanvas), new ZoomCanvas());
+        buttonCollection.add(findViewById(R.id.btnRemoveObject), new RemoveElements(graphBuilderFactory));
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
