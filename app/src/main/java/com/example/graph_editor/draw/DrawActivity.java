@@ -1,6 +1,7 @@
 package com.example.graph_editor.draw;
 
 import static com.example.graph_editor.menu.SharedPrefNames.CURRENT_GRAPH_NAME;
+import static com.example.graph_editor.menu.SharedPrefNames.GRAPH_TYPE;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -41,6 +42,7 @@ import com.example.graph_editor.extensions.GraphMenuManagerImpl;
 import com.example.graph_editor.file_serialization.Loader;
 import com.example.graph_editor.file_serialization.Saver;
 import com.example.graph_editor.fs.FSDirectories;
+import com.example.graph_editor.model.GraphType;
 
 import java.io.File;
 import java.io.Serializable;
@@ -52,14 +54,19 @@ import graph_editor.draw.point_mapping.PointMapper;
 import graph_editor.draw.point_mapping.PointMapperImpl;
 import graph_editor.extensions.OnOptionSelection;
 import graph_editor.geometry.Point;
+import graph_editor.graph.DirectedGraph;
+import graph_editor.graph.GenericGraphBuilder;
+import graph_editor.graph.Graph;
 import graph_editor.graph.ObservableStackImpl;
 import graph_editor.graph.SimpleGraphBuilder;
+import graph_editor.graph.UndirectedGraph;
 import graph_editor.graph.VersionStack.ObservableStack;
 import graph_editor.graph.VersionStackImpl;
 import graph_editor.properties.PropertyGraphBuilder;
 import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.BuilderVisualizer;
 import graph_editor.visual.GraphVisualization;
+
 public class DrawActivity extends AppCompatActivity {
     private final static int extensions_start = 1;
     private GraphView graphView;
@@ -67,6 +74,7 @@ public class DrawActivity extends AppCompatActivity {
 
     private NavigationButtonCollection buttonCollection;
     private String name;
+    private GraphType graphType;
     private boolean stackChangedSinceLastSave;
     private boolean locked;
     private Map<Integer, OnOptionSelection> extensionsOptions;
@@ -81,6 +89,7 @@ public class DrawActivity extends AppCompatActivity {
 
         SharedPreferences sharedPref = this.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
 
+        graphType = GraphType.getFromString(sharedPref.getString(GRAPH_TYPE, null));
         name = sharedPref.getString(CURRENT_GRAPH_NAME, null);
 
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -94,7 +103,14 @@ public class DrawActivity extends AppCompatActivity {
         if (name != null) {
             visualization = Loader.load(new File(getFilesDir(), FSDirectories.graphsDirectory), name);
         } else  {
-            visualization = new BuilderVisualizer().generateVisual(new PropertyGraphBuilder(new SimpleGraphBuilder(0).build()).build());
+            Graph graph;
+            if (graphType.equals(GraphType.UNDIRECTED)) {
+                graph = new UndirectedGraph.Builder().build();
+            } else {
+                graph = new DirectedGraph.Builder().build();
+            }
+            PropertyGraphBuilder<? extends Graph> builder = new PropertyGraphBuilder<>(graph);
+            visualization = new BuilderVisualizer().generateVisual(builder.build());
         }
 
         buttonCollection = new NavigationButtonCollection(this);

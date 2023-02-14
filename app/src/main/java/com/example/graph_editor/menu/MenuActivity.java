@@ -83,7 +83,7 @@ public class MenuActivity extends AppCompatActivity {
 
     private void changeToDrawActivity(GraphType type) {
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt(GRAPH_TYPE, type.ordinal());
+        editor.putString(GRAPH_TYPE, type.toString());
         editor.putLong(CURRENT_GRAPH_ID, -1);
         editor.apply();
 
