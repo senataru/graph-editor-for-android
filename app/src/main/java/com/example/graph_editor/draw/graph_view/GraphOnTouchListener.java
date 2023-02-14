@@ -8,7 +8,8 @@ import com.example.graph_editor.draw.NavigationButtonCollection;
 import com.example.graph_editor.draw.Settings;
 import com.example.graph_editor.draw.graph_action.GraphAction;
 import com.example.graph_editor.draw.graph_action.MoveCanvas;
-import com.example.graph_editor.point_mapping.PointMapper;
+
+import graph_editor.draw.point_mapping.PointMapper;
 import graph_editor.graph.VersionStack;
 import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.GraphVisualization;

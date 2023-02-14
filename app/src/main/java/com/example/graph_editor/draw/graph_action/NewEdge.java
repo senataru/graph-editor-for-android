@@ -6,12 +6,11 @@ import android.view.MotionEvent;
 
 import androidx.annotation.NonNull;
 
-import com.example.graph_editor.point_mapping.PointMapper;
-import com.example.graph_editor.point_mapping.ScreenPoint;
-
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import graph_editor.draw.point_mapping.PointMapper;
+import graph_editor.draw.point_mapping.ScreenPoint;
 import graph_editor.geometry.GeometryUtils;
 import graph_editor.geometry.Point;
 import graph_editor.graph.SimpleGraphBuilder;

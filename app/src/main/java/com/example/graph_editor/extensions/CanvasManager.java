@@ -2,11 +2,10 @@ package com.example.graph_editor.extensions;
 
 import android.graphics.Canvas;
 
-import com.example.graph_editor.point_mapping.PointMapper;
-
 import java.util.Collection;
 import java.util.Optional;
 
+import graph_editor.draw.point_mapping.PointMapper;
 import graph_editor.graph.Edge;
 import graph_editor.graph.Vertex;
 

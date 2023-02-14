@@ -17,9 +17,9 @@ import androidx.annotation.Nullable;
 
 import com.example.graph_editor.draw.Settings;
 import com.example.graph_editor.extensions.CanvasManager;
-import com.example.graph_editor.point_mapping.PointMapper;
-import com.example.graph_editor.point_mapping.ScreenPoint;
 
+import graph_editor.draw.point_mapping.PointMapper;
+import graph_editor.draw.point_mapping.ScreenPoint;
 import graph_editor.geometry.Point;
 import graph_editor.graph.Graph;
 import graph_editor.graph.VersionStack;

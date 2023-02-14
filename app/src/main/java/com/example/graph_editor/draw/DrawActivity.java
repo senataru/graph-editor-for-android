@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.graph_editor.R;
+import com.example.graph_editor.ViewWrapper;
 import com.example.graph_editor.draw.graph_action.GraphAction;
 import com.example.graph_editor.draw.graph_action.MoveCanvas;
 import com.example.graph_editor.draw.graph_action.MoveVertex;
@@ -40,8 +41,6 @@ import com.example.graph_editor.extensions.GraphMenuManagerImpl;
 import com.example.graph_editor.file_serialization.Loader;
 import com.example.graph_editor.file_serialization.Saver;
 import com.example.graph_editor.fs.FSDirectories;
-import com.example.graph_editor.point_mapping.PointMapper;
-import com.example.graph_editor.point_mapping.PointMapperImpl;
 
 import java.io.File;
 import java.io.Serializable;
@@ -49,6 +48,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import graph_editor.draw.point_mapping.PointMapper;
+import graph_editor.draw.point_mapping.PointMapperImpl;
 import graph_editor.extensions.OnOptionSelection;
 import graph_editor.geometry.Point;
 import graph_editor.graph.ObservableStackImpl;
@@ -114,7 +115,7 @@ public class DrawActivity extends AppCompatActivity {
         }
 
         stack = new ObservableStackImpl<>(new VersionStackImpl<>(visualization));
-        PointMapper mapper = new PointMapperImpl(graphView, new Point(0,0));
+        PointMapper mapper = new PointMapperImpl(new ViewWrapper(graphView), new Point(0,0));
         graphView.initialize(new CanvasManagerImpl(), mapper, visualization);
         GraphOnTouchListener onTouchListener = new GraphOnTouchListener(this, graphView, stack, buttonCollection, mapper);
         graphView.setOnTouchListener(onTouchListener);

@@ -7,10 +7,11 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.graph_editor.R;
+import com.example.graph_editor.ViewWrapper;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.extensions.CanvasManagerImpl;
-import com.example.graph_editor.point_mapping.PointMapperImpl;
 
+import graph_editor.draw.point_mapping.PointMapperImpl;
 import graph_editor.geometry.Point;
 import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.GraphVisualization;
@@ -37,7 +38,7 @@ public class ConfirmPopup {
         Button btnYes = popupView.findViewById(R.id.btn_yes);
         Button btnNo = popupView.findViewById(R.id.btn_no);
 
-        graphView.initialize(new CanvasManagerImpl(), new PointMapperImpl(graphView, new Point(0,0)), visualization);
+        graphView.initialize(new CanvasManagerImpl(), new PointMapperImpl(new ViewWrapper(graphView), new Point(0,0)), visualization);
 
         btnYes.setOnClickListener(v -> {
             deleteFunction.run();

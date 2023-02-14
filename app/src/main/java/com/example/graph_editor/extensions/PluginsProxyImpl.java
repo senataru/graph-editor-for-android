@@ -58,14 +58,4 @@ public class PluginsProxyImpl implements Plugin.Proxy {
             options.forEach((name, id) -> graphMenuManager.deregisterOption(id));
         }
     }
-
-    @Override
-    public boolean acquireDrawingBehaviour(Plugin drawingPlugin, GraphDrawer graphDrawer) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void releaseDrawingBehaviour(Plugin drawingPlugin) {
-        throw new UnsupportedOperationException();
-    }
 }
