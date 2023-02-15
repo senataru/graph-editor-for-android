@@ -47,13 +47,15 @@ public class InstalledExtensionsRecyclerViewAdapter
         Extension extension = installedExtensions.get(position);
         holder.compat.setText(extension.getName());
         holder.compat.setChecked(extension.isEnabled());
+        holder.compat.setEnabled(true);
         holder.compat.setOnCheckedChangeListener((b, checked) -> extension.setEnabled(checked));
         enableButton(holder.button);
         holder.button.setOnClickListener(v -> {
+            holder.compat.setChecked(false);
+            holder.compat.setEnabled(false);
+            extension.setEnabled(false);
             disableButton(holder.button);
             callback.onDeleteClicked(extension.getName());
-            System.out.println(position);
-            System.out.println(extension.getName());
         });
     }
 
