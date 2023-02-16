@@ -53,6 +53,11 @@
         app:showAsAction="never" >
     </item>
 
+    <item android:id="@+id/options_btn_arrange"
+        android:title="@string/arrange_graph"
+        app:showAsAction="never" >
+    </item>
+
 <!--    <item android:id="@+id/options_btn_normalize"-->
 <!--        android:title="@string/normalize_graph"-->
 <!--        app:showAsAction="never" >-->

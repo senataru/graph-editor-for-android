@@ -21,6 +21,7 @@
     <string name="undo">Undo</string>
     <string name="redo">Redo</string>
     <string name="normalize_graph">Normalize graph</string>
+    <string name="arrange_graph">Arrange graph</string>
     <string name="save_as">Save as…</string>
     <string name="generate_graph">Generate graph</string>
     <string name="clique">Clique</string>

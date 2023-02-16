@@ -60,6 +60,11 @@ public class OptionsHandler {
                 stack.push(visualization);
                 graphView.postInvalidate();
                 return true;
+            case R.id.options_btn_arrange:
+                visualization = new PlanarGraphVisualizer().generateVisual(stack.getCurrent().getGraph(), stack.getCurrent(), "arrange");
+                stack.push(visualization);
+                graphView.postInvalidate();
+                return true;
 //            case R.id.options_btn_normalize:
 //                stateStack.backup();
 //                State state = stateStack.getCurrentState();
