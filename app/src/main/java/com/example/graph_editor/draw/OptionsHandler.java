@@ -24,6 +24,7 @@ import graph_editor.properties.PropertyGraphBuilder;
 import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.BuilderVisualizer;
 import graph_editor.visual.GraphVisualization;
+import graph_editor.visual.PlanarGraphVisualizer;
 
 public class OptionsHandler {
     @SuppressLint("NonConstantResourceId")
@@ -55,6 +56,11 @@ public class OptionsHandler {
             case R.id.options_btn_clear:
                 PropertySupportingGraph emptyGraph = new PropertyGraphBuilder(new SimpleGraphBuilder(0).build()).build();
                 visualization = new BuilderVisualizer().generateVisual(emptyGraph);
+                stack.push(visualization);
+                graphView.postInvalidate();
+                return true;
+            case R.id.options_btn_arrange:
+                visualization = new PlanarGraphVisualizer().generateVisual(stack.getCurrent().getGraph() , stack.getCurrent(), "arrange");
                 stack.push(visualization);
                 graphView.postInvalidate();
                 return true;

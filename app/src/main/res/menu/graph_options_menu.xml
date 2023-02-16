@@ -52,7 +52,10 @@
         android:title="@string/clear_graph"
         app:showAsAction="never" >
     </item>
-
+    <item android:id="@+id/options_btn_arrange"
+        android:title="Aesthetic layout"
+        app:showAsAction="never">
+    </item>
 <!--    <item android:id="@+id/options_btn_normalize"-->
 <!--        android:title="@string/normalize_graph"-->
 <!--        app:showAsAction="never" >-->
