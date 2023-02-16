@@ -3,18 +3,16 @@ package com.example.graph_editor.extensions;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.graph_editor.R;
 import com.example.graph_editor.fs.FSDirectories;
+import com.example.graph_editor.model.GraphType;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -63,15 +61,17 @@ public class ExtensionsActivity extends AppCompatActivity implements OnExtension
     @Override
     protected void onResume() {
         super.onResume();
-        if(installedRepository == null) installedRepository =
-                InstalledExtensionsProvider
-                        .getInstance(
-                                new PluginsProxyImpl(
-                                        GraphMenuManagerImpl.getInstance(),
-                                        new CanvasManagerImpl(),
-                                        new GraphActionManagerImpl()),
-                                new File(this.getFilesDir(), FSDirectories.pluginsDirectory)
-                        );
+        if(installedRepository == null) {
+            installedRepository = InstalledExtensionsProvider.getInstance(
+                    new PluginsProxyImpl(
+                            GraphType.DIRECTED.getStackCaptureRepository(),
+                            GraphType.UNDIRECTED.getStackCaptureRepository(),
+                            GraphType.DIRECTED.getPropertyReaderRepository(),
+                            GraphType.UNDIRECTED.getPropertyReaderRepository()
+                    ),
+                    new File(this.getFilesDir(), FSDirectories.pluginsDirectory)
+            );
+        }
 
         installedView.setAdapter(new InstalledExtensionsRecyclerViewAdapter(
                 this,

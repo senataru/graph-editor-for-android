@@ -38,7 +38,6 @@ import com.example.graph_editor.draw.popups.DiscardPopup;
 import com.example.graph_editor.draw.popups.SavePopup;
 import com.example.graph_editor.extensions.CanvasManagerImpl;
 import com.example.graph_editor.extensions.GraphActionManagerImpl;
-import com.example.graph_editor.extensions.GraphMenuManagerImpl;
 import com.example.graph_editor.file_serialization.Loader;
 import com.example.graph_editor.file_serialization.Saver;
 import com.example.graph_editor.fs.FSDirectories;
@@ -53,14 +52,11 @@ import java.util.function.IntFunction;
 
 import graph_editor.draw.point_mapping.PointMapper;
 import graph_editor.draw.point_mapping.PointMapperImpl;
-import graph_editor.extensions.OnOptionSelection;
+import graph_editor.extensions.StackCapture;
 import graph_editor.geometry.Point;
-import graph_editor.graph.DirectedGraph;
 import graph_editor.graph.GenericGraphBuilder;
 import graph_editor.graph.Graph;
 import graph_editor.graph.ObservableStackImpl;
-import graph_editor.graph.SimpleGraphBuilder;
-import graph_editor.graph.UndirectedGraph;
 import graph_editor.graph.VersionStack.ObservableStack;
 import graph_editor.graph.VersionStackImpl;
 import graph_editor.properties.PropertyGraphBuilder;
@@ -77,7 +73,8 @@ public class DrawActivity extends AppCompatActivity {
     private String name;
     private boolean stackChangedSinceLastSave;
     private boolean locked;
-    private Map<Integer, OnOptionSelection> extensionsOptions;
+    private Map<Integer, StackCapture> extensionsOptions;
+    private GraphType graphType;
 
     public boolean isLocked() { return locked; }
     public void setLocked(boolean value) { this.locked = value; }
@@ -89,7 +86,7 @@ public class DrawActivity extends AppCompatActivity {
 
         SharedPreferences sharedPref = this.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
 
-        GraphType graphType = GraphType.getFromString(sharedPref.getString(GRAPH_TYPE, null));
+        graphType = GraphType.getFromString(sharedPref.getString(GRAPH_TYPE, null));
         name = sharedPref.getString(CURRENT_GRAPH_NAME, null);
 
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -151,9 +148,11 @@ public class DrawActivity extends AppCompatActivity {
         inflater.inflate(R.menu.graph_options_menu, menu);
 
         int id = extensions_start;
-        Collection<Pair<String, OnOptionSelection>> options = GraphMenuManagerImpl.getInstance().getRegisteredOptions();
+        Collection<Pair<String, StackCapture>> options = graphType
+                .getStackCaptureRepository()
+                .getRegisteredOptions();
         extensionsOptions = new HashMap<>();
-        for (Pair<String, OnOptionSelection> it : options) {
+        for (Pair<String, StackCapture> it : options) {
             extensionsOptions.put(id, it.second);
             menu.add(0, id++, 0, it.first);
         }

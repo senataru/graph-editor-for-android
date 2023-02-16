@@ -1,32 +1,40 @@
 package com.example.graph_editor.extensions;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.File;
 import java.util.*;
 
 import graph_editor.extensions.Extension;
 import graph_editor.extensions.ExtensionsRepository;
 import graph_editor.extensions.Plugin;
+import graph_editor.extensions.PluginConfigDto;
 
 public class InstalledExtensionsProvider implements ExtensionsRepository {
     private final Plugin.Proxy proxy;
     private final File pluginsDirectory;
-    private final List<Extension> extensions = new ArrayList<>();
-    private final Map<String, Extension> extensionsMap = new HashMap<>();
+    private final List<Extension<?>> extensions = new ArrayList<>();
+    private final Map<String, Extension<?>> extensionsMap = new HashMap<>();
 
-    private InstalledExtensionsProvider(Plugin.Proxy proxy, File pluginsDirectory) {
+    private InstalledExtensionsProvider(
+            Plugin.Proxy proxy,
+            File pluginsDirectory
+    ) {
         this.proxy = proxy;
         this.pluginsDirectory = pluginsDirectory;
     }
 
-    public static InstalledExtensionsProvider getInstance(Plugin.Proxy proxy, File pluginsDirectory) {
+    public static InstalledExtensionsProvider getInstance(
+            Plugin.Proxy proxy,
+            File pluginsDirectory
+    ) {
         pluginsDirectory.mkdirs();
         InstalledExtensionsProvider instance = new InstalledExtensionsProvider(proxy, pluginsDirectory);
         instance.loadRepository();
         return instance;
     }
-
     @Override
-    public List<Extension> getExtensions() {
+    public List<Extension<?>> getExtensions() {
         return extensions;
     }
 
@@ -73,14 +81,18 @@ public class InstalledExtensionsProvider implements ExtensionsRepository {
     }
 
     private boolean loadExtension(File extensionDirectory) {
+        ObjectMapper mapper = new ObjectMapper();
+        Extension<?> ext;
         try {
-            Extension e = new Extension(
+            PluginConfigDto dto = mapper.readValue(new File(extensionDirectory, "config.json"), PluginConfigDto.class);
+            Plugin plugin = PluginLoader.loadPlugin(extensionDirectory, dto);
+            ext = new Extension<>(
                     extensionDirectory.getName(),
-                    PluginLoader.loadPlugin(extensionDirectory),
+                    plugin,
                     proxy
             );
-            extensions.add(e);
-            extensionsMap.put(extensionDirectory.getName(), e);
+            extensions.add(ext);
+            extensionsMap.put(extensionDirectory.getName(), ext);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
