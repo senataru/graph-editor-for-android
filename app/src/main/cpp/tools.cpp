@@ -15,8 +15,7 @@
 #include "forces.h"
 
 
-extern "C"
-JNIEXPORT jintArray JNICALL Java_com_example_graph_1editor_jni_Tools_dave(JNIEnv *env, jobject thisObject, jint x) {
+extern "C" JNIEXPORT jintArray JNICALL Java_com_example_graph_1editor_jni_Tools_dave(JNIEnv *env, jobject thisObject, jint x) {
     jint res_tab[1];
     res_tab[0] = x * 2;
     jintArray res = env->NewIntArray(1);
@@ -106,13 +105,13 @@ Java_com_example_graph_1editor_jni_Tools_arrange(JNIEnv *env, jobject clazz,
 // SECOND FUNCTION
 extern "C"
 JNIEXPORT jdoubleArray JNICALL
-Java_com_example_graph_1editor_model_DrawManager_arrangePlanarGraph( JNIEnv *env, jobject clazz,
-                                                                     jint n,
-                                                                     jint m,
-                                                                     jdoubleArray tab_x,
-                                                                     jdoubleArray tab_y,
-                                                                     jintArray tab_edge_source,
-                                                                     jintArray tab_edge_target) {
+Java_com_example_graph_1editor_jni_Tools_arrangePlanar( JNIEnv *env, jobject clazz,
+                                                        jint n,
+                                                        jint m,
+                                                        jdoubleArray tab_x,
+                                                        jdoubleArray tab_y,
+                                                        jintArray tab_edge_source,
+                                                        jintArray tab_edge_target) {
 
     std::vector<NamespaceForVertex::Vertex> V;
     jint *edge_source = (*env).GetIntArrayElements(tab_edge_source, nullptr);
@@ -202,13 +201,13 @@ Java_com_example_graph_1editor_model_DrawManager_arrangePlanarGraph( JNIEnv *env
 
 extern "C"
 JNIEXPORT jdoubleArray JNICALL
-Java_com_example_graph_1editor_model_DrawManager_makePlanar( JNIEnv *env, jobject clazz,
-                                                             jint n,
-                                                             jint m,
-                                                             jdoubleArray tab_x,
-                                                             jdoubleArray tab_y,
-                                                             jintArray tab_edge_source,
-                                                             jintArray tab_edge_target) {
+Java_com_example_graph_1editor_jni_Tools_makePlanar( JNIEnv *env, jobject clazz,
+                                                     jint n,
+                                                     jint m,
+                                                     jdoubleArray tab_x,
+                                                     jdoubleArray tab_y,
+                                                     jintArray tab_edge_source,
+                                                     jintArray tab_edge_target) {
     jint *edge_source = (*env).GetIntArrayElements(tab_edge_source, nullptr);
     jint *edge_target = (*env).GetIntArrayElements(tab_edge_target, nullptr);
     jdouble *x = (*env).GetDoubleArrayElements(tab_x, nullptr);
@@ -260,8 +259,7 @@ Java_com_example_graph_1editor_model_DrawManager_makePlanar( JNIEnv *env, jobjec
     return res;
 }
 
-extern "C"
-JNIEXPORT jstring JNICALL Java_com_example_graph_1editor_jni_Tools_bar(JNIEnv *env, jobject thisObject)
+extern "C" JNIEXPORT jstring JNICALL Java_com_example_graph_1editor_jni_Tools_bar(JNIEnv *env, jobject thisObject)
 {
     std::string res("bar");
     return env->NewStringUTF(res.c_str());

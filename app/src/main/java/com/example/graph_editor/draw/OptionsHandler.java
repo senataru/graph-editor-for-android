@@ -59,11 +59,22 @@ public class OptionsHandler {
                 stack.push(visualization);
                 graphView.postInvalidate();
                 return true;
-            case R.id.options_btn_arrange:
+            case R.id.options_btn_arrange: // TODO: change strings to enums
                 visualization = new PlanarGraphVisualizer().generateVisual(stack.getCurrent().getGraph() , stack.getCurrent(), "arrange");
                 stack.push(visualization);
                 graphView.postInvalidate();
                 return true;
+            case R.id.options_btn_planar_arrange:
+                visualization = new PlanarGraphVisualizer().generateVisual(stack.getCurrent().getGraph() , stack.getCurrent(), "arrangePlanar");
+                stack.push(visualization);
+                graphView.postInvalidate();
+                return true;
+            case R.id.options_btn_makePlanar:
+                visualization = new PlanarGraphVisualizer().generateVisual(stack.getCurrent().getGraph() , stack.getCurrent(), "planar");
+                stack.push(visualization);
+                graphView.postInvalidate();
+                return true;
+
 //            case R.id.options_btn_normalize:
 //                stateStack.backup();
 //                State state = stateStack.getCurrentState();
