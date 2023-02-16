@@ -81,4 +81,5 @@
     <string name="connect">connect</string>
     <string name="rotate_canvas">rotate canvas</string>
     <string name="zoom_canvas">zoom canvas</string>
+    <string name="property_readers">Property Readers</string>
 </resources>

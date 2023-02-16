@@ -12,6 +12,7 @@ import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -23,7 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.graph_editor.R;
-import com.example.graph_editor.ViewWrapper;
+import com.example.graph_editor.android_view_wrappers.ViewWrapper;
 import com.example.graph_editor.draw.graph_action.GraphAction;
 import com.example.graph_editor.draw.graph_action.MoveCanvas;
 import com.example.graph_editor.draw.graph_action.MoveVertex;
@@ -52,6 +53,7 @@ import java.util.function.IntFunction;
 
 import graph_editor.draw.point_mapping.PointMapper;
 import graph_editor.draw.point_mapping.PointMapperImpl;
+import graph_editor.extensions.OnPropertyReaderSelection;
 import graph_editor.extensions.StackCapture;
 import graph_editor.geometry.Point;
 import graph_editor.graph.GenericGraphBuilder;
@@ -74,6 +76,7 @@ public class DrawActivity extends AppCompatActivity {
     private boolean stackChangedSinceLastSave;
     private boolean locked;
     private Map<Integer, StackCapture> extensionsOptions;
+    private Map<Integer, OnPropertyReaderSelection> readersOptions;
     private GraphType graphType;
 
     public boolean isLocked() { return locked; }
@@ -148,6 +151,7 @@ public class DrawActivity extends AppCompatActivity {
         inflater.inflate(R.menu.graph_options_menu, menu);
 
         int id = extensions_start;
+
         Collection<Pair<String, StackCapture>> options = graphType
                 .getStackCaptureRepository()
                 .getRegisteredOptions();
@@ -155,6 +159,18 @@ public class DrawActivity extends AppCompatActivity {
         for (Pair<String, StackCapture> it : options) {
             extensionsOptions.put(id, it.second);
             menu.add(0, id++, 0, it.first);
+        }
+
+        Collection<Pair<String, OnPropertyReaderSelection>> readers = graphType
+                .getPropertyReaderRepository()
+                .getRegisteredOptions();
+
+        MenuItem readersItem = menu.findItem(R.id.options_property_readers);
+        Menu readersMenu = readersItem.getSubMenu();
+        readersMenu.add(0, id++, 0, "test");
+        for (Pair<String, OnPropertyReaderSelection> it : readers) {
+            readersOptions.put(id, it.second);
+            readersMenu.add(0, id++, 0, it.first);
         }
         return true;
     }

@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.graph_editor.R;
-import com.example.graph_editor.ViewWrapper;
+import com.example.graph_editor.android_view_wrappers.ViewWrapper;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.extensions.CanvasManagerImpl;
 

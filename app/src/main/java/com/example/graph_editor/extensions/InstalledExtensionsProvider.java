@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.Predicate;
 
 import graph_editor.extensions.Extension;
 import graph_editor.extensions.ExtensionsRepository;
@@ -13,9 +14,8 @@ import graph_editor.extensions.PluginConfigDto;
 public class InstalledExtensionsProvider implements ExtensionsRepository {
     private final Plugin.Proxy proxy;
     private final File pluginsDirectory;
-    private final List<Extension<?>> extensions = new ArrayList<>();
-    private final Map<String, Extension<?>> extensionsMap = new HashMap<>();
-
+    private final List<Extension> extensions = new ArrayList<>();
+    private final Map<String, Extension> extensionsMap = new HashMap<>();
     private InstalledExtensionsProvider(
             Plugin.Proxy proxy,
             File pluginsDirectory
@@ -24,7 +24,7 @@ public class InstalledExtensionsProvider implements ExtensionsRepository {
         this.pluginsDirectory = pluginsDirectory;
     }
 
-    public static InstalledExtensionsProvider getInstance(
+    public static InstalledExtensionsProvider newInstance(
             Plugin.Proxy proxy,
             File pluginsDirectory
     ) {
@@ -34,7 +34,7 @@ public class InstalledExtensionsProvider implements ExtensionsRepository {
         return instance;
     }
     @Override
-    public List<Extension<?>> getExtensions() {
+    public List<Extension> getExtensions() {
         return extensions;
     }
 
@@ -82,11 +82,11 @@ public class InstalledExtensionsProvider implements ExtensionsRepository {
 
     private boolean loadExtension(File extensionDirectory) {
         ObjectMapper mapper = new ObjectMapper();
-        Extension<?> ext;
+        Extension ext;
         try {
             PluginConfigDto dto = mapper.readValue(new File(extensionDirectory, "config.json"), PluginConfigDto.class);
             Plugin plugin = PluginLoader.loadPlugin(extensionDirectory, dto);
-            ext = new Extension<>(
+            ext = new Extension(
                     extensionDirectory.getName(),
                     plugin,
                     proxy

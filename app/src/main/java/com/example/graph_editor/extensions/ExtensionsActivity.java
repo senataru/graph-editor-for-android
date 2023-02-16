@@ -12,10 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.graph_editor.R;
 import com.example.graph_editor.fs.FSDirectories;
-import com.example.graph_editor.model.GraphType;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import graph_editor.extensions.ExtensionsClient;
@@ -61,21 +59,11 @@ public class ExtensionsActivity extends AppCompatActivity implements OnExtension
     @Override
     protected void onResume() {
         super.onResume();
-        if(installedRepository == null) {
-            installedRepository = InstalledExtensionsProvider.getInstance(
-                    new PluginsProxyImpl(
-                            GraphType.DIRECTED.getStackCaptureRepository(),
-                            GraphType.UNDIRECTED.getStackCaptureRepository(),
-                            GraphType.DIRECTED.getPropertyReaderRepository(),
-                            GraphType.UNDIRECTED.getPropertyReaderRepository()
-                    ),
-                    new File(this.getFilesDir(), FSDirectories.pluginsDirectory)
-            );
-        }
+        installedRepository = StaticState.getExtensionsRepositoryInstance(this);
 
         installedView.setAdapter(new InstalledExtensionsRecyclerViewAdapter(
                 this,
-                new ArrayList<>(installedRepository.getExtensions()),
+                installedRepository.getExtensions(),
                 this
         ));
     }
