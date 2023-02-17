@@ -46,7 +46,7 @@ public class NewVertex extends GraphOnTouchMutation {
     protected GraphVisualization<PropertySupportingGraph> execute(PointMapper mapper, GraphVisualization<PropertySupportingGraph> previous) {
         mapper.mapFromView(sp);
         PropertySupportingGraph graph = previous.getGraph();
-        var builder = graphBuilderFactory.apply(graph.getVertices().size());
+        var builder = graphBuilderFactory.apply(0);
         Vertex addedVertex = builder.addVertex();
 
         BuilderVisualizer visualizer = new BuilderVisualizer();

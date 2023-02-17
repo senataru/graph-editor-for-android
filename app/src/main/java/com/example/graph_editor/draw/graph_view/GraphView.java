@@ -15,11 +15,14 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import com.example.graph_editor.android_view_wrappers.CanvasWrapper;
 import com.example.graph_editor.draw.Settings;
-import com.example.graph_editor.extensions.CanvasManager;
+import com.example.graph_editor.extensions.DrawerSource;
+import com.example.graph_editor.model.GraphType;
 
+import graph_editor.draw.IGraphDrawer;
+import graph_editor.draw.point_mapping.CanvasDrawer;
 import graph_editor.draw.point_mapping.PointMapper;
-import graph_editor.draw.point_mapping.ScreenPoint;
 import graph_editor.geometry.Point;
 import graph_editor.graph.Graph;
 import graph_editor.graph.VersionStack;
@@ -29,13 +32,13 @@ import graph_editor.visual.GraphVisualization;
 public class GraphView extends View implements VersionStack.ObservableStack.Observer<GraphVisualization<PropertySupportingGraph>> {
     private final int baseVertexRadius = 7;
     private final int baseEdgeWidth = 5;
-
     private Paint vertexPaint;
     private double vertexRadius = baseVertexRadius;
     private Paint edgePaint;
     private boolean fixedWidth;
     private PointMapper mapper;
-    private CanvasManager canvasManager;
+    private DrawerSource drawerSource;
+    private GraphType graphType;
     private GraphVisualization<PropertySupportingGraph> visualization;
 
     public GraphView(Context context) {
@@ -72,11 +75,13 @@ public class GraphView extends View implements VersionStack.ObservableStack.Obse
 
     // !! this alone is not enough, all due to height being lazily calculated
     public void initialize(
-            CanvasManager canvasManager,
+            DrawerSource drawerSource,
             PointMapper mapper,
+            GraphType graphType,
             GraphVisualization<PropertySupportingGraph> visualization) {
-        this.canvasManager = canvasManager;
+        this.drawerSource = drawerSource;
         this.mapper = mapper;
+        this.graphType = graphType;
         this.visualization = visualization;
         postInvalidate();
     }
@@ -86,33 +91,16 @@ public class GraphView extends View implements VersionStack.ObservableStack.Obse
         super.onDraw(canvas);
 
         fixedWidth = Settings.getFixedWidth(getContext());
-        Graph graph = visualization.getGraph();
 
 //        vertexRadius = getDrawWidth(rectangle.getScale(), baseVertexRadius);
 //        edgePaint.setStrokeWidth((float)getDrawWidth(rectangle.getScale(), baseEdgeWidth));
-        edgePaint.setStrokeWidth(baseEdgeWidth);
-
-        CanvasManager.EdgeDrawer edgeDrawer =
-                canvasManager.getEdgeDrawer().orElse((edge, r, canvas1) ->
-                        drawEdge(
-                                canvas1,
-                                mapper.mapIntoView(visualization.getVertexPoint(edge.getSource())),
-                                mapper.mapIntoView(visualization.getVertexPoint(edge.getTarget()))
-//TODO use graphType?           graph.getType()
-                        )
-                );
-        graph.getEdges().forEach(e -> edgeDrawer.drawEdge(
-                e,
-                mapper,
-                canvas)
-        );
-
-        CanvasManager.VertexDrawer vertexDrawer =
-                canvasManager.getVertexDrawer().orElse((v, r, canvas1) ->
-                        drawVertex(canvas1, mapper.mapIntoView(visualization.getVertexPoint(v))));
-        graph.getVertices().forEach(v -> vertexDrawer.drawVertex(v, mapper, canvas));
-
-        canvasManager.getExtendedDrawers().forEach(drawer -> drawer.drawElements(mapper, canvas));
+//        edgePaint.setStrokeWidth(baseEdgeWidth);
+        CanvasDrawer drawer = new CanvasWrapper(canvas);
+        IGraphDrawer<PropertySupportingGraph> graphDrawer =
+                drawerSource
+                        .getDrawer(mapper, drawer)
+                        .orElse(new DefaultDrawer(mapper, drawer, graphType));
+        graphDrawer.drawGraph(visualization);
     }
 
     @Override
@@ -120,18 +108,6 @@ public class GraphView extends View implements VersionStack.ObservableStack.Obse
         this.visualization = visualization;
         postInvalidate();
     }
-
-    private void drawVertex(Canvas canvas, ScreenPoint point) {
-        canvas.drawCircle(point.getX(), point.getY(), (float)vertexRadius, vertexPaint);
-    }
-
-    private void drawEdge(Canvas canvas, ScreenPoint start, ScreenPoint end /*, GraphType type*/) {
-        canvas.drawLine(start.getX(), start.getY(), end.getX(), end.getY(), edgePaint);
-//        if (type == GraphType.DIRECTED) {
-//            drawArrow(edgePaint, canvas, x1, y1, x2, y2);
-//        }
-    }
-
     private void drawArrow(Paint paint, Canvas canvas, float x1, float y1, float x2, float y2) {
 //        float radius = (float)getDrawWidth(state.getRectangle().getScale(), 50);
         float radius = baseEdgeWidth * 10;
@@ -162,5 +138,9 @@ public class GraphView extends View implements VersionStack.ObservableStack.Obse
     }
     public GraphVisualization<PropertySupportingGraph> getVisualization() {
         return visualization;
+    }
+
+    public GraphType getGraphType() {
+        return graphType;
     }
 }

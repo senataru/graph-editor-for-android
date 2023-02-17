@@ -37,8 +37,10 @@ import com.example.graph_editor.draw.graph_view.GraphOnTouchListener;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.DiscardPopup;
 import com.example.graph_editor.draw.popups.SavePopup;
-import com.example.graph_editor.extensions.CanvasManagerImpl;
 import com.example.graph_editor.extensions.GraphActionManagerImpl;
+import com.example.graph_editor.extensions.PluginsDrawerSource;
+import com.example.graph_editor.extensions.StaticState;
+import com.example.graph_editor.file_serialization.FileData;
 import com.example.graph_editor.file_serialization.Loader;
 import com.example.graph_editor.file_serialization.Saver;
 import com.example.graph_editor.fs.FSDirectories;
@@ -100,13 +102,15 @@ public class DrawActivity extends AppCompatActivity {
         graphView = findViewById(R.id.viewGraph);
 
         GraphVisualization<PropertySupportingGraph> visualization;
-        IntFunction<GenericGraphBuilder<? extends Graph>> graphBuilderFactory = graphType.getGraphBuilderFactory();
         if (name != null) {
-            visualization = Loader.load(new File(getFilesDir(), FSDirectories.graphsDirectory), name);
+            FileData data = Loader.load(new File(getFilesDir(), FSDirectories.graphsDirectory), name);
+            visualization = data.visualization;
+            graphType = data.type;
         } else  {
             visualization = new BuilderVisualizer().generateVisual(
-                    new PropertyGraphBuilder(graphBuilderFactory.apply(0).build()).build());
+                    new PropertyGraphBuilder(graphType.getGraphBuilderFactory().apply(0).build()).build());
         }
+        IntFunction<GenericGraphBuilder<? extends Graph>> graphBuilderFactory = graphType.getGraphBuilderFactory();
 
         initializeButtonConnection(graphBuilderFactory);
 
@@ -120,7 +124,12 @@ public class DrawActivity extends AppCompatActivity {
 
         stack = new ObservableStackImpl<>(new VersionStackImpl<>(visualization));
         PointMapper mapper = new PointMapperImpl(new ViewWrapper(graphView), new Point(0,0));
-        graphView.initialize(new CanvasManagerImpl(), mapper, visualization);
+        graphView.initialize(
+                new PluginsDrawerSource(StaticState.getExtensionsRepositoryInstance(this), graphType),
+                mapper,
+                graphType,
+                visualization
+        );
         GraphOnTouchListener onTouchListener = new GraphOnTouchListener(this, graphView, stack, buttonCollection, mapper);
         graphView.setOnTouchListener(onTouchListener);
 
@@ -164,7 +173,7 @@ public class DrawActivity extends AppCompatActivity {
         Collection<Pair<String, OnPropertyReaderSelection>> readers = graphType
                 .getPropertyReaderRepository()
                 .getRegisteredOptions();
-
+        readersOptions = new HashMap<>();
         MenuItem readersItem = menu.findItem(R.id.options_property_readers);
         Menu readersMenu = readersItem.getSubMenu();
         readersMenu.add(0, id++, 0, "test");
@@ -177,10 +186,10 @@ public class DrawActivity extends AppCompatActivity {
 
     public void makeSave(Runnable afterTask) {
         if(name == null) {
-            new SavePopup().show(stack.getCurrent(), this, afterTask);
+            new SavePopup().show(stack.getCurrent(), graphType,this, afterTask);
         } else {
             GraphVisualization<PropertySupportingGraph> visualization = stack.getCurrent();
-            Saver.save(this, new File(getFilesDir(), FSDirectories.graphsDirectory), name , (Serializable) visualization);
+            Saver.save(this, new File(getFilesDir(), FSDirectories.graphsDirectory), name , new FileData(visualization, graphType));
 
             Toast.makeText(this, "Graph saved", Toast.LENGTH_LONG).show();
             afterTask.run();
@@ -189,18 +198,29 @@ public class DrawActivity extends AppCompatActivity {
     }
     ActivityResultLauncher<Intent> importActivityResultLauncher = registerForActivityResult(
         new ActivityResultContracts.StartActivityForResult(),
-        (ActivityResult result) -> ImportExportLaunchers.exportCommand(result, this, stack));
+        (ActivityResult result) -> ImportExportLaunchers.exportCommand(result, this, stack, graphType));
 
     ActivityResultLauncher<Intent> exportActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            result -> ImportExportLaunchers.importCommand(result, this, stack));
+            result -> ImportExportLaunchers.importCommand(result, this, stack, graphType));
 
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (isLocked()) return false;
-        if(!OptionsHandler.handle(item, this, stack, graphView,
-                ()->makeSave(()->{}), importActivityResultLauncher, exportActivityResultLauncher, extensionsOptions))
+        if(!OptionsHandler.handle(
+                item,
+                this,
+                stack,
+                graphView,
+                ()->makeSave(()->{}),
+                importActivityResultLauncher,
+                exportActivityResultLauncher,
+                extensionsOptions,
+                readersOptions,
+                StaticState.getExtensionsRepositoryInstance(this),
+                graphType
+        ))
             return super.onOptionsItemSelected(item);
         return true;
     }

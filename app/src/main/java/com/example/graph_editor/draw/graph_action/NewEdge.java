@@ -63,7 +63,7 @@ public class NewEdge extends GraphOnTouchMutation {
             return null;
         } else {
             PropertySupportingGraph graph = previous.getGraph();
-            var builder = graphBuilderFactory.apply(graph.getVertices().size());
+            var builder = graphBuilderFactory.apply(0);
             builder.addEdge(inverse.get(p1).getIndex(), inverse.get(p2).getIndex());
             BuilderVisualizer visualizer = new BuilderVisualizer();
             PropertyGraphBuilder propertyGraphBuilder = deBuild(graph, builder, visualizer, previous.getVisualization().entrySet());

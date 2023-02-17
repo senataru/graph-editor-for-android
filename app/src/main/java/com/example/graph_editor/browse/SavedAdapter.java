@@ -13,7 +13,9 @@ import com.example.graph_editor.R;
 import com.example.graph_editor.android_view_wrappers.ViewWrapper;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.ShareAsIntent;
-import com.example.graph_editor.extensions.CanvasManagerImpl;
+import com.example.graph_editor.extensions.PluginsDrawerSource;
+import com.example.graph_editor.extensions.StaticState;
+import com.example.graph_editor.file_serialization.FileData;
 import com.example.graph_editor.file_serialization.Loader;
 import com.example.graph_editor.fs.FSDirectories;
 
@@ -22,8 +24,6 @@ import java.util.List;
 
 import graph_editor.draw.point_mapping.PointMapperImpl;
 import graph_editor.geometry.Point;
-import graph_editor.properties.PropertySupportingGraph;
-import graph_editor.visual.GraphVisualization;
 
 public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
     private final List<String> data;
@@ -47,15 +47,20 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.Holder> {
         String name = data.get(position);
         holder.txtName.setText(name);
 
-        GraphVisualization<PropertySupportingGraph> visualization = Loader.load(new File(browseActivity.getFilesDir(), FSDirectories.graphsDirectory), name);
+        FileData fileData = Loader.load(new File(browseActivity.getFilesDir(), FSDirectories.graphsDirectory), name);
 
-        holder.dataGraph.initialize(new CanvasManagerImpl(), new PointMapperImpl(new ViewWrapper(holder.dataGraph), new Point(0,0)), visualization);
+        holder.dataGraph.initialize(
+                new PluginsDrawerSource(StaticState.getExtensionsRepositoryInstance(browseActivity), fileData.type),
+                new PointMapperImpl(new ViewWrapper(holder.dataGraph), new Point(0,0)),
+                fileData.type,
+                fileData.visualization
+        );
 
         holder.editButton.setOnClickListener(v -> {
             browseActivity.changeActivity(name);
         });
         holder.deleteButton.setOnClickListener(v ->
-                new ConfirmPopup(browseActivity, holder.dataGraph.getVisualization(), () -> {
+                new ConfirmPopup(browseActivity, holder.dataGraph.getVisualization(), holder.dataGraph.getGraphType(), () -> {
                     data.remove(position);
                     notifyItemRemoved(position);
                     notifyItemRangeChanged(position, data.size());

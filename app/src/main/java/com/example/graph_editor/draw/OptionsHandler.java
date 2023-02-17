@@ -10,12 +10,23 @@ import androidx.annotation.NonNull;
 import com.example.graph_editor.R;
 import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.GeneratePopup;
+import com.example.graph_editor.draw.popups.ReaderPopup;
 import com.example.graph_editor.draw.popups.SavePopup;
 import com.example.graph_editor.draw.popups.SettingsPopup;
+import com.example.graph_editor.model.GraphType;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
+import graph_editor.extensions.Extension;
+import graph_editor.extensions.ExtensionsRepository;
+import graph_editor.extensions.OnPropertyReaderSelection;
 import graph_editor.extensions.StackCapture;
 import graph_editor.graph.SimpleGraphBuilder;
 import graph_editor.graph.VersionStack;
@@ -31,11 +42,28 @@ public class OptionsHandler {
                                  GraphView graphView, Runnable makeSave,
                                  ActivityResultLauncher<Intent> importActivityResultLauncher,
                                  ActivityResultLauncher<Intent> exportActivityResultLauncher,
-                                 Map<Integer, StackCapture> extensionsOptions) {
+                                 Map<Integer, StackCapture> extensionsOptions,
+                                 Map<Integer, OnPropertyReaderSelection> readersOptions,
+                                 ExtensionsRepository repository,
+                                 GraphType type) {
         if (extensionsOptions.containsKey(item.getItemId())) {
             Objects
                     .requireNonNull(extensionsOptions.get(item.getItemId()))
                     .handle(stack);
+            return true;
+        }
+        if (readersOptions.containsKey(item.getItemId())) {
+            Predicate<Extension> filter = type == GraphType.UNDIRECTED ? Extension::supportsUndirectedGraphs : Extension::supportsDirectedGraphs;
+            Set<String> names = new HashSet<>();
+            repository
+                    .getExtensions()
+                    .stream()
+                    .filter(filter)
+                    .map(Extension::usedDrawablesNames)
+                    .forEach(i -> i.forEach(names::add));
+            List<OnPropertyReaderSelection.SettingChoice> choices =
+                    Objects.requireNonNull(readersOptions.get(item.getItemId())).handle(List.copyOf(names));
+            new ReaderPopup(context, choices).show();
             return true;
         }
         GraphVisualization<PropertySupportingGraph> visualization;
@@ -79,7 +107,7 @@ public class OptionsHandler {
                 new SettingsPopup(context, graphView::postInvalidate).show();
                 return true;
             case R.id.options_btn_save_as:
-                new SavePopup().show(stack.getCurrent(), context, ()->{});
+                new SavePopup().show(stack.getCurrent(), type, context, ()->{});
                 return true;
 //            case R.id.options_btn_export_txt:
 //                new ShareAsTxtIntent(context, stack.getCurrent()).show();

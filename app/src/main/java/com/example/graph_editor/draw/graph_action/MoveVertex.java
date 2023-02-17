@@ -63,7 +63,7 @@ public class MoveVertex extends GraphOnTouchMutation {
             return null;
         } else {
             PropertySupportingGraph graph = previous.getGraph();
-            var builder = graphBuilderFactory.apply(graph.getVertices().size());
+            var builder = graphBuilderFactory.apply(0);
             BuilderVisualizer visualizer = new BuilderVisualizer();
             Vertex movedVertex = inverse.get(p1);
             var entries = previous

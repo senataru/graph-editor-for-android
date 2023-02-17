@@ -13,12 +13,13 @@ import java.io.OutputStream;
 import java.io.Serializable;
 
 public class Saver {
-    public static void save(Context context, File directory, String filename, Serializable serialized) {
+    public static void save(Context context, File directory, String filename, FileData data) {
         try {
             directory.mkdirs();
             try (FileOutputStream fos = new FileOutputStream(new File(directory, filename))) {
                 try (ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-                    oos.writeObject(serialized);
+                    oos.writeObject(data.visualization);
+                    oos.writeObject(data.type.toString());
                 }
             }
         } catch (Exception e) {
@@ -27,10 +28,11 @@ public class Saver {
         }
     }
 
-    public static void save(Context context, Uri uri, Serializable serialized) {
+    public static void save(Context context, Uri uri, FileData data) {
         try (OutputStream os = context.getContentResolver().openOutputStream(uri)) {
             ObjectOutputStream oos = new ObjectOutputStream(os);
-            oos.writeObject(serialized);
+            oos.writeObject(data.visualization);
+            oos.writeObject(data.type.toString());
             Toast.makeText(context, "Export complete", Toast.LENGTH_SHORT).show();
         } catch (FileNotFoundException e) {
             Toast.makeText(context, "Serialization failed due to file not found", Toast.LENGTH_LONG).show();

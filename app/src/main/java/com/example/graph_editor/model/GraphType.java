@@ -3,6 +3,7 @@ package com.example.graph_editor.model;
 import com.example.graph_editor.extensions.OnSelectionRepository;
 import com.example.graph_editor.extensions.OnSelectionRepositoryImpl;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.function.IntFunction;
 
