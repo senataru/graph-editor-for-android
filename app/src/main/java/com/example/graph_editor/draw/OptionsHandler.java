@@ -1,5 +1,9 @@
 package com.example.graph_editor.draw;
 
+import static graph_editor.visual.PlanarGraphVisualizer.PlanarAlgorithm.findPlanarArrange;
+import static graph_editor.visual.PlanarGraphVisualizer.PlanarAlgorithm.fixArrangingWithForces;
+import static graph_editor.visual.PlanarGraphVisualizer.PlanarAlgorithm.fixPlanarArranging;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.view.MenuItem;
@@ -25,6 +29,7 @@ import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.BuilderVisualizer;
 import graph_editor.visual.GraphVisualization;
 import graph_editor.visual.PlanarGraphVisualizer;
+import graph_editor.visual.PlanarGraphVisualizer.*;
 
 public class OptionsHandler {
     @SuppressLint("NonConstantResourceId")
@@ -60,17 +65,17 @@ public class OptionsHandler {
                 graphView.postInvalidate();
                 return true;
             case R.id.options_btn_arrange: // TODO: change strings to enums
-                visualization = new PlanarGraphVisualizer().generateVisual(stack.getCurrent().getGraph() , stack.getCurrent(), "arrange");
+                visualization = new PlanarGraphVisualizer().generateVisual(stack.getCurrent().getGraph() , stack.getCurrent(), fixArrangingWithForces);
                 stack.push(visualization);
                 graphView.postInvalidate();
                 return true;
             case R.id.options_btn_planar_arrange:
-                visualization = new PlanarGraphVisualizer().generateVisual(stack.getCurrent().getGraph() , stack.getCurrent(), "arrangePlanar");
+                visualization = new PlanarGraphVisualizer().generateVisual(stack.getCurrent().getGraph() , stack.getCurrent(), fixPlanarArranging);
                 stack.push(visualization);
                 graphView.postInvalidate();
                 return true;
             case R.id.options_btn_makePlanar:
-                visualization = new PlanarGraphVisualizer().generateVisual(stack.getCurrent().getGraph() , stack.getCurrent(), "planar");
+                visualization = new PlanarGraphVisualizer().generateVisual(stack.getCurrent().getGraph() , stack.getCurrent(), findPlanarArrange);
                 stack.push(visualization);
                 graphView.postInvalidate();
                 return true;
