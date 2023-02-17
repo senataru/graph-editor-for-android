@@ -1,6 +1,7 @@
 package com.example.graph_editor.draw;
 
 import static com.example.graph_editor.menu.SharedPrefNames.CURRENT_GRAPH_NAME;
+import static com.example.graph_editor.menu.SharedPrefNames.GRAPH_TYPE;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -11,6 +12,7 @@ import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -22,7 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.graph_editor.R;
-import com.example.graph_editor.ViewWrapper;
+import com.example.graph_editor.android_view_wrappers.ViewWrapper;
 import com.example.graph_editor.draw.graph_action.GraphAction;
 import com.example.graph_editor.draw.graph_action.MoveCanvas;
 import com.example.graph_editor.draw.graph_action.MoveVertex;
@@ -37,29 +39,33 @@ import com.example.graph_editor.draw.popups.DiscardPopup;
 import com.example.graph_editor.draw.popups.SavePopup;
 import com.example.graph_editor.extensions.CanvasManagerImpl;
 import com.example.graph_editor.extensions.GraphActionManagerImpl;
-import com.example.graph_editor.extensions.GraphMenuManagerImpl;
 import com.example.graph_editor.file_serialization.Loader;
 import com.example.graph_editor.file_serialization.Saver;
 import com.example.graph_editor.fs.FSDirectories;
+import com.example.graph_editor.model.GraphType;
 
 import java.io.File;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.IntFunction;
 
 import graph_editor.draw.point_mapping.PointMapper;
 import graph_editor.draw.point_mapping.PointMapperImpl;
-import graph_editor.extensions.OnOptionSelection;
+import graph_editor.extensions.OnPropertyReaderSelection;
+import graph_editor.extensions.StackCapture;
 import graph_editor.geometry.Point;
+import graph_editor.graph.GenericGraphBuilder;
+import graph_editor.graph.Graph;
 import graph_editor.graph.ObservableStackImpl;
-import graph_editor.graph.SimpleGraphBuilder;
 import graph_editor.graph.VersionStack.ObservableStack;
 import graph_editor.graph.VersionStackImpl;
 import graph_editor.properties.PropertyGraphBuilder;
 import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.BuilderVisualizer;
 import graph_editor.visual.GraphVisualization;
+
 public class DrawActivity extends AppCompatActivity {
     private final static int extensions_start = 1;
     private GraphView graphView;
@@ -69,7 +75,9 @@ public class DrawActivity extends AppCompatActivity {
     private String name;
     private boolean stackChangedSinceLastSave;
     private boolean locked;
-    private Map<Integer, OnOptionSelection> extensionsOptions;
+    private Map<Integer, StackCapture> extensionsOptions;
+    private Map<Integer, OnPropertyReaderSelection> readersOptions;
+    private GraphType graphType;
 
     public boolean isLocked() { return locked; }
     public void setLocked(boolean value) { this.locked = value; }
@@ -81,6 +89,7 @@ public class DrawActivity extends AppCompatActivity {
 
         SharedPreferences sharedPref = this.getSharedPreferences("GLOBAL", Context.MODE_PRIVATE);
 
+        graphType = GraphType.getFromString(sharedPref.getString(GRAPH_TYPE, null));
         name = sharedPref.getString(CURRENT_GRAPH_NAME, null);
 
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -91,20 +100,15 @@ public class DrawActivity extends AppCompatActivity {
         graphView = findViewById(R.id.viewGraph);
 
         GraphVisualization<PropertySupportingGraph> visualization;
+        IntFunction<GenericGraphBuilder<? extends Graph>> graphBuilderFactory = graphType.getGraphBuilderFactory();
         if (name != null) {
             visualization = Loader.load(new File(getFilesDir(), FSDirectories.graphsDirectory), name);
         } else  {
-            visualization = new BuilderVisualizer().generateVisual(new PropertyGraphBuilder(new SimpleGraphBuilder(0).build()).build());
+            visualization = new BuilderVisualizer().generateVisual(
+                    new PropertyGraphBuilder(graphBuilderFactory.apply(0).build()).build());
         }
 
-        buttonCollection = new NavigationButtonCollection(this);
-        buttonCollection.add(findViewById(R.id.btnVertex), new NewVertex());
-        buttonCollection.add(findViewById(R.id.btnEdge), new NewEdge());
-        buttonCollection.add(findViewById(R.id.btnMoveObject), new MoveVertex());
-        buttonCollection.add(findViewById(R.id.btnMoveCanvas), new MoveCanvas());
-        buttonCollection.add(findViewById(R.id.btnRotateCanvas), new RotateCanvas());
-        buttonCollection.add(findViewById(R.id.btnZoomCanvas), new ZoomCanvas());
-        buttonCollection.add(findViewById(R.id.btnRemoveObject), new RemoveElements());
+        initializeButtonConnection(graphBuilderFactory);
 
         for (Pair<String, GraphAction> it : GraphActionManagerImpl.getRegisteredActions()) {
             LinearLayout ll = findViewById(R.id.linearLayout);
@@ -123,6 +127,18 @@ public class DrawActivity extends AppCompatActivity {
         stack.addObserver(stackObserver);
         stack.addObserver(graphView);
     }
+
+    private void initializeButtonConnection(IntFunction<GenericGraphBuilder<? extends Graph>> graphBuilderFactory) {
+        buttonCollection = new NavigationButtonCollection(this);
+        buttonCollection.add(findViewById(R.id.btnVertex), new NewVertex(graphBuilderFactory));
+        buttonCollection.add(findViewById(R.id.btnEdge), new NewEdge(graphBuilderFactory));
+        buttonCollection.add(findViewById(R.id.btnMoveObject), new MoveVertex(graphBuilderFactory));
+        buttonCollection.add(findViewById(R.id.btnMoveCanvas), new MoveCanvas());
+        buttonCollection.add(findViewById(R.id.btnRotateCanvas), new RotateCanvas());
+        buttonCollection.add(findViewById(R.id.btnZoomCanvas), new ZoomCanvas());
+        buttonCollection.add(findViewById(R.id.btnRemoveObject), new RemoveElements(graphBuilderFactory));
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -135,11 +151,26 @@ public class DrawActivity extends AppCompatActivity {
         inflater.inflate(R.menu.graph_options_menu, menu);
 
         int id = extensions_start;
-        Collection<Pair<String, OnOptionSelection>> options = GraphMenuManagerImpl.getInstance().getRegisteredOptions();
+
+        Collection<Pair<String, StackCapture>> options = graphType
+                .getStackCaptureRepository()
+                .getRegisteredOptions();
         extensionsOptions = new HashMap<>();
-        for (Pair<String, OnOptionSelection> it : options) {
+        for (Pair<String, StackCapture> it : options) {
             extensionsOptions.put(id, it.second);
             menu.add(0, id++, 0, it.first);
+        }
+
+        Collection<Pair<String, OnPropertyReaderSelection>> readers = graphType
+                .getPropertyReaderRepository()
+                .getRegisteredOptions();
+
+        MenuItem readersItem = menu.findItem(R.id.options_property_readers);
+        Menu readersMenu = readersItem.getSubMenu();
+        readersMenu.add(0, id++, 0, "test");
+        for (Pair<String, OnPropertyReaderSelection> it : readers) {
+            readersOptions.put(id, it.second);
+            readersMenu.add(0, id++, 0, it.first);
         }
         return true;
     }

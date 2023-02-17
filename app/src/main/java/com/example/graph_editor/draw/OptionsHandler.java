@@ -20,7 +20,7 @@ import com.example.graph_editor.draw.popups.SettingsPopup;
 import java.util.Map;
 import java.util.Objects;
 
-import graph_editor.extensions.OnOptionSelection;
+import graph_editor.extensions.StackCapture;
 import graph_editor.graph.SimpleGraphBuilder;
 import graph_editor.graph.VersionStack;
 import graph_editor.graph_generators.GraphGeneratorBipartiteClique;
@@ -37,7 +37,7 @@ public class OptionsHandler {
                                  GraphView graphView, Runnable makeSave,
                                  ActivityResultLauncher<Intent> importActivityResultLauncher,
                                  ActivityResultLauncher<Intent> exportActivityResultLauncher,
-                                 Map<Integer, OnOptionSelection> extensionsOptions) {
+                                 Map<Integer, StackCapture> extensionsOptions) {
         if (extensionsOptions.containsKey(item.getItemId())) {
             Objects
                     .requireNonNull(extensionsOptions.get(item.getItemId()))

@@ -21,6 +21,14 @@
         android:title="@string/save"
         app:showAsAction="always" >
     </item>
+    <item android:id="@+id/options_property_readers"
+        android:icon="@drawable/ic_property_read"
+        android:title="@string/property_readers"
+        app:showAsAction="always" >
+        <menu>
+<!--            loaded dynamically-->
+        </menu>
+    </item>
 
     <item android:id="@+id/options_btn_save_as"
         android:title="@string/save_as"

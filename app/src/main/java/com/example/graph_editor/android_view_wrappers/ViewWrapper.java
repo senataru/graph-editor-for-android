@@ -1,4 +1,4 @@
-package com.example.graph_editor;
+package com.example.graph_editor.android_view_wrappers;
 
 import android.view.View;
 
