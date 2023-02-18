@@ -6,6 +6,7 @@ import android.view.MotionEvent;
 
 import androidx.annotation.NonNull;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
@@ -63,16 +64,15 @@ public class MoveVertex extends GraphOnTouchMutation {
             return null;
         } else {
             PropertySupportingGraph graph = previous.getGraph();
-            var builder = graphBuilderFactory.apply(0);
             BuilderVisualizer visualizer = new BuilderVisualizer();
             Vertex movedVertex = inverse.get(p1);
-            var entries = previous
-                    .getVisualization()
-                    .entrySet()
-                    .stream()
-                    .filter(e -> !e.getKey().equals(movedVertex))
-                    .collect(Collectors.toList());
-            PropertyGraphBuilder propertyGraphBuilder = deBuild(graph, builder, visualizer, entries);
+            Map<Vertex, Point> coordinates = new HashMap<>();
+            previous.getVisualization().forEach((v, p) -> {
+                if (!v.equals(movedVertex)) {
+                    coordinates.put(v, p);
+                }
+            });
+            PropertyGraphBuilder propertyGraphBuilder = deBuild(graph, graphBuilderFactory.apply(0), visualizer, coordinates);
             visualizer.addCoordinates(movedVertex, p2);
             return visualizer.generateVisual(propertyGraphBuilder.build());
         }

@@ -13,10 +13,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.graph_editor.R;
+import com.example.graph_editor.model.GraphType;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import graph_editor.graph.GenericGraphBuilder;
 import graph_editor.graph.Graph;
 import graph_editor.graph.VersionStack;
 import graph_editor.graph_generators.GraphGenerator;
@@ -29,14 +32,16 @@ import graph_editor.visual.GraphVisualization;
 public class GeneratePopup {
     private final Context context;
     private final VersionStack<GraphVisualization<PropertySupportingGraph>> stack;
-    private final GraphGenerator generator;
+    private final GraphGenerator<?> generator;
+    private final GraphType graphType;
 
     private AlertDialog dialog;
 
-    public GeneratePopup(Context context, VersionStack<GraphVisualization<PropertySupportingGraph>> stack, GraphGenerator generator) {
+    public GeneratePopup(Context context, VersionStack<GraphVisualization<PropertySupportingGraph>> stack, GraphGenerator generator, GraphType type) {
         this.context = context;
         this.stack = stack;
         this.generator = generator;
+        this.graphType = type;
     }
 
     public void show() {
@@ -88,10 +93,13 @@ public class GeneratePopup {
                 parametersInteger.add(Integer.parseInt(str));
             }
 
-            GraphVisualization<Graph> rawVisualization = generator.generate(parametersInteger);
+            GraphVisualization<?> rawVisualization = generator.generate(parametersInteger);
             BuilderVisualizer visualizer = new BuilderVisualizer();
             rawVisualization.getVisualization().forEach(visualizer::addCoordinates);
-            PropertyGraphBuilder propertyGraphBuilder = new PropertyGraphBuilder(rawVisualization.getGraph());
+            Graph graph = rawVisualization.getGraph();
+            GenericGraphBuilder<?> genericGraphBuilder = graphType.getGraphBuilderFactory().apply(graph.getVertices().size());
+            graph.getEdges().forEach(e -> genericGraphBuilder.addEdge(e.getSource().getIndex(), e.getTarget().getIndex()));
+            PropertyGraphBuilder propertyGraphBuilder = new PropertyGraphBuilder(genericGraphBuilder);
             GraphVisualization<PropertySupportingGraph> visualization = visualizer.generateVisual(propertyGraphBuilder.build());
             stack.push(visualization);
 

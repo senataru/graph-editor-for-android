@@ -5,6 +5,7 @@ import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
+import android.graphics.Color;
 import android.graphics.Path;
 
 import com.example.graph_editor.model.GraphType;
@@ -23,8 +24,8 @@ import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.GraphVisualization;
 
 public class DefaultDrawer implements IGraphDrawer<PropertySupportingGraph> {
-    private static final float defaultVertexSize = 20.0f;
-    private static final int defaultVertexColor = 0x000000ff;
+    private static final float defaultVertexSize = 10.0f;
+    private static final int defaultVertexColor = 0xff0000ff;
     private static final int defaultEdgeColor = 0x7f000000;
     private static final int defaultArrowColor = 0x00ff0000;
     private static final int defaultArrowRadius = 50;

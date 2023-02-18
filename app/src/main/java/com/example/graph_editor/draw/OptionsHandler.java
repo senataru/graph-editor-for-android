@@ -15,20 +15,17 @@ import com.example.graph_editor.draw.popups.SavePopup;
 import com.example.graph_editor.draw.popups.SettingsPopup;
 import com.example.graph_editor.model.GraphType;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import graph_editor.extensions.Extension;
 import graph_editor.extensions.ExtensionsRepository;
 import graph_editor.extensions.OnPropertyReaderSelection;
 import graph_editor.extensions.StackCapture;
-import graph_editor.graph.SimpleGraphBuilder;
 import graph_editor.graph.VersionStack;
 import graph_editor.graph_generators.GraphGeneratorBipartiteClique;
 import graph_editor.properties.PropertyGraphBuilder;
@@ -81,7 +78,7 @@ public class OptionsHandler {
                 return true;
             //more actions
             case R.id.options_btn_clear:
-                PropertySupportingGraph emptyGraph = new PropertyGraphBuilder(new SimpleGraphBuilder(0).build()).build();
+                PropertySupportingGraph emptyGraph = new PropertyGraphBuilder(type.getGraphBuilderFactory().apply(0)).build();
                 visualization = new BuilderVisualizer().generateVisual(emptyGraph);
                 stack.push(visualization);
                 graphView.postInvalidate();
@@ -139,7 +136,7 @@ public class OptionsHandler {
 //                new GeneratePopup(context, graphStack, new GraphGeneratorClique()).show();
 //                return true;
             case R.id.generate_btn_bipartite_clique:
-                new GeneratePopup(context, stack, new GraphGeneratorBipartiteClique()).show();
+                new GeneratePopup(context, stack, new GraphGeneratorBipartiteClique(), type).show();
                 return true;
 //            case R.id.generate_btn_full_binary_tree:
 //                new GeneratePopup(context, graphStack, new GraphGeneratorFullBinaryTree()).show();

@@ -89,17 +89,14 @@ public class GraphView extends View implements VersionStack.ObservableStack.Obse
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
         fixedWidth = Settings.getFixedWidth(getContext());
 
 //        vertexRadius = getDrawWidth(rectangle.getScale(), baseVertexRadius);
 //        edgePaint.setStrokeWidth((float)getDrawWidth(rectangle.getScale(), baseEdgeWidth));
 //        edgePaint.setStrokeWidth(baseEdgeWidth);
         CanvasDrawer drawer = new CanvasWrapper(canvas);
-        IGraphDrawer<PropertySupportingGraph> graphDrawer =
-                drawerSource
-                        .getDrawer(mapper, drawer)
-                        .orElse(new DefaultDrawer(mapper, drawer, graphType));
+        IGraphDrawer<PropertySupportingGraph> graphDrawer = new DefaultDrawer(mapper, drawer, graphType);
+//                drawerSource.getDrawer(mapper, drawer).orElse(new DefaultDrawer(mapper, drawer, graphType));
         graphDrawer.drawGraph(visualization);
     }
 

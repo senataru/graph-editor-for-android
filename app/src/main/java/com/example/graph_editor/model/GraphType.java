@@ -15,8 +15,8 @@ import graph_editor.graph.Graph;
 import graph_editor.graph.UndirectedGraph;
 
 public enum GraphType {
-    DIRECTED("directed"),
-    UNDIRECTED("undirected");
+    DIRECTED("DIRECTED"),
+    UNDIRECTED("UNDIRECTED");
 
     static final Map<GraphType, IntFunction<GenericGraphBuilder<? extends Graph>>> graphBuilderFactoryMap =
             Map.of(DIRECTED, DirectedGraph.Builder::new, UNDIRECTED, UndirectedGraph.Builder::new);
@@ -37,9 +37,9 @@ public enum GraphType {
     }
 
     public static GraphType getFromString(String type) {
-        if (type.equals("directed")) {
+        if (type.equals(DIRECTED.toString())) {
             return DIRECTED;
-        } else if (type.equals("undirected")) {
+        } else if (type.equals(UNDIRECTED.toString())) {
             return UNDIRECTED;
         } else {
             throw new IllegalArgumentException("Unknown graph type: " + type);

@@ -1,5 +1,7 @@
 package com.example.graph_editor.draw.graph_action;
 
+import static graph_editor.properties.GraphDebuilder.copyProperties;
+
 import android.view.MotionEvent;
 
 import androidx.annotation.NonNull;
@@ -7,6 +9,7 @@ import androidx.annotation.NonNull;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.IntFunction;
 import java.util.stream.StreamSupport;
@@ -20,6 +23,7 @@ import graph_editor.graph.GenericGraphBuilder;
 import graph_editor.graph.Graph;
 import graph_editor.graph.VersionStack;
 import graph_editor.graph.Vertex;
+import graph_editor.properties.GraphDebuilder;
 import graph_editor.properties.PropertyGraphBuilder;
 import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.BuilderVisualizer;
@@ -46,7 +50,7 @@ public class RemoveElements extends GraphOnTouchMutation {
                         removedVertices.add(v);
                         removedEdges.addAll(v.getEdges());
                         stack.getCurrent().getGraph().getVertices().forEach(adj -> adj.getEdges().forEach(e -> {
-                            if (e.getTarget().equals(v)) { removedEdges.add(e); }
+                            if (e.getOther(adj).equals(v)) { removedEdges.add(e); }
                         }));
                     }
                 }
@@ -64,37 +68,33 @@ public class RemoveElements extends GraphOnTouchMutation {
     @Override
     protected GraphVisualization<PropertySupportingGraph> execute(PointMapper mapper, GraphVisualization<PropertySupportingGraph> previous) {
         PropertySupportingGraph graph = previous.getGraph();
-        Map<Vertex, Vertex> correspondence = new HashMap<>();
+        Map<Vertex, Vertex> vCorrespondence = new HashMap<>();
+        Map<Edge, Edge> eCorrespondence = new HashMap<>();
         var graphBuilder = graphBuilderFactory.apply(0);
         for (Vertex v : previous.getGraph().getVertices()) {
             if (!removedVertices.contains(v)) {
-                correspondence.put(v, graphBuilder.addVertex());
+                vCorrespondence.put(v, graphBuilder.addVertex());
             }
         }
-        correspondence.forEach((v, addedVertex) -> {
+        removedVertices.forEach(v -> System.out.println(v.getIndex()));
+        System.out.println("hee");
+        vCorrespondence.forEach((v, addedVertex) -> {
             v.getEdges().forEach(e -> {
-                if(!removedEdges.contains(e) && !removedVertices.contains(e.getTarget())) {
-                    graphBuilder.addEdge(addedVertex.getIndex(), correspondence.get(e.getTarget()).getIndex());
+                if(!removedEdges.contains(e) && !removedVertices.contains(e.getOther(v))) {
+                    Optional<Edge> addedEdge = graphBuilder.addEdge(
+                            addedVertex.getIndex(), vCorrespondence.get(e.getOther(v)).getIndex()
+                    );
+                    addedEdge.ifPresent(edge -> eCorrespondence.put(e, edge));
                 }
             });
         });
+        PropertyGraphBuilder propertyGraphBuilder = new PropertyGraphBuilder(graphBuilder);
         BuilderVisualizer visualizer = new BuilderVisualizer();
-        var propertyGraphBuilder = new PropertyGraphBuilder(graphBuilder.build());
         graph.getExtendedElements().forEach(propertyGraphBuilder::addExtendedElement);
-        graph.getPropertiesNames().forEach(propertyName -> {
-            propertyGraphBuilder.registerProperty(propertyName);
-            StreamSupport.stream(graph.getElementsWithProperty(propertyName).spliterator(), false)
-                            .filter(ge -> !removedVertices.contains(ge) && !removedEdges.contains(ge))
-                                    .forEach(graphElement -> propertyGraphBuilder.addElementProperty(
-                                        graphElement,
-                                        propertyName,
-                                        graph.getPropertyValue(propertyName, graphElement)
-                                    ));
-        });
-        previous.getVisualization().forEach((v, p) -> {
-            if (!removedVertices.contains(v)) {
-                visualizer.addCoordinates(correspondence.get(v), p);
-            }
+        copyProperties(graph, propertyGraphBuilder, vCorrespondence, eCorrespondence);
+        Map<Vertex, Point> coordinates = previous.getVisualization();
+        vCorrespondence.forEach((v, builderV) -> {
+            visualizer.addCoordinates(builderV, coordinates.get(v));
         });
         return visualizer.generateVisual(propertyGraphBuilder.build());
     }

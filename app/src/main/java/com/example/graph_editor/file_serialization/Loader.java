@@ -22,6 +22,7 @@ public class Loader {
             try (ObjectInputStream is = new ObjectInputStream(fis)) {
                 GraphVisualization<PropertySupportingGraph> visualization = (GraphVisualization<PropertySupportingGraph>) is.readObject();
                 String typeName = (String) is.readObject();
+                System.out.println(typeName);
                 return new FileData(visualization, GraphType.valueOf(typeName));
             } catch (IOException | ClassNotFoundException exception) {
                 throw new RuntimeException(exception);

@@ -46,12 +46,10 @@ public class NewVertex extends GraphOnTouchMutation {
     protected GraphVisualization<PropertySupportingGraph> execute(PointMapper mapper, GraphVisualization<PropertySupportingGraph> previous) {
         mapper.mapFromView(sp);
         PropertySupportingGraph graph = previous.getGraph();
-        var builder = graphBuilderFactory.apply(0);
-        Vertex addedVertex = builder.addVertex();
-
         BuilderVisualizer visualizer = new BuilderVisualizer();
+        PropertyGraphBuilder propertyGraphBuilder = deBuild(graph, graphBuilderFactory.apply(0), visualizer, previous.getVisualization());
+        Vertex addedVertex = propertyGraphBuilder.addVertex();
         visualizer.addCoordinates(addedVertex, mapper.mapFromView(sp));
-        PropertyGraphBuilder propertyGraphBuilder = deBuild(graph, builder, visualizer, previous.getVisualization().entrySet());
         return visualizer.generateVisual(propertyGraphBuilder.build());
     }
 }

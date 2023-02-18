@@ -108,7 +108,7 @@ public class DrawActivity extends AppCompatActivity {
             graphType = data.type;
         } else  {
             visualization = new BuilderVisualizer().generateVisual(
-                    new PropertyGraphBuilder(graphType.getGraphBuilderFactory().apply(0).build()).build());
+                    new PropertyGraphBuilder(graphType.getGraphBuilderFactory().apply(0)).build());
         }
         IntFunction<GenericGraphBuilder<? extends Graph>> graphBuilderFactory = graphType.getGraphBuilderFactory();
 
