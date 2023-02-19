@@ -14,6 +14,7 @@ import com.example.graph_editor.R;
 import com.example.graph_editor.fs.FSDirectories;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import graph_editor.extensions.ExtensionsClient;
@@ -63,7 +64,7 @@ public class ExtensionsActivity extends AppCompatActivity implements OnExtension
 
         installedView.setAdapter(new InstalledExtensionsRecyclerViewAdapter(
                 this,
-                installedRepository.getExtensions(),
+                new ArrayList<>(installedRepository.getExtensions()),
                 this
         ));
     }
