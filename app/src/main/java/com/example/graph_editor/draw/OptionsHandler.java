@@ -18,15 +18,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import graph_editor.extensions.OnOptionSelection;
+import graph_editor.graph.Graph;
+import graph_editor.graph.SimpleGraphBuilder;
 import graph_editor.extensions.Extension;
 import graph_editor.extensions.ExtensionsRepository;
 import graph_editor.extensions.OnPropertyReaderSelection;
 import graph_editor.extensions.StackCapture;
 import graph_editor.graph.VersionStack;
-import graph_editor.graph_generators.GraphGeneratorBipartiteClique;
+import graph_editor.graph_generators.GraphGenerator;
 import graph_editor.properties.PropertyGraphBuilder;
 import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.BuilderVisualizer;
@@ -34,7 +38,8 @@ import graph_editor.visual.GraphVisualization;
 
 public class OptionsHandler {
     @SuppressLint("NonConstantResourceId")
-    public static boolean handle(@NonNull MenuItem item, DrawActivity context, VersionStack<GraphVisualization<PropertySupportingGraph>> stack,
+    public static boolean handle(@NonNull MenuItem item, DrawActivity context,
+                                 VersionStack<GraphVisualization<PropertySupportingGraph>> stack,
                                  GraphView graphView, Runnable makeSave,
                                  ActivityResultLauncher<Intent> importActivityResultLauncher,
                                  ActivityResultLauncher<Intent> exportActivityResultLauncher,
@@ -42,6 +47,8 @@ public class OptionsHandler {
                                  Map<Integer, OnPropertyReaderSelection> readersOptions,
                                  ExtensionsRepository repository,
                                  GraphType type) {
+                                 Map<Integer, OnOptionSelection> extensionsOptions,
+                                 Map<Integer, Supplier<GraphGenerator<?>>> graphGeneratorsMap) {
         if (extensionsOptions.containsKey(item.getItemId())) {
             Objects
                     .requireNonNull(extensionsOptions.get(item.getItemId()))
@@ -60,6 +67,12 @@ public class OptionsHandler {
             List<OnPropertyReaderSelection.SettingChoice> choices =
                     Objects.requireNonNull(readersOptions.get(item.getItemId())).handle(List.copyOf(names));
             new ReaderPopup(context, choices, graphView::postInvalidate).show();
+            return true;
+        }
+        if (graphGeneratorsMap.containsKey(item.getItemId())) {
+            Supplier<GraphGenerator<? extends Graph>> generatorSupplier = Objects.requireNonNull(
+                    graphGeneratorsMap.get(item.getItemId()));
+            new GeneratePopup(context, stack, generatorSupplier.get()).show();
             return true;
         }
         GraphVisualization<PropertySupportingGraph> visualization;
@@ -125,27 +138,6 @@ public class OptionsHandler {
                 importFromFileIntent = Intent.createChooser(importFromFileIntent, "Choose file containing a graph");
                 importActivityResultLauncher.launch(importFromFileIntent);
                 return true;
-            //generate graph
-            //TODO retrieve disabled generators
-
-//            case R.id.generate_btn_cycle:
-//                new GeneratePopup(context, graphStack, new GraphGeneratorCycle()).show();
-//                return true;
-//            case R.id.generate_btn_clique:
-//                new GeneratePopup(context, graphStack, new GraphGeneratorClique()).show();
-//                return true;
-            case R.id.generate_btn_bipartite_clique:
-                new GeneratePopup(context, stack, new GraphGeneratorBipartiteClique(), type).show();
-                return true;
-//            case R.id.generate_btn_full_binary_tree:
-//                new GeneratePopup(context, graphStack, new GraphGeneratorFullBinaryTree()).show();
-//                return true;
-//            case R.id.generate_btn_grid:
-//                new GeneratePopup(context, graphStack, new GraphGeneratorGrid()).show();
-//                return true;
-//            case R.id.generate_btn_king_grid:
-//                new GeneratePopup(context, graphStack, new GraphGeneratorKingGrid()).show();
-//                return true;
             default:
                 return false;
         }

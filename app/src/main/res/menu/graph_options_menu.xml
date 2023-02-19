@@ -90,11 +90,10 @@
 <!--                android:title="@string/clique"-->
 <!--                app:showAsAction="never" >-->
 <!--            </item>-->
-
-            <item android:id="@+id/generate_btn_bipartite_clique"
-                android:title="@string/bipartite_clique"
-                app:showAsAction="never" >
-            </item>
+<!--            <item android:id="@+id/generate_btn_bipartite_clique"-->
+<!--                android:title="@string/bipartite_clique"-->
+<!--                app:showAsAction="never" >-->
+<!--            </item>-->
 
 <!--            <item android:id="@+id/generate_btn_full_binary_tree"-->
 <!--                android:title="@string/full_binary_tree"-->
