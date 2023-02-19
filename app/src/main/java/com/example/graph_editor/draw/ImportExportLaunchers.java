@@ -31,7 +31,7 @@ public class ImportExportLaunchers {
 
         visualizationOptional.ifPresent(data -> {
             if (data.type != type) {
-                Toast.makeText(context, "Cannot load " + type + " graph, because graphStack contains " + data.type + " graphs", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Cannot load " + data.type + " graph, because graphStack contains " + type + " graphs", Toast.LENGTH_SHORT).show();
                 return;
             }
             stack.push(data.visualization);

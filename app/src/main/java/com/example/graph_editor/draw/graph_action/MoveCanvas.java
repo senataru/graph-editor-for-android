@@ -23,11 +23,16 @@ public class MoveCanvas implements GraphAction {
                 offset = mapper.getOffset();
             }
             case MotionEvent.ACTION_MOVE -> {
-                ScreenPoint downOnScreen = mapper.mapIntoView(offset);
-                float diffX = downOnScreen.getX() - event.getX();
-                float diffY = downOnScreen.getY() - event.getY();
-                ScreenPoint currentOffset = new ScreenPoint(downPoint.getX() + diffX, downPoint.getY() + diffY);
-                mapper.setOffset(mapper.mapFromView(currentOffset));
+                if (downPoint == null) {
+                    downPoint = new ScreenPoint(event.getX(), event.getY());
+                    offset = mapper.getOffset();
+                } else {
+                    ScreenPoint downOnScreen = mapper.mapIntoView(offset);
+                    float diffX = downOnScreen.getX() - event.getX();
+                    float diffY = downOnScreen.getY() - event.getY();
+                    ScreenPoint currentOffset = new ScreenPoint(downPoint.getX() + diffX, downPoint.getY() + diffY);
+                    mapper.setOffset(mapper.mapFromView(currentOffset));
+                }
             }
             default -> { }
         }

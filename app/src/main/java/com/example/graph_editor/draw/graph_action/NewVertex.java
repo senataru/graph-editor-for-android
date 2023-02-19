@@ -44,6 +44,9 @@ public class NewVertex extends GraphOnTouchMutation {
 
     @Override
     protected GraphVisualization<PropertySupportingGraph> execute(PointMapper mapper, GraphVisualization<PropertySupportingGraph> previous) {
+        if (sp == null) {
+            return null;
+        }
         mapper.mapFromView(sp);
         PropertySupportingGraph graph = previous.getGraph();
         BuilderVisualizer visualizer = new BuilderVisualizer();

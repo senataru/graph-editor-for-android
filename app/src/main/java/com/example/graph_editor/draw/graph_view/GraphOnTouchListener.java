@@ -33,21 +33,11 @@ public class GraphOnTouchListener implements GraphView.OnTouchListener {
     public boolean onTouch(View v, MotionEvent event) {
         v.performClick();
 
-        boolean stylusMode = Settings.getStylus(activity);
-
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             activity.setLocked(true);
         }
 
         GraphAction action = buttonCollection.getGraphAction();
-
-        if (stylusMode) {
-            if (event.getToolType(0) == MotionEvent.TOOL_TYPE_FINGER) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    action = new MoveCanvas();
-                }
-            }
-        }
 
         GraphVisualization<PropertySupportingGraph> visualization = action.perform(mapper, event, stack);
         graphView.notifyChange(visualization);

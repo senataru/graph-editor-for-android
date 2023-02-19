@@ -36,7 +36,7 @@ public class MoveVertex extends GraphOnTouchMutation {
     @Override
     public GraphVisualization<PropertySupportingGraph> perform(PointMapper mapper, @NonNull MotionEvent event, VersionStack<GraphVisualization<PropertySupportingGraph>> stack) {
         switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN -> sp1 = new ScreenPoint(event.getX(), event.getY());
+            case MotionEvent.ACTION_DOWN -> sp2 = sp1 = new ScreenPoint(event.getX(), event.getY());
             case MotionEvent.ACTION_MOVE -> {
                 sp2 = new ScreenPoint(event.getX(), event.getY());
                 var visualization = execute(mapper, stack.getCurrent());
@@ -53,6 +53,9 @@ public class MoveVertex extends GraphOnTouchMutation {
 
     @Override
     protected GraphVisualization<PropertySupportingGraph> execute(PointMapper mapper, GraphVisualization<PropertySupportingGraph> previous) {
+        if (sp1 == null || sp2 == null) {
+            return null;
+        }
         Map<Point, Vertex> inverse = previous
                 .getVisualization()
                 .entrySet()

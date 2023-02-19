@@ -52,6 +52,9 @@ public class NewEdge extends GraphOnTouchMutation {
 
     @Override
     protected GraphVisualization<PropertySupportingGraph> execute(PointMapper mapper, GraphVisualization<PropertySupportingGraph> previous) {
+        if (sp1 == null || sp2 == null) {
+            return null;
+        }
         Map<Point, Vertex> inverse = previous
                 .getVisualization()
                 .entrySet()
