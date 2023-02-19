@@ -54,6 +54,13 @@ public class RemoveElements extends GraphOnTouchMutation {
                         }));
                     }
                 }
+                for (Edge e : stack.getCurrent().getGraph().getEdges()) {
+                    Point p1 = stack.getCurrent().getVertexPoint(e.getSource());
+                    Point p2 = stack.getCurrent().getVertexPoint(e.getTarget());
+                    if (GeometryUtils.distanceFromSegment(eraser, p1, p2) < eraserSize / mapper.getZoom()) {
+                        removedEdges.add(e);
+                    }
+                }
                 return execute(mapper, stack.getCurrent());
             }
             case MotionEvent.ACTION_UP -> {
