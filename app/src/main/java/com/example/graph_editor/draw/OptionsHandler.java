@@ -60,7 +60,7 @@ public class OptionsHandler {
                     .forEach(i -> i.forEach(names::add));
             List<OnPropertyReaderSelection.SettingChoice> choices =
                     Objects.requireNonNull(readersOptions.get(item.getItemId())).handle(List.copyOf(names));
-            new ReaderPopup(context, choices).show();
+            new ReaderPopup(context, choices, graphView::postInvalidate).show();
             return true;
         }
         GraphVisualization<PropertySupportingGraph> visualization;
