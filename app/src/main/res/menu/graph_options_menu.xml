@@ -71,10 +71,10 @@
 <!--        app:showAsAction="never" >-->
 <!--    </item>-->
 
-    <item android:id="@+id/options_btn_settings"
-        android:title="@string/settings"
-        app:showAsAction="never" >
-    </item>
+<!--    <item android:id="@+id/options_btn_settings"-->
+<!--        android:title="@string/settings"-->
+<!--        app:showAsAction="never" >-->
+<!--    </item>-->
 
     <item android:id="@+id/options_btn_generate_graph"
         android:title="@string/generate_graph"

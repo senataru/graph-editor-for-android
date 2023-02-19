@@ -12,7 +12,6 @@ import com.example.graph_editor.draw.graph_view.GraphView;
 import com.example.graph_editor.draw.popups.GeneratePopup;
 import com.example.graph_editor.draw.popups.ReaderPopup;
 import com.example.graph_editor.draw.popups.SavePopup;
-import com.example.graph_editor.draw.popups.SettingsPopup;
 import com.example.graph_editor.model.GraphType;
 
 import java.util.HashSet;
@@ -100,9 +99,9 @@ public class OptionsHandler {
 //                graphView.postInvalidate();
 //                return true;
 
-            case R.id.options_btn_settings:
-                new SettingsPopup(context, graphView::postInvalidate).show();
-                return true;
+//            case R.id.options_btn_settings:
+//                new SettingsPopup(context, graphView::postInvalidate).show();
+//                return true;
             case R.id.options_btn_save_as:
                 new SavePopup().show(stack.getCurrent(), type, context, ()->{});
                 return true;
