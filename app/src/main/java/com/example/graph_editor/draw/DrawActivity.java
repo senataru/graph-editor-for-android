@@ -12,7 +12,7 @@ import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
+import android.view.SubMenu;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -47,11 +47,11 @@ import com.example.graph_editor.fs.FSDirectories;
 import com.example.graph_editor.model.GraphType;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.IntFunction;
+import java.util.function.Supplier;
 
 import graph_editor.draw.point_mapping.PointMapper;
 import graph_editor.draw.point_mapping.PointMapperImpl;
@@ -63,13 +63,15 @@ import graph_editor.graph.Graph;
 import graph_editor.graph.ObservableStackImpl;
 import graph_editor.graph.VersionStack.ObservableStack;
 import graph_editor.graph.VersionStackImpl;
+import graph_editor.graph_generators.GraphGenerator;
 import graph_editor.properties.PropertyGraphBuilder;
 import graph_editor.properties.PropertySupportingGraph;
 import graph_editor.visual.BuilderVisualizer;
 import graph_editor.visual.GraphVisualization;
 
 public class DrawActivity extends AppCompatActivity {
-    private final static int extensions_start = 1;
+    private final static int GRAPH_GENERATORS_START = 1;
+    private final static int EXTENSIONS_START = 100;
     private GraphView graphView;
     private ObservableStack<GraphVisualization<PropertySupportingGraph>> stack;
 
@@ -79,6 +81,7 @@ public class DrawActivity extends AppCompatActivity {
     private boolean locked;
     private Map<Integer, StackCapture> extensionsOptions;
     private Map<Integer, OnPropertyReaderSelection> readersOptions;
+    private Map<Integer, Supplier<GraphGenerator<? extends Graph>>> graphGenerators;
     private GraphType graphType;
 
     public boolean isLocked() { return locked; }
@@ -159,8 +162,17 @@ public class DrawActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.graph_options_menu, menu);
 
-        int id = extensions_start;
+        SubMenu generatorsSubMenu = menu.getItem(R.id.options_btn_generate_graph).getSubMenu();
+        int id = GRAPH_GENERATORS_START;
+        graphGenerators = new HashMap<>();
 
+        for (Map.Entry<String, Supplier<GraphGenerator<? extends Graph>>> entry :
+                graphType.getGraphGeneratorsMap().entrySet()) {
+           graphGenerators.put(id, entry.getValue());
+            menu.add(0, id++, 0, entry.getKey());
+        }
+
+        id = EXTENSIONS_START;
         Collection<Pair<String, StackCapture>> options = graphType
                 .getStackCaptureRepository()
                 .getRegisteredOptions();
@@ -219,6 +231,7 @@ public class DrawActivity extends AppCompatActivity {
                 extensionsOptions,
                 readersOptions,
                 StaticState.getExtensionsRepositoryInstance(this),
+                graphGenerators,
                 graphType
         ))
             return super.onOptionsItemSelected(item);

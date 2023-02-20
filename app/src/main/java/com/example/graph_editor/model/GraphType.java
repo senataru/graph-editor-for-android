@@ -6,6 +6,7 @@ import com.example.graph_editor.extensions.OnSelectionRepositoryImpl;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.function.IntFunction;
+import java.util.function.Supplier;
 
 import graph_editor.extensions.OnPropertyReaderSelection;
 import graph_editor.extensions.StackCapture;
@@ -13,6 +14,7 @@ import graph_editor.graph.DirectedGraph;
 import graph_editor.graph.GenericGraphBuilder;
 import graph_editor.graph.Graph;
 import graph_editor.graph.UndirectedGraph;
+import graph_editor.graph_generators.*;
 
 public enum GraphType {
     DIRECTED("DIRECTED"),
@@ -25,6 +27,17 @@ public enum GraphType {
             Map.of(DIRECTED, new OnSelectionRepositoryImpl<>(), UNDIRECTED, new OnSelectionRepositoryImpl<>());
     private static final Map<GraphType, OnSelectionRepository<OnPropertyReaderSelection>> propertyReaders =
             Map.of(DIRECTED, new OnSelectionRepositoryImpl<>(), UNDIRECTED, new OnSelectionRepositoryImpl<>());
+    private static final Map<GraphType, Map<String, Supplier<GraphGenerator<? extends Graph>>>> generators =
+            Map.of(DIRECTED,
+                    Map.of("cycle", GraphGeneratorDirectedCycle::new),
+                    UNDIRECTED,
+                    Map.of("cycle", GraphGeneratorUndirectedCycle::new,
+                            "clique", GraphGeneratorClique::new,
+                            "bipartite clique", GraphGeneratorBipartiteClique::new,
+                            "full binary tree", GraphGeneratorFullBinaryTree::new,
+                            "grid", GraphGeneratorGrid::new,
+                            "king grid", GraphGeneratorKingGrid::new
+                            ));
     private final String type;
 
     GraphType(String type) {
@@ -55,5 +68,9 @@ public enum GraphType {
     }
     public OnSelectionRepository<OnPropertyReaderSelection> getPropertyReaderRepository() {
         return propertyReaders.get(this);
+    }
+
+    public Map<String, Supplier<GraphGenerator<? extends Graph>>> getGraphGeneratorsMap() {
+        return generators.get(this);
     }
 }

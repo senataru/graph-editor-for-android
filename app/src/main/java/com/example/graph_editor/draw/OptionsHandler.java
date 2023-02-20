@@ -20,12 +20,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import graph_editor.extensions.Extension;
 import graph_editor.extensions.ExtensionsRepository;
 import graph_editor.extensions.OnPropertyReaderSelection;
 import graph_editor.extensions.StackCapture;
+import graph_editor.graph.Graph;
 import graph_editor.graph.VersionStack;
+import graph_editor.graph_generators.GraphGenerator;
 import graph_editor.graph_generators.GraphGeneratorBipartiteClique;
 import graph_editor.properties.PropertyGraphBuilder;
 import graph_editor.properties.PropertySupportingGraph;
@@ -41,7 +44,14 @@ public class OptionsHandler {
                                  Map<Integer, StackCapture> extensionsOptions,
                                  Map<Integer, OnPropertyReaderSelection> readersOptions,
                                  ExtensionsRepository repository,
+                                 Map<Integer, Supplier<GraphGenerator<? extends Graph>>> graphGenerators,
                                  GraphType type) {
+        if (graphGenerators.containsKey(item.getItemId())) {
+            Supplier<GraphGenerator<? extends Graph>> generatorSupplier = Objects.requireNonNull(
+                    graphGenerators.get(item.getItemId()));
+            new GeneratePopup(context, stack, generatorSupplier.get(), type).show();
+                return true;
+        }
         if (extensionsOptions.containsKey(item.getItemId())) {
             Objects
                     .requireNonNull(extensionsOptions.get(item.getItemId()))
@@ -125,27 +135,6 @@ public class OptionsHandler {
                 importFromFileIntent = Intent.createChooser(importFromFileIntent, "Choose file containing a graph");
                 importActivityResultLauncher.launch(importFromFileIntent);
                 return true;
-            //generate graph
-            //TODO retrieve disabled generators
-
-//            case R.id.generate_btn_cycle:
-//                new GeneratePopup(context, graphStack, new GraphGeneratorCycle()).show();
-//                return true;
-//            case R.id.generate_btn_clique:
-//                new GeneratePopup(context, graphStack, new GraphGeneratorClique()).show();
-//                return true;
-            case R.id.generate_btn_bipartite_clique:
-                new GeneratePopup(context, stack, new GraphGeneratorBipartiteClique(), type).show();
-                return true;
-//            case R.id.generate_btn_full_binary_tree:
-//                new GeneratePopup(context, graphStack, new GraphGeneratorFullBinaryTree()).show();
-//                return true;
-//            case R.id.generate_btn_grid:
-//                new GeneratePopup(context, graphStack, new GraphGeneratorGrid()).show();
-//                return true;
-//            case R.id.generate_btn_king_grid:
-//                new GeneratePopup(context, graphStack, new GraphGeneratorKingGrid()).show();
-//                return true;
             default:
                 return false;
         }

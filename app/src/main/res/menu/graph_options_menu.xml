@@ -81,35 +81,6 @@
         app:showAsAction="never" >
 
         <menu>
-<!--            <item android:id="@+id/generate_btn_cycle"-->
-<!--                android:title="@string/cycle"-->
-<!--                app:showAsAction="never" >-->
-<!--            </item>-->
-
-<!--            <item android:id="@+id/generate_btn_clique"-->
-<!--                android:title="@string/clique"-->
-<!--                app:showAsAction="never" >-->
-<!--            </item>-->
-
-            <item android:id="@+id/generate_btn_bipartite_clique"
-                android:title="@string/bipartite_clique"
-                app:showAsAction="never" >
-            </item>
-
-<!--            <item android:id="@+id/generate_btn_full_binary_tree"-->
-<!--                android:title="@string/full_binary_tree"-->
-<!--                app:showAsAction="never" >-->
-<!--            </item>-->
-
-<!--            <item android:id="@+id/generate_btn_grid"-->
-<!--                android:title="@string/grid"-->
-<!--                app:showAsAction="never" >-->
-<!--            </item>-->
-
-<!--            <item android:id="@+id/generate_btn_king_grid"-->
-<!--                android:title="@string/king_grid"-->
-<!--                app:showAsAction="never" >-->
-<!--            </item>-->
         </menu>
 
     </item>
