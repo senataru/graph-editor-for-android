@@ -23,11 +23,6 @@ import com.example.graph_editor.model.GraphType;
 public class MenuActivity extends AppCompatActivity {
     private SharedPreferences sharedPref;
 
-    static {
-        System.loadLibrary("sample_lib");
-    }
-    public static native int doubleUp(int x);
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
