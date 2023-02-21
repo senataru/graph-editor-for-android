@@ -162,14 +162,14 @@ public class DrawActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.graph_options_menu, menu);
 
-        SubMenu generatorsSubMenu = menu.getItem(R.id.options_btn_generate_graph).getSubMenu();
+        SubMenu generatorsSubMenu = menu.findItem(R.id.options_btn_generate_graph).getSubMenu();
         int id = GRAPH_GENERATORS_START;
         graphGenerators = new HashMap<>();
 
         for (Map.Entry<String, Supplier<GraphGenerator<? extends Graph>>> entry :
                 graphType.getGraphGeneratorsMap().entrySet()) {
            graphGenerators.put(id, entry.getValue());
-            menu.add(0, id++, 0, entry.getKey());
+            generatorsSubMenu.add(0, id++, 0, entry.getKey());
         }
 
         id = EXTENSIONS_START;
